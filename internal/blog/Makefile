@@ -16,11 +16,3 @@ test:
 	grep -v "_mock.go" coverage.pre.txt > coverage.txt
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt
-mock:
-	./mockgen usecase/repository_article_html.go
-	./mockgen usecase/repository_article_source.go
-	./mockgen usecase/repository_article.go
-	./mockgen usecase/markdown2html/markdown2html.go
-	./mockgen usecase/usecase.go
-	./mockgen web/presenter.go
-	./mockgen web/presenters.go
