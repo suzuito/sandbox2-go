@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<title>Page Title</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{{template "admin__common_head"}}
+
+<body>
+    <div>
+        {{template "admin__header" .Header}}
+    </div>
+    <div>
+        <table>
+            {{range .ArticleSources}}
+            <tr>
+                <td>
+                    <a href="/admin/sources/{{.ID}}">
+                    {{.ID}}
+                    </a>
+                </td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+</body>
+
+</html>

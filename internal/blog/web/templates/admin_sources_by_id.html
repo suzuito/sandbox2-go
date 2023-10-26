@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<title>Page Title</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{{template "admin__common_head"}}
+<link rel="stylesheet" href="/css/admin_import.css">
+
+<body>
+    <div>
+        {{template "admin__header" .Header}}
+    </div>
+    <div>
+        <table>
+            {{range .ArticleSources}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Version}}</td>
+                <td>
+                    {{$article := (index $.MapArticleSourceVersionToArticle .Version)}}
+                    {{if $article}}
+                    <a href="/admin/articles/{{$article.ID}}?version={{$article.Version}}">
+                      v{{$article.Version}}
+                    </a>
+                    {{end}}
+                </td>
+                <td>
+                    <form action="/admin/import/{{.ID}}/{{.Version}}">
+                        <input type="submit" value="Import"/>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+</body>
+
+</html>

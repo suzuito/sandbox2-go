@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<title>Page Title</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{{template "admin__common_head"}}
+
+<body>
+    <div>
+        {{template "admin__header" .Header}}
+    </div>
+    <div>
+        <div>
+            <form action="/admin/search/source">
+                <input name="q" type="text" placeholder="Search words" />
+                <select name="branch">
+                    {{range .Branches}}
+                    <option>{{.}}</option>
+                    {{end}}
+                </select>
+                <input type="submit" />
+            </form>
+        </div>
+        <div>
+            <table>
+                {{range .Articles}}
+                <tr>
+                    <td>
+                        <a href="/admin/articles/{{.ID}}">
+                            {{.ID}}
+                        </a>
+                    </td>
+                    <td>
+                        v{{.Version}}
+                    </td>
+                    <td>
+                        {{.DateString}}
+                    </td>
+                    <td>
+                        {{.Title}}
+                    </td>
+                    <td>
+                        <a target="_blank" href="{{.ArticleSource.Meta.URL}}">src</a>
+                    </td>
+                    <td>
+                        <form>
+                            <input hidden type="text" name="articleId" value="{{.ID}}">
+                            <input type="submit" value="削除する"/>
+                        </form>
+                    </td>
+                </tr>
+                {{end}}
+            </table>
+        </div>
+        <div>
+            <a href="/admin/execute/import-all-sources">*</a>
+        </div>
+    </div>
+</body>
+
+</html>

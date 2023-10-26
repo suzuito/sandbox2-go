@@ -1,0 +1,10 @@
+.pc_articles_pager {
+    padding: 6px;
+    display: flex;
+    flex-direction: row;
+}
+.pc_articles_pager-prev {
+    padding-right: 6px;
+}
+.pc_articles_pager-next {
+}

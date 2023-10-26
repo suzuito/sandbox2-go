@@ -1,0 +1,17 @@
+FROM golang:1.19-alpine AS build
+
+WORKDIR /app
+
+COPY . ./
+RUN cd blog && go mod download && go build -o server cmd/server/main.go
+RUN mv blog/server .
+
+FROM alpine:latest
+
+WORKDIR /app
+COPY --from=build /app/server /app/server
+COPY --from=build /app/blog/web/templates web/templates
+COPY --from=build /app/blog/web/css web/css
+COPY --from=build /app/blog/web/images web/images
+
+ENTRYPOINT ["/app/server"]

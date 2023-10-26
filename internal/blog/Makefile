@@ -1,0 +1,26 @@
+DB_NAME = blog
+DB_NAME_FOR_UNIT_TEST = blog_for_unit_test
+
+init:
+	docker compose up -d
+	while [ true ]; do mysql -u root -h 127.0.0.1 -e 'show databases' > /dev/null 2>&1 && echo 'DB connection is OK' && break; echo 'Waiting until DB connection is OK' && sleep 1; done
+	mysql -u root -h 127.0.0.1 -e "create database if not exists $(DB_NAME)"
+	mysql -u root -h 127.0.0.1 -e "create database if not exists $(DB_NAME_FOR_UNIT_TEST)"
+init-rdb:
+	migrate -source file://./.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME)" drop -f
+	migrate -source file://./.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME)" up
+	migrate -source file://./.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME_FOR_UNIT_TEST)" drop -f
+	migrate -source file://./.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME_FOR_UNIT_TEST)" up
+test:
+	go test -timeout 30s -coverprofile=coverage.pre.txt -covermode=atomic ./...
+	grep -v "_mock.go" coverage.pre.txt > coverage.txt
+	go tool cover -html=coverage.txt -o coverage.html
+	go tool cover -func coverage.txt
+mock:
+	./mockgen usecase/repository_article_html.go
+	./mockgen usecase/repository_article_source.go
+	./mockgen usecase/repository_article.go
+	./mockgen usecase/markdown2html/markdown2html.go
+	./mockgen usecase/usecase.go
+	./mockgen web/presenter.go
+	./mockgen web/presenters.go

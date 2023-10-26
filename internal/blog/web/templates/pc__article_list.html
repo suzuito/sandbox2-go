@@ -1,0 +1,26 @@
+{{define "pc__article_list"}}
+<div class="pc__article_list">
+  {{range .}}
+  <div class="pc__article">
+    <div class="pc__article_list-article-title">
+      <a href="/articles/{{.ID}}">
+        {{.Title}}
+      </a>
+    </div>
+    <div class="pc__article_list-date">
+      {{.DateString}}
+    </div>
+    <div class="pc__article_list-article-description">{{.Description}}</div>
+    <div class="pc__article_list-tags">
+      {{range .Tags}}
+      <div class="pc__article_list-tag">
+        <a href="/articles?tags={{.ID}}">
+          {{.ID}}
+        </a>
+      </div>
+      {{end}}
+    </div>
+  </div>
+  {{end}}
+</div>
+{{end}}

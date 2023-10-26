@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<title>Page Title</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{{template "pc__common_head" .}}
+<link rel="stylesheet" href="/css/pc_articles.css">
+<body>
+    <div class="pc__header">
+        {{template "pc__header" .Header}}
+    </div>
+    <div class="pc__content">
+        {{template "pc_articles_pager" .}}
+        {{template "pc__article_list" .Articles}}
+        {{template "pc_articles_pager" .}}
+    </div>
+    <div class="pc__footer">
+        {{template "pc__footer"}}
+    </div>
+</body>
+
+</html>

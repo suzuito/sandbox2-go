@@ -1,0 +1,18 @@
+{{define "pc_articles_pager"}}
+<div class="pc_articles_pager">
+    <div class="pc_articles_pager-prev">
+        {{if .HasPrevPage}}
+        <a href="?page={{.PrevPage}}&tags={{.QueryTags}}">
+            前へ
+        </a>
+        {{end}}
+    </div>
+    <div class="pc_articles_pager-next">
+        {{if .HasNextPage}}
+        <a href="?page={{.NextPage}}&tags={{.QueryTags}}">
+            次へ
+        </a>
+        {{end}}
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<title>Page Title</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{{template "admin__common_head"}}
+<link rel="stylesheet" href="/css/admin_import.css">
+
+<body>
+    <div>
+        {{template "admin__header" .Header}}
+    </div>
+    <div>
+        {{template "admin__article" .Article}}
+    </div>
+    <div>
+        <table>
+            <tr>
+                <td>{{range .ArticlesByID}}<a href="?version={{.Version}}">v{{.Version}}</a>{{end}}</td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        {{range $articleSourceID, $articleSourceVersions := .MapArticleSourceToArticleSourceVersions}}
+        <div>{{$articleSourceID}}</div>
+        <table>
+            {{range $_, $articleSourceVersion := $articleSourceVersions}}
+            {{$articleVersion := (index $.MapArticleSourceVersionToArticleVersion $articleSourceVersion.Version)}}
+            <tr>
+                <td>
+                    <a target="_brank" href="{{$articleSourceVersion.Meta.URL}}">
+                        {{$articleSourceVersion.Version}}
+                    </a>
+                </td>
+                <td>
+                    {{if gt $articleVersion 0 }}
+                    <a href="?version={{$articleVersion}}">
+                        v{{$articleVersion}}
+                    </a>
+                    {{end}}
+                </td>
+                <td>
+                    <form>
+                        <input type="submit" value="Delete" {{if lt $articleVersion 1}}disabled{{end}} />
+                    </form>
+                </td>
+                <td>
+                    <a href="/admin/import/{{$articleSourceVersion.ID}}/{{$articleSourceVersion.Version}}">
+                        Import
+                    </a>
+                </td>
+            </tr>
+            {{end}}
+        </table>
+        {{end}}
+    </div>
+    <div>
+        {{.ArticleHTML}}
+    </div>
+</body>
+
+</html>

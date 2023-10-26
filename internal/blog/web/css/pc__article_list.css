@@ -1,0 +1,20 @@
+.pc__article_list {
+    padding: 6px;
+}
+.pc__article {
+    padding-bottom: 24px;
+}
+.pc__article_list-article-title {
+    font-weight: bold;
+}
+.pc__article_list-date {
+    font-size: 12px;
+}
+.pc__article_list-tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.pc__article_list-tag {
+    padding-right: 6px;
+}
