@@ -86,4 +86,5 @@ Run notifier app
 
 ```bash
 go run internal/crawler/crawler/cmd/local/crawl/*.go
+go run internal/crawler/notifier/cmd/local/notify/*.go
 ```
