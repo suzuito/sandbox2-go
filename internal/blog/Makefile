@@ -11,8 +11,3 @@ init-rdb:
 	migrate -source file://./.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME)" up
 	migrate -source file://./.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME_FOR_UNIT_TEST)" drop -f
 	migrate -source file://./.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME_FOR_UNIT_TEST)" up
-test:
-	go test -timeout 30s -coverprofile=coverage.pre.txt -covermode=atomic ./...
-	grep -v "_mock.go" coverage.pre.txt > coverage.txt
-	go tool cover -html=coverage.txt -o coverage.html
-	go tool cover -func coverage.txt
