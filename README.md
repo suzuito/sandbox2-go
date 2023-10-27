@@ -5,7 +5,7 @@
 ### Test
 
 ```bash
-make test
+make common-test
 ```
 
 ## blog
@@ -52,5 +52,38 @@ migrate create -dir .schema -ext sql init
 ### Test
 
 ```bash
-make test
+make blog-test
+```
+
+## crawler
+
+### Run
+
+Make develop environment
+
+```bash
+make crawler-init
+```
+
+Open filebase UI in local.
+http://localhost:8082
+
+Load environment variables.
+
+```bash
+cp ./.service/crawler/local.env.sh.sample ./.service/crawler/local.env.sh
+vi ./.service/crawler/local.env.sh
+source ./.service/crawler/local.env.sh
+```
+
+Run crawler app
+
+```bash
+go run internal/crawler/crawler/cmd/local/*.go
+```
+
+Run notifier app
+
+```bash
+go run internal/crawler/notifier/cmd/local/*.go
 ```

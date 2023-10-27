@@ -1,0 +1,7 @@
+FROM node:20-slim
+# FROM node:20-alpine
+# alpine linuxを使うとバグるので、使わないように！
+# https://github.com/firebase/firebase-tools/issues/5256
+
+RUN apt-get update && apt-get install -y openjdk-17-jre-headless
+RUN npm install -g firebase-tools

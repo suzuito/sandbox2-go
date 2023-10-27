@@ -1,0 +1,12 @@
+services:
+  firebase:
+    build:
+      context: .docker/devenv/firebase
+    working_dir: /opt/app
+    volumes:
+      - .:/opt/app
+    command: /bin/sh -c '/usr/local/bin/firebase emulators:start --project=dummy-prj'
+    ports:
+      - 8081:8081
+      - 8082:8082
+      - 8083:8083
