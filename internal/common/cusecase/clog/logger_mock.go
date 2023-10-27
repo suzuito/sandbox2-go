@@ -104,3 +104,15 @@ func (mr *MockLoggerMockRecorder) Infof(ctx, format any, v ...any) *gomock.Call 
 	varargs := append([]any{ctx, format}, v...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Infof", reflect.TypeOf((*MockLogger)(nil).Infof), varargs...)
 }
+
+// SetLevel mocks base method.
+func (m *MockLogger) SetLevel(l Level) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetLevel", l)
+}
+
+// SetLevel indicates an expected call of SetLevel.
+func (mr *MockLoggerMockRecorder) SetLevel(l any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLevel", reflect.TypeOf((*MockLogger)(nil).SetLevel), l)
+}

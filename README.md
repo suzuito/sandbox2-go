@@ -57,13 +57,13 @@ make blog-test
 
 ## crawler
 
-### Run
-
 Make develop environment
 
 ```bash
 make crawler-init
 ```
+
+### Run
 
 Open filebase UI in local.
 http://localhost:8082
@@ -79,11 +79,11 @@ source ./.service/crawler/local.env.sh
 Run crawler app
 
 ```bash
-go run internal/crawler/crawler/cmd/local/*.go
+./crawler-crawl.exe
 ```
 
 Run notifier app
 
 ```bash
-go run internal/crawler/notifier/cmd/local/*.go
+go run internal/crawler/crawler/cmd/local/crawl/*.go
 ```

@@ -11,23 +11,36 @@ import (
 )
 
 type LoggerJSON struct {
-	keys map[string]any
-	log  *log.Logger
+	keys  map[string]any
+	log   *log.Logger
+	level Level
 }
 
 func (t *LoggerJSON) Debugf(ctx context.Context, format string, v ...any) {
+	if t.level > LevelDebug {
+		return
+	}
 	t.event(ctx, "DEBUG", format, v...)
 }
 
 func (t *LoggerJSON) Infof(ctx context.Context, format string, v ...any) {
+	if t.level > LevelInfo {
+		return
+	}
 	t.event(ctx, "INFO", format, v...)
 }
 
 func (t *LoggerJSON) Warnf(ctx context.Context, format string, v ...any) {
+	if t.level > LevelWarn {
+		return
+	}
 	t.event(ctx, "WARN", format, v...)
 }
 
 func (t *LoggerJSON) Errorf(ctx context.Context, format string, v ...any) {
+	if t.level > LevelError {
+		return
+	}
 	t.event(ctx, "ERROR", format, v...)
 }
 
@@ -70,6 +83,10 @@ func (t *LoggerJSON) AddKey(keys ...string) {
 	}
 }
 
+func (t *LoggerJSON) SetLevel(l Level) {
+	t.level = l
+}
+
 func setMap(ctx context.Context, key string, m *map[string]any) {
 	v := ctx.Value(key)
 	if v != nil {
@@ -81,8 +98,9 @@ func NewLoggerJSON(keys ...string) *LoggerJSON {
 	l := log.Default()
 	l.SetFlags(0)
 	ljson := LoggerJSON{
-		log:  l,
-		keys: map[string]any{},
+		log:   l,
+		level: LevelDebug,
+		keys:  map[string]any{},
 	}
 	for _, k := range keys {
 		ljson.keys[k] = nil

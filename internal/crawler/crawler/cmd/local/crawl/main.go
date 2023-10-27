@@ -23,11 +23,12 @@ func main() {
 	flag.Usage = usage
 	crawlerIDString := flag.String("crawler-id", "", "CrawlerID")
 	flag.Parse()
-
 	if len(*crawlerIDString) <= 2 {
 		usage()
 		os.Exit(2)
 	}
+
+	clog.L.SetLevel(clog.LevelDebug)
 
 	ctx := context.Background()
 	u, err := internal.NewUsecaseLocal(ctx)

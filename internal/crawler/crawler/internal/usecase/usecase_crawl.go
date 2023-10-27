@@ -55,6 +55,9 @@ func (t *UsecaseImpl) Crawl(
 		t.L.Errorf(ctx, "Failed to Parse : %+v", err)
 		return terrors.Wrap(err)
 	}
+	for _, data := range timeSeriesData {
+		t.L.Debugf(ctx, "fetched data %s", string(data.GetID()))
+	}
 	publisher, err := crawler.NewPublisher(ctx)
 	if err != nil {
 		t.L.Errorf(ctx, "Failed to NewPublisher : %+v", err)
