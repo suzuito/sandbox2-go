@@ -25,3 +25,5 @@ go.work
 coverage.*
 
 *.log
+
+local.env.sh
