@@ -1,0 +1,48 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  common-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.21.x' ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+      - run: make common-test
+      - uses: codecov/codecov-action@v3
+        with:
+          flags: blog
+  blog-docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .service/blog/Dockerfile.server
+  blog-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.21.x' ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+      - uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_CREDS }}'
+      - run: curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.0/migrate.linux-386.tar.gz | tar xvz && sudo mv ./migrate /bin/
+      - run: make blog-init && make blog-init-rdb && make blog-test
+      - uses: codecov/codecov-action@v3
+        with:
+          flags: blog

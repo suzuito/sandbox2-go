@@ -10,6 +10,11 @@ make test
 
 ## blog
 
+```bash
+make blog-init
+make blog-init-rdb
+```
+
 ### Run
 
 ```bash
