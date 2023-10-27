@@ -3,6 +3,7 @@ package markdown2html
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/alecthomas/chroma/v2"
@@ -53,6 +54,7 @@ func convertMarkdownToHTML(
 	dst *string,
 	article *entity.Article,
 ) error {
+	fmt.Println(src)
 	buffer := bytes.NewBufferString("")
 	parserContext := parser.NewContext()
 	md := goldmark.New(
@@ -92,6 +94,7 @@ func convertMarkdownToHTML(
 	*dst = buffer.String()
 
 	metaMap := meta.Get(parserContext)
+	fmt.Printf("%+v\n", metaMap)
 	article.Description = extractMetaValue(metaMap, "description", "")
 	dateAtString := extractMetaValue(metaMap, "date", "")
 	date, err := time.Parse("2006-01-02", dateAtString)
@@ -107,6 +110,7 @@ func convertMarkdownToHTML(
 		article.Tags = append(article.Tags, entity.Tag{ID: entity.TagID(tagString.(string))})
 	}
 	article.ID = entity.ArticleID(extractMetaValue(metaMap, "id", ""))
+	fmt.Printf("%+v\n", article)
 	return nil
 }
 

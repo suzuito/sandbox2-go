@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/suzuito/sandbox2-go/internal/blog/entity"
+	"github.com/suzuito/sandbox2-go/internal/common/terrors"
 )
 
 func (t *UsecaseImpl) uploadArticle(
@@ -11,14 +12,13 @@ func (t *UsecaseImpl) uploadArticle(
 	articleSource *entity.ArticleSource,
 	md []byte,
 ) (*entity.Article, error) {
-	// t.L.Infof("Upload article source '%s'\n", articleSource.ID)
 	article, html, err := t.GenerateArticleHTMLFromMarkdown(
 		ctx,
 		articleSource,
 		md,
 	)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Wrapf("failed to GenerateArticleHTMLFromMarkdown of %+v : %+v", articleSource.Meta.URL, err)
 	}
 	if err := t.RepositoryArticleHTML.SetArticle(ctx, article, html); err != nil {
 		return nil, err

@@ -1,0 +1,7 @@
+tmp_dir = "./.tmp-air"
+[build]
+cmd = "go build -o ./.tmp-air/blog/server.out internal/blog/cmd/server/*.go"
+bin = "./.tmp-air/blog/server.out"
+include_dir = [
+    "internal/blog"
+]
