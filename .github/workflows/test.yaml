@@ -18,7 +18,7 @@ jobs:
       - run: make common-test
       - uses: codecov/codecov-action@v3
         with:
-          flags: blog
+          flags: common
   blog-test:
     runs-on: ubuntu-latest
     strategy:
