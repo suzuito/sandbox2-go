@@ -16,6 +16,8 @@ blog-init:
 	while [ true ]; do mysql -u root -h 127.0.0.1 -e 'show databases' > /dev/null 2>&1 && echo 'DB connection is OK' && break; echo 'Waiting until DB connection is OK' && sleep 1; done
 	mysql -u root -h 127.0.0.1 -e "create database if not exists $(DB_NAME)"
 	mysql -u root -h 127.0.0.1 -e "create database if not exists $(DB_NAME_FOR_UNIT_TEST)"
+blog-build:
+	go build -o blog-server.exe internal/blog/cmd/server/*.go
 blog-test:
 	sh test.sh ./internal/blog/...
 blog-init-rdb:

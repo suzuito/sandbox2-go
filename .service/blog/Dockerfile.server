@@ -1,17 +1,18 @@
-FROM golang:1.19-alpine AS build
+FROM golang:1.21-alpine AS build
+
+RUN apk add --no-cache make
 
 WORKDIR /app
 
 COPY . ./
-RUN cd blog && go mod download && go build -o server cmd/server/main.go
-RUN mv blog/server .
+RUN make blog-build
 
 FROM alpine:latest
 
 WORKDIR /app
-COPY --from=build /app/server /app/server
-COPY --from=build /app/blog/web/templates web/templates
-COPY --from=build /app/blog/web/css web/css
-COPY --from=build /app/blog/web/images web/images
+COPY --from=build /app/blog-server.exe .
+COPY --from=build /app/internal/blog/web/templates/ internal/blog/web/templates/
+COPY --from=build /app/internal/blog/web/css/ internal/blog/web/css/
+COPY --from=build /app/internal/blog/web/images/ internal/blog/web/images/
 
-ENTRYPOINT ["/app/server"]
+ENTRYPOINT ["/app/blog-server.exe"]
