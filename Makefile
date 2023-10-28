@@ -41,16 +41,16 @@ crawler-init:
 	docker compose up -d crawler-firebase-emulator
 	while [ true ]; do curl http://localhost:8082 > /dev/null 2>&1 && echo 'Firebase emulator connection is OK' && break; echo 'Waiting until Firebase emulator connection is OK' && sleep 1; done
 crawler-mock:
-	./mockgen internal/crawler/crawler/internal/entity/crawler/crawler.go
-	./mockgen internal/crawler/crawler/internal/entity/crawler/fetcher.go
-	./mockgen internal/crawler/crawler/internal/entity/crawler/parser.go
-	./mockgen internal/crawler/crawler/internal/entity/crawler/publisher.go
-	./mockgen internal/crawler/crawler/internal/usecase/repository/repository.go
-	./mockgen internal/crawler/crawler/internal/usecase/queue/queue.go
-	./mockgen internal/crawler/crawler/internal/usecase/crawlerfactory/crawlerfactory.go
-	./mockgen internal/crawler/notifier/internal/entity/notifier/notifier.go
-	./mockgen internal/crawler/notifier/internal/usecase/repository/repository.go
-	./mockgen internal/crawler/notifier/internal/usecase/notifierfactory/notifierfactory.go
-	./mockgen internal/crawler/notifier/internal/usecase/discord/discordgo_session.go
+	./mockgen crawler/crawler/internal/entity/crawler/crawler.go
+	./mockgen crawler/crawler/internal/entity/crawler/fetcher.go
+	./mockgen crawler/crawler/internal/entity/crawler/parser.go
+	./mockgen crawler/crawler/internal/entity/crawler/publisher.go
+	./mockgen crawler/crawler/internal/usecase/repository/repository.go
+	./mockgen crawler/crawler/internal/usecase/queue/queue.go
+	./mockgen crawler/crawler/internal/usecase/crawlerfactory/crawlerfactory.go
+	./mockgen crawler/notifier/internal/entity/notifier/notifier.go
+	./mockgen crawler/notifier/internal/usecase/repository/repository.go
+	./mockgen crawler/notifier/internal/usecase/notifierfactory/notifierfactory.go
+	./mockgen crawler/notifier/internal/usecase/discord/discordgo_session.go
 crawler-test:
-	sh test.sh ./internal/crawler/...
+	sh test.sh ./crawler/...
