@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/suzuito/sandbox2-go/internal/common/test_helper"
+	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/internal/crawler/crawler/internal/entity/crawler"
 	"go.uber.org/mock/gomock"
 )

@@ -3,8 +3,8 @@ package crawlerfactory
 import (
 	"context"
 
-	"github.com/suzuito/sandbox2-go/internal/common/cusecase/clog"
-	"github.com/suzuito/sandbox2-go/internal/common/terrors"
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
+	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/internal/crawler/crawler/internal/entity/crawler"
 	"github.com/suzuito/sandbox2-go/internal/crawler/crawler/internal/usecase/crawler/goblog"
 	"github.com/suzuito/sandbox2-go/internal/crawler/crawler/internal/usecase/crawler/goconnpass"

@@ -9,8 +9,8 @@ import (
 	"github.com/google/go-github/v50/github"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/internal/blog/entity"
-	"github.com/suzuito/sandbox2-go/internal/common/test_helper"
 )
 
 func TestGetBranches(t *testing.T) {

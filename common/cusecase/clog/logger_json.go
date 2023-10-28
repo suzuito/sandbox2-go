@@ -7,7 +7,7 @@ import (
 	"log"
 	"runtime"
 
-	"github.com/suzuito/sandbox2-go/internal/common/terrors"
+	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
 type LoggerJSON struct {

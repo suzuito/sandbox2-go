@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/suzuito/sandbox2-go/internal/common/cusecase/clog"
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/internal/crawler/notifier/cmd/local/internal"
 )
 

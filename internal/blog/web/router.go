@@ -5,8 +5,8 @@ import (
 	"path"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/internal/common/cusecase/clog"
-	"github.com/suzuito/sandbox2-go/internal/common/cweb"
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
+	"github.com/suzuito/sandbox2-go/common/cweb"
 )
 
 type SetRouterFunc func(e *gin.Engine, ctrl *ControllerImpl)

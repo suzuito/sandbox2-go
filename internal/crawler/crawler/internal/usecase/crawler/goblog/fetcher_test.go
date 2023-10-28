@@ -9,7 +9,7 @@ import (
 
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
-	"github.com/suzuito/sandbox2-go/internal/common/test_helper"
+	"github.com/suzuito/sandbox2-go/common/test_helper"
 )
 
 func TestFetch(t *testing.T) {

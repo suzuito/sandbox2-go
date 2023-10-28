@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/suzuito/sandbox2-go/internal/common/test_helper"
+	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/internal/crawler/notifier/internal/entity/notifier"
 	"github.com/suzuito/sandbox2-go/internal/crawler/notifier/internal/usecase/discord"
 	"github.com/suzuito/sandbox2-go/internal/crawler/pkg/entity/timeseriesdata"

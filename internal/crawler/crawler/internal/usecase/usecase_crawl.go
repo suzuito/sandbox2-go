@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 
-	"github.com/suzuito/sandbox2-go/internal/common/terrors"
+	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/internal/crawler/crawler/internal/entity/crawler"
 )
 

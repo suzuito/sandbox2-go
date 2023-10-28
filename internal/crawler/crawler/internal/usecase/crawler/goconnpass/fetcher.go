@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/suzuito/sandbox2-go/internal/common/terrors"
+	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
 type Fetcher struct {

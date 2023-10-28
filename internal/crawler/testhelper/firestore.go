@@ -7,7 +7,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/stretchr/testify/assert"
-	"github.com/suzuito/sandbox2-go/internal/common/terrors"
+	"github.com/suzuito/sandbox2-go/common/terrors"
 	"google.golang.org/api/iterator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

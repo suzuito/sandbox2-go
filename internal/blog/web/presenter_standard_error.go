@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/internal/blog/usecase"
-	"github.com/suzuito/sandbox2-go/internal/common/cusecase/clog"
 )
 
 type PresenterStandardError struct {

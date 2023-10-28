@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
+	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/internal/blog/entity"
-	"github.com/suzuito/sandbox2-go/internal/common/terrors"
 )
 
 func (t *UsecaseImpl) uploadArticle(

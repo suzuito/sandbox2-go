@@ -4,7 +4,7 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/suzuito/sandbox2-go/internal/common/cusecase/clog"
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/internal/crawler/notifier/internal/entity/notifier"
 	"github.com/suzuito/sandbox2-go/internal/crawler/notifier/internal/usecase/discord"
 	"github.com/suzuito/sandbox2-go/internal/crawler/notifier/internal/usecase/notifier/govillageblogfeed"

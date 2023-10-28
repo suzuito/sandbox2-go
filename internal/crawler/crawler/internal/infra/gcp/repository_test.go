@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
-	"github.com/suzuito/sandbox2-go/internal/common/test_helper"
+	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/internal/crawler/crawler/internal/entity/crawler"
 	"github.com/suzuito/sandbox2-go/internal/crawler/pkg/entity/timeseriesdata"
 	"github.com/suzuito/sandbox2-go/internal/crawler/testhelper"

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/mmcdole/gofeed"
-	"github.com/suzuito/sandbox2-go/internal/common/cusecase/clog"
-	"github.com/suzuito/sandbox2-go/internal/common/terrors"
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
+	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/internal/crawler/pkg/entity/timeseriesdata"
 )
 

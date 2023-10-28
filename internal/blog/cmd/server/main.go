@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/internal/blog/cmd/internal/inject"
 	"github.com/suzuito/sandbox2-go/internal/blog/web"
-	"github.com/suzuito/sandbox2-go/internal/common/cusecase/clog"
 )
 
 func main() {

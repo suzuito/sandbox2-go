@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/suzuito/sandbox2-go/internal/common/test_helper"
+	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/internal/crawler/notifier/internal/entity/notifier"
 	"github.com/suzuito/sandbox2-go/internal/crawler/pkg/entity/timeseriesdata"
 	"go.uber.org/mock/gomock"

@@ -2,9 +2,9 @@
 # common
 #
 common-test:
-	sh test.sh ./internal/common/...
+	sh test.sh ./common/...
 common-mock:
-	./mockgen internal/common/cusecase/clog/logger.go
+	./mockgen common/cusecase/clog/logger.go
 
 #
 # blog
