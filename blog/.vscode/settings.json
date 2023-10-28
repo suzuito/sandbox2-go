@@ -1,5 +1,0 @@
-{
-    "yaml.schemas": {
-        "https://json.schemastore.org/cloudbuild.json": "file:///Users/suzukitaito/git/sandbox-go/blog/cloudbuild-server.yaml"
-    }
-}
