@@ -17,22 +17,22 @@ blog-init:
 	mysql -u root -h 127.0.0.1 -e "create database if not exists $(DB_NAME)"
 	mysql -u root -h 127.0.0.1 -e "create database if not exists $(DB_NAME_FOR_UNIT_TEST)"
 blog-build:
-	go build -o blog-server.exe internal/blog/cmd/server/*.go
+	go build -o blog-server.exe blog/cmd/server/*.go
 blog-test:
-	sh test.sh ./internal/blog/...
+	sh test.sh ./blog/...
 blog-init-rdb:
 	migrate -source file://./.service/blog/.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME)" drop -f
 	migrate -source file://./.service/blog/.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME)" up
 	migrate -source file://./.service/blog/.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME_FOR_UNIT_TEST)" drop -f
 	migrate -source file://./.service/blog/.schema/ -database "mysql://root:@tcp(127.0.0.1:3306)/$(DB_NAME_FOR_UNIT_TEST)" up
 blog-mock:
-	./mockgen internal/blog/usecase/repository_article_html.go
-	./mockgen internal/blog/usecase/repository_article_source.go
-	./mockgen internal/blog/usecase/repository_article.go
-	./mockgen internal/blog/usecase/markdown2html/markdown2html.go
-	./mockgen internal/blog/usecase/usecase.go
-	./mockgen internal/blog/web/presenter.go
-	./mockgen internal/blog/web/presenters.go
+	./mockgen blog/usecase/repository_article_html.go
+	./mockgen blog/usecase/repository_article_source.go
+	./mockgen blog/usecase/repository_article.go
+	./mockgen blog/usecase/markdown2html/markdown2html.go
+	./mockgen blog/usecase/usecase.go
+	./mockgen blog/web/presenter.go
+	./mockgen blog/web/presenters.go
 
 #
 # crawler
