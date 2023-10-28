@@ -11,8 +11,8 @@ FROM alpine:latest
 
 WORKDIR /app
 COPY --from=build /app/blog-server.exe .
-COPY --from=build /app/internal/blog/web/templates/ internal/blog/web/templates/
-COPY --from=build /app/internal/blog/web/css/ internal/blog/web/css/
-COPY --from=build /app/internal/blog/web/images/ internal/blog/web/images/
+COPY --from=build /app/blog/web/templates/ blog/web/templates/
+COPY --from=build /app/blog/web/css/ blog/web/css/
+COPY --from=build /app/blog/web/images/ blog/web/images/
 
 ENTRYPOINT ["/app/blog-server.exe"]

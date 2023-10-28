@@ -68,9 +68,9 @@ func NewUsecaseImpl(ctx context.Context) (*usecase.UsecaseImpl, *Environment, *w
 	}
 	s := web.WebSetting{
 		SiteOrigin:       env.SiteOrigin,
-		DirPathTemplates: "internal/blog/web/templates",
-		DirPathCSS:       "internal/blog/web/css",
-		DirPathImages:    "internal/blog/web/images",
+		DirPathTemplates: "blog/web/templates",
+		DirPathCSS:       "blog/web/css",
+		DirPathImages:    "blog/web/images",
 		AdminPassword:    env.AdminPassword,
 	}
 	if env.Env == "godzilla" {
