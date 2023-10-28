@@ -1,0 +1,37 @@
+<h1>Table of Contents</h1>
+<ul>
+<li>
+<a href="#forkgoimport">ForkされたレポジトリをGoパッケージとしてimportする方法</a></li>
+</ul>
+<h1 id="forkgoimport" class="md-heading">ForkされたレポジトリをGoパッケージとしてimportする方法</h1>
+<p>Github上に公開されている、forkされたGoのパッケージのレポジトリをGoパッケージとしてimportする方法。</p>
+<p><code>replace</code>ディレクティヴを使用する。</p>
+<p>方法を例を用いて説明する。</p>
+<p>次のような<code>go.mod</code>があるとする。</p>
+<pre><code>module github.com/suzuito/fuga-go
+
+go 1.15
+
+require (
+	firebase.google.com/go/v4 v4.2.0
+)
+</code></pre>
+<p>Goのパッケージ<code>firebase.google.com/go/v4</code>をforkしたレポジトリが<code>github.com/maku693/firebase-admin-go</code>にある。
+今回は<code>github.com/maku693/firebase-admin-go</code>の<code>auth-emulator-token-verification</code>ブランチをGoパッケージとしてimportし、使用したい。</p>
+<p>まず、forkしたレポジトリ<code>github.com/maku693/firebase-admin-go</code>をcloneし、ローカルへダウンロードする。</p>
+<pre><code>git clone https://github.com/maku693/firebase-admin-go.git
+</code></pre>
+<p>cloneしてダウンロードされたレポジトリのパスを確認する。</p>
+<pre tabindex="0" style="overflow:scroll;background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>% <span style="color:#0086b3">pwd</span> firebase-admin-go
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>/Users/taro/firebase-admin-go
+</span></span></code></pre><p><code>replace</code>ディレクティヴを<code>go.mod</code>の中に追加する。</p>
+<pre><code>module github.com/suzuito/fuga-go
+
+go 1.15
+
+require (
+	firebase.google.com/go/v4 v4.2.0
+)
+
+replace firebase.google.com/go/v4 =&gt; /Users/taro/firebase-admin-go
+</code></pre>

@@ -1,0 +1,272 @@
+<h1>Table of Contents</h1>
+<ul>
+<li>
+<a href="#angular--1">Angular でモノレポ </a><ul>
+<li>
+<a href="#heading">スコープ</a></li>
+<li>
+<a href="#heading-1">仮想プロジェクト</a></li>
+<li>
+<a href="#heading-2">作り方</a><ul>
+<li>
+<a href="#heading-3">レポジトリを作る</a></li>
+<li>
+<a href="#lib1">ライブラリlib1を作る</a></li>
+<li>
+<a href="#site1site2">アプリケーションsite1とsite2を作る</a></li>
+<li>
+<a href="#serve">serve方法（ローカルでの開発）</a><ul>
+<li>
+<a href="#heading-4">ライブラリ側のソースコード</a></li>
+<li>
+<a href="#heading-5">アプリケーション側のソースコード</a></li>
+<li>
+<a href="#--watch">ライブラリのビルドと--watch</a></li>
+<li>
+<a href="#serve-1">アプリケーションのserve</a></li>
+</ul>
+</li>
+<li>
+<a href="#builddeploy">アプリケーションのbuildとdeploy</a><ul>
+<li>
+<a href="#build">build</a></li>
+<li>
+<a href="#deploy">deploy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="#heading-6">参考</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="angular--1" class="md-heading">Angular でモノレポ &#x1f44d;</h1>
+<p>Angularにてモノレポするための方法を書きます。&#x1f44d;
+モノレポとは、ソースコードを1つのレポジトリで管理する手法だ。</p>
+<p>Angularはフロントエンドのソースコードを綺麗に構造化できるフレームワークだ。
+俗人的な書き方を防止するようなあらゆる仕組みが用意されている。
+ソースコードの構造についても、Angularについてある程度の知識がある人であれば、誰が書いても同じような構造となる。
+ビューは<code>component</code>という単位で、複雑なロジックは<code>service</code>という単位で、<code>component</code>と<code>service</code>を組み合わせて実装された小さなアプリケーションを<code>module</code>という独立したライブラリの形にすることもできる。
+いかにも<code>Google</code>が作りそうなフレームワークという感じだ。</p>
+<p>それ故に、僕はしばしば、再利用可能なソースコードの一部をmoduleとして抽出し、別のAngularアプリケーションでも使用できるようにと、余計なことをしたくなってしまう。開発者のさがというやつだ。</p>
+<p>これをやるとき、再利用可能なソースコードだけが含まれるモジュールを、独立したレポジトリとして、管理したくなる。</p>
+<p>しかし、ライブラリを独立したレポジトリで管理するようなワークフローは、効率が悪い。
+ライブラリに変更を加えた場合、ライブラリのソースコードをリモートレポジトリにコミットし、コミットされたソースコードをAngularアプリケーション側でフェッチしなければならないからだ。
+もちろん、それを回避する方法はあるのだろうが、回避するためにはひと工夫が必要だ。
+その工夫のために頭を使うのが面倒臭い。</p>
+<p>このような理由から、1つのレポジトリで全てのソースコードを管理したくなる。</p>
+<h2 id="heading" class="md-heading">スコープ</h2>
+<p>この記事では、Angularで書かれたフロントエンドのソースコードをモノレポで管理するまで。
+サーバーサイドとフロントエンドのソースコードをモノレポで管理するということはやらない。</p>
+<p>また、Angular CLIは次のバージョンのものを用いた。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>% ng version
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>     _                      _                 ____ _     ___
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    / <span style="color:#d14">\ </span>  _ __   __ _ _   _| | __ _ _ __     / ___| |   |_ _|
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>   / △ <span style="color:#d14">\ </span>| <span style="color:#d14">&#39;_ \ / _` | | | | |/ _` | &#39;</span>__|   | |   | |    | |
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>  / ___ <span style="color:#d14">\|</span> | | | <span style="color:#000;font-weight:bold">(</span>_| | |_| | | <span style="color:#000;font-weight:bold">(</span>_| | |      | |___| |___ | |
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span> /_/   <span style="color:#d14">\_\_</span>| |_|<span style="color:#d14">\_</span>_, |<span style="color:#d14">\_</span>_,_|_|<span style="color:#d14">\_</span>_,_|_|       <span style="color:#d14">\_</span>___|_____|___|
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>                |___/
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>Angular CLI: 11.2.2
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>Node: 12.12.0
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>OS: darwin x64
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>Angular: 
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>... 
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>Ivy Workspace: 
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>Package                      Version
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>------------------------------------------------------
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>@angular-devkit/architect    0.1100.1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>@angular-devkit/core         11.0.1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>@angular-devkit/schematics   11.0.1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>@schematics/angular          11.0.1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>@schematics/update           0.1100.1
+</span></span></code></pre><h2 id="heading-1" class="md-heading">仮想プロジェクト</h2>
+<p>本記事では、仮想的なプロジェクトを作りながら、そのサンプルプロジェクトをソースコードをモノレポで管理する方法を説明する。</p>
+<p>サンプルプロジェクトは、以下のようなものを想定する。</p>
+<ul>
+<li>site1 <code>アプリケーション1</code></li>
+<li>site2 <code>アプリケーション2</code></li>
+<li>lib1 <code>site1,site2の両方にて使用される共通ソースコード</code></li>
+</ul>
+<p>本記事の目的は、<code>site1</code>,<code>site2</code>,<code>lib1</code>のソースコードを1つのレポジトリで管理する方法を示すことだ。</p>
+<h2 id="heading-2" class="md-heading">作り方</h2>
+<h3 id="heading-3" class="md-heading">レポジトリを作る</h3>
+<p>まずはレポジトリを作る。
+今後、このレポジトリで全てのソースコードを管理していく。
+レポジトリの名前は<code>monorepo-angular</code>だ。</p>
+<p>以下のコマンドを実行し、レポジトリを作る。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>ng new monorepo-angular --create-application<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">false</span>
+</span></span></code></pre><p>コマンド実行後、<code>monorepo-angular</code>ディレクトリ配下にファイルが作成される。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>% tree -I node_modules ./monorepo-angular
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>./monorepo-angular
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>├── README.md
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>├── angular.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>├── package-lock.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>├── package.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>├── tsconfig.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>└── tslint.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#099">0</span> directories, <span style="color:#099">6</span> files
+</span></span></code></pre><p>生成された各ファイルの役割は後ほど説明する。</p>
+<p>ご覧の通り、このレポジトリはアプリケーション部分を構成するソースコードは含まれていない。
+この後、ライブラリ<code>lib1</code>や、アプリケーション<code>site1</code>、<code>site2</code>を作っていく。
+これらのソースコードは全て<code>projects</code>ディレクトリ配下に置かれる。</p>
+<h3 id="lib1" class="md-heading">ライブラリ<code>lib1</code>を作る</h3>
+<p>以下のコマンドを実行する。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span><span style="color:#0086b3">cd</span> monorepo-angular
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>ng generate library lib1
+</span></span></code></pre><p>コマンド実行後、<code>monorepo-angular</code>ディレクトリ配下にファイルが作成される。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>% tree -I node_modules . 
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>.
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>├── README.md
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>├── angular.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>├── package-lock.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>├── package.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>├── projects
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>│   └── lib1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>│       ├── README.md
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>│       ├── karma.conf.js
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>│       ├── ng-package.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>│       ├── package.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>│       ├── src
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>│       │   ├── lib
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>│       │   │   ├── lib1.component.spec.ts
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>│       │   │   ├── lib1.component.ts
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>│       │   │   ├── lib1.module.ts
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>│       │   │   ├── lib1.service.spec.ts
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>│       │   │   └── lib1.service.ts
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>│       │   ├── public-api.ts
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>│       │   └── test.ts
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>│       ├── tsconfig.lib.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>│       ├── tsconfig.lib.prod.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>│       ├── tsconfig.spec.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>│       └── tslint.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>├── tsconfig.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>└── tslint.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span><span style="color:#099">4</span> directories, <span style="color:#099">21</span> files
+</span></span></code></pre><h3 id="site1site2" class="md-heading">アプリケーション<code>site1</code>と<code>site2</code>を作る</h3>
+<p>以下のコマンドを実行する。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>ng generate application site1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>ng generate application site2
+</span></span></code></pre><p>コマンド実行後、<code>monorepo-angular</code>ディレクトリ配下にファイルが作成される。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>% tree -I node_modules .
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>.
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>├── README.md
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>├── angular.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>├── package-lock.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>├── package.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>├── projects
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>│   ├── lib1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>...省略...
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>│   ├── site1
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>...省略...
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>│   └── site2
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>...省略...
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>├── tsconfig.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>└── tslint.json
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span><span style="color:#099">18</span> directories, <span style="color:#099">65</span> files
+</span></span></code></pre><h3 id="serve" class="md-heading">serve方法（ローカルでの開発）</h3>
+<p>では、ローカルで開発するフローを説明する。</p>
+<h4 id="heading-4" class="md-heading">ライブラリ側のソースコード</h4>
+<p>ライブラリの<code>Lib1Service</code>に<code>hello</code>関数を作る。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#000;font-weight:bold">import</span> { Injectable } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;@angular/core&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#000;font-weight:bold">@Injectable</span>({
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>  providedIn<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;root&#39;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>})
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">class</span> Lib1Service {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>  <span style="color:#000;font-weight:bold">constructor</span>() { }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>  hello()<span style="color:#000;font-weight:bold">:</span> <span style="color:#458;font-weight:bold">string</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;Hello world!&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>  }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>}
+</span></span></code></pre><h4 id="heading-5" class="md-heading">アプリケーション側のソースコード</h4>
+<p>この関数を<code>site1</code>,<code>site2</code>の中で呼んでみる。
+<code>site1</code>の<code>app.module.ts</code>の中でライブラリの<code>Lib1Service</code>を<code>providers</code>へ追加する。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#000;font-weight:bold">import</span> { NgModule } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;@angular/core&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#000;font-weight:bold">import</span> { BrowserModule } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;@angular/platform-browser&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#000;font-weight:bold">import</span> { Lib1Service } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;lib1&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span><span style="color:#000;font-weight:bold">import</span> { AppRoutingModule } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;./app-routing.module&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#000;font-weight:bold">import</span> { AppComponent } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;./app.component&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span><span style="color:#000;font-weight:bold">@NgModule</span>({
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>  declarations<span style="color:#000;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>    AppComponent
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>  ],
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>  imports<span style="color:#000;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>    BrowserModule,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>    AppRoutingModule
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>  ],
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>  providers<span style="color:#000;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>    Lib1Service,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>  ],
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>  bootstrap<span style="color:#000;font-weight:bold">:</span> [AppComponent]
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>})
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">class</span> AppModule { }
+</span></span></code></pre><p><code>site1</code>の<code>application/app.component.ts</code></p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#000;font-weight:bold">import</span> { Component } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;@angular/core&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#000;font-weight:bold">import</span> { Lib1Service } <span style="color:#000;font-weight:bold">from</span> <span style="color:#d14">&#39;lib1&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#000;font-weight:bold">@Component</span>({
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>  selector<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;app-root&#39;</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>  templateUrl<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;./app.component.html&#39;</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>  styleUrls<span style="color:#000;font-weight:bold">:</span> [<span style="color:#d14">&#39;./app.component.scss&#39;</span>]
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>})
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">class</span> AppComponent {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>  title <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;site1&#39;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>  <span style="color:#000;font-weight:bold">constructor</span>(<span style="color:#000;font-weight:bold">public</span> lib1Service: <span style="color:#458;font-weight:bold">Lib1Service</span>) {}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>}
+</span></span></code></pre><p><code>site1</code>の<code>application/app.component.html</code></p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>&lt;<span style="color:#000080">html</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>  &lt;<span style="color:#000080">head</span>&gt;&lt;/<span style="color:#000080">head</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>  &lt;<span style="color:#000080">body</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>    &lt;<span style="color:#000080">div</span>&gt;{{title}} using {{lib1Service.hello()}}&lt;/<span style="color:#000080">div</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>  &lt;/<span style="color:#000080">body</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span>&lt;/<span style="color:#000080">html</span>&gt;
+</span></span></code></pre><h4 id="--watch" class="md-heading">ライブラリのビルドと<code>--watch</code></h4>
+<p>以下のコマンドで、ライブラリをアプリケーションで利用する方法。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span><span style="color:#998;font-style:italic"># lib1のビルド</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>ng build lib1 --watch
+</span></span></code></pre><p>ビルド後のコードは<code>dist/lib1</code>ディレクトリに出力される。</p>
+<h4 id="serve-1" class="md-heading">アプリケーションのserve</h4>
+<p>以下のコマンドを用いれば、アプリケーションをserveできる。</p>
+<p>site1をポート4201、site2をポート4202でserveする。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span><span style="color:#998;font-style:italic"># site1の起動</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>ng serve site1 --port<span style="color:#000;font-weight:bold">=</span><span style="color:#099">4201</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span><span style="color:#998;font-style:italic"># site2の起動</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>ng serve site2 --port<span style="color:#000;font-weight:bold">=</span><span style="color:#099">4202</span>
+</span></span></code></pre><h3 id="builddeploy" class="md-heading">アプリケーションのbuildとdeploy</h3>
+<h4 id="build" class="md-heading">build</h4>
+<p>以下のコマンドを用いれば、アプリケーションをbuildできる。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>ng build lib1 --prod
+</span></span></code></pre><p>ビルド後のコードは<code>dist/lib1</code>に出力される。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>ng build site1 --prod
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>ng build site2 --prod
+</span></span></code></pre><p>ビルド後のコードは<code>dist/site1</code>,<code>dist/site2</code>に出力される。</p>
+<h4 id="deploy" class="md-heading">deploy</h4>
+<p>あとは、生成されたコード<code>dist/site1</code>,<code>dist/site2</code>をデプロイするだけ。</p>
+<p>ライブラリ<code>dist/lib1</code>のコードはデプロイしなくても良い。
+必要であればライブラリを、npmパッケージとして、npmレジストリにpublishすることができる。
+本記事では、ライブラリの生成方法については省略する。
+詳しくは<a href="https://angular.io/guide/using-libraries" target="blank">こちら</a>。</p>
+<p>この記事で作成した<code>site1</code>をGitHub pagesにデプロイする方法は以下。</p>
+<pre tabindex="0" style="background-color:#fff;"><code><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>ng build site1 --prod --base-href<span style="color:#000;font-weight:bold">=</span>/monorepo-angular --deploy-url<span style="color:#000;font-weight:bold">=</span>/monorepo-angular/
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>git add docs
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>git push origin main
+</span></span></code></pre><ul>
+<li><a href="https://suzuito.github.io/monorepo-angular/" target="blank">https://suzuito.github.io/monorepo-angular/</a></li>
+</ul>
+<h2 id="heading-6" class="md-heading">参考</h2>
+<ul>
+<li><a href="https://angular.io/guide/file-structure#multiple-projects" target="blank">https://angular.io/guide/file-structure#multiple-projects</a></li>
+</ul>

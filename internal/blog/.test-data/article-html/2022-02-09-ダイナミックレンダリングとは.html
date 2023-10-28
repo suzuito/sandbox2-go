@@ -1,0 +1,35 @@
+<h1>Table of Contents</h1>
+<ul>
+<li>
+<a href="#heading">ダイナミックレンダリングとは</a></li>
+<li>
+<a href="#spaseo">SPAのSEO対策としてのダイナミックレンダリング</a></li>
+<li>
+<a href="#heading-1">ダイナミックレンダリングの実装方法</a></li>
+<li>
+<a href="#chrome">Chromeのヘッドレスブラウザ機能</a></li>
+<li>
+<a href="#heading-2">で？</a></li>
+</ul>
+<h1 id="heading" class="md-heading">ダイナミックレンダリングとは</h1>
+<p>この度、SPAのダイナミックレンダリングを、kubernetesのsidecarを用いて実装した。久々に、それについての記事を書こうと思ったが、長くなりそうだった。なので何回かに分けて書き下す。今日は、ダイナミックレンダリングとは。ちなみに、ダイナミックレンダリングを一言で言うと、<code>特定のユーザー エージェントを対象に、クライアント側でレンダリングされるコンテンツとプリレンダリングされるコンテンツを切り替える</code>こと。</p>
+<h1 id="spaseo" class="md-heading">SPAのSEO対策としてのダイナミックレンダリング</h1>
+<p>SPA（Single page application）で実装されたページにおいては、ブラウザ上のjavascriptがページをレンダリングする。一昔前では先進的だったSPAも、最近ではすっかりお馴染みとなった。Angular、React、Vue等、ウェブアプリケーションフレームワークの発展が、SPAの浸透を後押ししたから。</p>
+<p>SPAで課題となるのがSEO問題。Googleのsearchbot（通称、googlebot）はSPAを処理することができないので、SPAで実装されているページは検索インデックスに適切に登録される保証はない。将来的に、googlebotが改善されSPAを処理できるようになるかもしれないが、現在のところでは、その改善がいつ頃に実行されるのか？はわからない。</p>
+<p>となると、SPAで実装されているページを、どうSEO対策するのか？</p>
+<p>Googleは、ダイナミックレンダリングという手法を推奨している。ダイナミックレンダリングとは、<a href="https://developers.google.com/search/docs/advanced/javascript/dynamic-rendering" target="blank">こちら</a>にある通り、<code>ダイナミック レンダリングとは、特定のユーザー エージェントを対象に、クライアント側でレンダリングされるコンテンツとプリレンダリングされるコンテンツを切り替えること</code>である。</p>
+<h1 id="heading-1" class="md-heading">ダイナミックレンダリングの実装方法</h1>
+<p>ダイナミックレンダリングの実装方法は次の通り。ページ配信サーバーが、HTTPリクエストのユーザーエージェントに応じて、処理を切り替えるだけ。もし、ユーザーエージェントがgooglebot等のボットだった場合、サーバーはSPAで実装されたページをヘッドレスブラウザで予めレンダリングし、レンダリング結果、つまりはHTMLを返す（この場合、レンダリングはサーバーサイドで行われる）。もし、ユーザーエージェントがボットではなかった場合、SPA（主にjs）をそのまま返す（この場合、レンダリングはブラウザ上で行われる）。</p>
+<p>ヘッドレスブラウザとは、UIがないブラウザのこと。なに？UIがない？では、ウェブページを操作したり、表示したりしたい場合どうすればいいの？と思うだろう。ヘッドレスブラウザは、プログラミングインターフェースを介したり、ある種のコマンドラインを介したり、して操作される。うーん。人間がヘッドレスブラウザを介してウェブページを閲覧するという行為は、すこぶる面倒臭そうだ。だって、ブラウザを操作するために、わざわざプログラミングしたり、コマンドラインを実行したりするんでしょ？しかしながら、ウェブページ、特にSPAで実装されたページの自動E2Eテストには、ヘッドレスブラウザは適している。人間のブラウザ操作を模倣するプログラムを、ヘッドレスブラウザが提供するプログラミングインターフェースやら、コマンドやらを介して行えば、書き易いからだ。ヘッドレスブラウザのその他の用途としては、SPAで実装されたページのスクレイピングなどがある。ダイナミックレンダリングも、ヘッドレスブラウザの用途の１つと言える。</p>
+<h1 id="chrome" class="md-heading">Chromeのヘッドレスブラウザ機能</h1>
+<p>Chromeはヘッドレスブラウザ機能をサポートしている。詳細は<a href="https://developers.google.cn/web/updates/2017/04/headless-chrome?hl=ja" target="blank">こちら</a>。</p>
+<p>さらにChromeは、ヘッドレスブラウザを操作するためのプロトコルを厳密に定義している。これを<a href="https://chromedevtools.github.io/devtools-protocol/" target="blank">Chrome Devtools Protocol（以下CDPと略す）</a>と呼ぶ。</p>
+<p>CDPに準拠した、Chromeのヘッドレスブラウザ機能を利用して作られているツールは<a href="https://github.com/ChromeDevTools/awesome-chrome-devtools" target="blank">実はたくさんある</a>。ダイナミックレンダリングを実現するためのツールも、たくさんある。</p>
+<p>CDPに準拠した、ダイナミックレンダリングを実現するためのツールとして、たとえば以下がある。</p>
+<ul>
+<li><a href="https://github.com/puppeteer/puppeteer" target="blank">Puppeteer</a>はChromeのヘッドレス機能を操作するためのNode.js APIを提供する。ダイナミックレンダリングをNode.jsで実装したいなら、選択肢の１つとなる。</li>
+<li><a href="https://github.com/chromedp/chromedp" target="blank">chromedp</a>はChromeのヘッドレス機能を操作するためのGo APIを提供する。ダイナミックレンダリングをGoで実装したいなら、選択肢の１つとなる。</li>
+<li><a href="https://github.com/GoogleChrome/rendertron" target="blank">rendertron</a>は、SPAページ（もちろん、SPAページではないページもレンダリングできるよ）レンダリングするためのウェブサービスを提供する。サンプルは<a href="https://render-tron.appspot.com/" target="blank">こちら</a>。Puppeteerで書かれている。</li>
+</ul>
+<h1 id="heading-2" class="md-heading">で？</h1>
+<p>この度、SPAのダイナミックレンダリングを、rendertronとkubernetesのsidecarを用いて実装てみたんですけどね。それについては、また気が向いたらそのうち書きますわ。ということで、今日はこの辺で。</p>
