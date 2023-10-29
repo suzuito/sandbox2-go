@@ -1,21 +1,23 @@
 # sandbox2-go
 
-## common
+## Development
 
-### Test
+### common
+
+#### Test
 
 ```bash
 make common-test
 ```
 
-## blog
+### blog
 
 ```bash
 make blog-init
 make blog-init-rdb
 ```
 
-### Run
+#### Run
 
 ```bash
 # env
@@ -49,13 +51,13 @@ Migration
 migrate create -dir .schema -ext sql init
 ```
 
-### Test
+#### Test
 
 ```bash
 make blog-test
 ```
 
-## crawler
+### crawler
 
 Make develop environment
 
@@ -63,7 +65,7 @@ Make develop environment
 make crawler-init
 ```
 
-### Run
+#### Run
 
 Open filebase UI in local.
 http://localhost:8082
@@ -88,3 +90,7 @@ Run notifier app
 go run internal/crawler/crawler/cmd/local/crawl/*.go
 go run internal/crawler/notifier/cmd/local/notify/*.go
 ```
+
+## Deployment
+
+Create release tag on Github.
