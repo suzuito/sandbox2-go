@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/blog/entity"
+	"github.com/suzuito/sandbox2-go/common/arrayutil"
 )
 
 func (t *ControllerImpl) GetAdminArticlesByID(ctx *gin.Context) {
@@ -26,11 +27,15 @@ func (t *ControllerImpl) GetAdminArticlesByID(ctx *gin.Context) {
 			t.Presenters.Response(ctx, PresenterArgStandardError{Err: err})
 			return
 		}
-		articlesSourceIDMap := map[entity.ArticleSourceID]string{}
-		for _, article := range articles {
-			articlesSourceIDMap[article.ArticleSource.ID] = ""
-		}
-		for articleSourceID := range articlesSourceIDMap {
+		articleSourceIDs := arrayutil.
+			Map(
+				articles,
+				func(elem entity.Article) entity.ArticleSourceID {
+					return elem.ArticleSource.ID
+				},
+			)
+		articleSourceIDs = arrayutil.Uniq(articleSourceIDs)
+		for _, articleSourceID := range articleSourceIDs {
 			articleSourceVersions, err := t.RepositoryArticleSource.GetVersions(ctx, "main", articleSourceID)
 			if err != nil {
 				t.Presenters.Response(ctx, PresenterArgStandardError{Err: err})
