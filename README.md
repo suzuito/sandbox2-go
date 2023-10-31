@@ -93,4 +93,5 @@ go run internal/crawler/notifier/cmd/local/notify/*.go
 
 ## Deployment
 
-Create release tag on Github.
+1. Run Github actions `create-release-draft` to create release draft.
+2. Publish release draft.
