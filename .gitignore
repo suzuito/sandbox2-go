@@ -27,3 +27,4 @@ coverage.*
 *.log
 
 local.env.sh
+changelog.md
