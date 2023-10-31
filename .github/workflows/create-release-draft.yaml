@@ -12,3 +12,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash create-release-draft.sh ${{ inputs.version }}
+        env:
+          GH_TOKEN: ${{ github.token }}
