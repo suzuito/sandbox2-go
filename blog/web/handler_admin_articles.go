@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"html/template"
 	"net/http"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/blog/entity"
@@ -34,7 +35,8 @@ func (t *ControllerImpl) GetAdminArticlesByID(ctx *gin.Context) {
 					return elem.ArticleSource.ID
 				},
 			)
-		articleSourceIDs = arrayutil.Uniq(articleSourceIDs)
+		slices.Sort(articleSourceIDs)
+		slices.Compact(articleSourceIDs)
 		for _, articleSourceID := range articleSourceIDs {
 			articleSourceVersions, err := t.RepositoryArticleSource.GetVersions(ctx, "main", articleSourceID)
 			if err != nil {
