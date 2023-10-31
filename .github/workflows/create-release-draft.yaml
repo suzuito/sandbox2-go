@@ -1,0 +1,14 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "version"
+        required: true
+        type: string
+
+jobs:
+  create-release-draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash create-release-draft.sh ${{ inputs.version }}
