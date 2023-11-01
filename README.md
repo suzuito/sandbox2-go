@@ -100,5 +100,4 @@ Define
 
 Procedure
 
-1. Run Github actions `create-release-draft` to create release draft.
-2. Publish release draft.
+1. Run Github actions `create-release-draft`
