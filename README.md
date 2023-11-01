@@ -93,5 +93,12 @@ go run internal/crawler/notifier/cmd/local/notify/*.go
 
 ## Deployment
 
+Define
+
+- Make sandbox2-go package available in public
+- Publish docker image of blog for CloudRun
+
+Procedure
+
 1. Run Github actions `create-release-draft` to create release draft.
 2. Publish release draft.
