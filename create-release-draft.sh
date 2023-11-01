@@ -14,4 +14,4 @@ if ! [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     exit 2
 fi
 
-gh release create ${version} --draft --title="${version}" --generate-notes --target=main
+gh release create ${version} --title="${version}" --generate-notes --target=main
