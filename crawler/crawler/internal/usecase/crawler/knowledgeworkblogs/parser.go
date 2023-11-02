@@ -2,7 +2,6 @@ package knowledgeworkblogs
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"strings"
 	"time"
@@ -24,7 +23,7 @@ func (t *Parser) Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.TimeS
 	}
 	returned := []timeseriesdata.TimeSeriesData{}
 	for _, item := range feed.Items {
-		fmt.Println(item.Title, item.Link, item.Published)
+		clog.L.Debugf(ctx, "%s %s %+v", item.Title, item.Link, item.Published)
 		publishedAt, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", item.Published)
 		if err != nil {
 			clog.L.Errorf(ctx, "%+v\n", err)
