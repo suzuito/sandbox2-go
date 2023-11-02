@@ -3,6 +3,7 @@ package usecase
 import (
 	"bytes"
 	"context"
+	"io"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
@@ -27,11 +28,17 @@ func (t *UsecaseImpl) CrawlOnGCF(
 func (t *UsecaseImpl) Crawl(
 	ctx context.Context,
 	crawlerID crawler.CrawlerID,
+	input io.Reader,
 ) error {
 	t.L.Infof(ctx, "Crawl %s", crawlerID)
 	crawler, err := t.CrawlerFactory.GetCrawler(ctx, crawlerID)
 	if err != nil {
 		t.L.Errorf(ctx, "Failed to GetCrawler : %+v", err)
+		return terrors.Wrap(err)
+	}
+	inputCrawler, err := crawler.ParseInput(ctx, input)
+	if err != nil {
+		t.L.Errorf(ctx, "Failed to ParseInput : %+v", err)
 		return terrors.Wrap(err)
 	}
 	fetcher, err := crawler.NewFetcher(ctx)
