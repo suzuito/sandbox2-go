@@ -9,6 +9,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goblog"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goconnpass"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/golangweekly"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworkblog"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworkblogs"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 )
@@ -57,6 +58,7 @@ func NewDefaultCrawlerFactoryImpl(
 			goconnpass.NewCrawler(repository),
 			golangweekly.NewCrawler(repository),
 			knowledgeworkblogs.NewCrawler(),
+			knowledgeworkblog.NewCrawler(),
 		},
 	)
 }

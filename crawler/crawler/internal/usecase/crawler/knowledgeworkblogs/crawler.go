@@ -8,7 +8,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
 )
 
-const CrawlerID crawler.CrawlerID = "knowledgeworkblog"
+const CrawlerID crawler.CrawlerID = "knowledgeworkblogs"
 
 type Crawler struct {
 }
