@@ -13,7 +13,7 @@ type Crawler interface {
 	ID() CrawlerID
 	Name() string
 
-	Fetch(ctx context.Context, w io.Writer) error
-	Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.TimeSeriesData, error)
-	Publish(ctx context.Context, data ...timeseriesdata.TimeSeriesData) error
+	Fetch(ctx context.Context, w io.Writer, msg CrawlerInputData) error
+	Parse(ctx context.Context, r io.Reader, msg CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error)
+	Publish(ctx context.Context, msg CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error
 }

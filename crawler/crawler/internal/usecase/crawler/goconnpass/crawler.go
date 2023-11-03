@@ -46,7 +46,7 @@ func (t *Crawler) Name() string {
 	return string(CrawlerID)
 }
 
-func (t *Crawler) Fetch(ctx context.Context, w io.Writer) error {
+func (t *Crawler) Fetch(ctx context.Context, w io.Writer, _ crawler.CrawlerInputData) error {
 	u, _ := url.Parse("https://connpass.com/api/v1/event/")
 	q := u.Query()
 	q.Add("keyword_or", "go言語")
@@ -63,7 +63,7 @@ func (t *Crawler) Fetch(ctx context.Context, w io.Writer) error {
 	return terrors.Wrap(t.fetcher.DoRequest(ctx, request, w))
 }
 
-func (t *Crawler) Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.TimeSeriesData, error) {
+func (t *Crawler) Parse(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error) {
 	res := connpassAPIResponse{}
 	if err := json.NewDecoder(r).Decode(&res); err != nil {
 		return nil, terrors.Wrap(err)
@@ -130,6 +130,6 @@ type connpassAPIResponse struct {
 	Events []connpassAPIResponseEvent `json:"events"`
 }
 
-func (t *Crawler) Publish(ctx context.Context, data ...timeseriesdata.TimeSeriesData) error {
+func (t *Crawler) Publish(ctx context.Context, _ crawler.CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
 	return terrors.Wrap(t.repository.SetTimeSeriesData(ctx, CrawlerID, data...))
 }

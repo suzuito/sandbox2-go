@@ -43,6 +43,7 @@ crawler-init:
 crawler-mock:
 	./mockgen crawler/crawler/internal/entity/crawler/crawler.go
 	./mockgen crawler/crawler/internal/usecase/repository/repository.go
+	./mockgen crawler/crawler/internal/usecase/fetcher/fetcher_http.go
 	./mockgen crawler/crawler/internal/usecase/queue/queue.go
 	./mockgen crawler/crawler/internal/usecase/crawlerfactory/crawlerfactory.go
 	./mockgen crawler/notifier/internal/entity/notifier/notifier.go

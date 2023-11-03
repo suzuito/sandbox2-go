@@ -14,9 +14,10 @@ import (
 func TestPublishCrawlEvent(t *testing.T) {
 	topicIDCrawlEvent := "topic-TestPublishCrawlEvent"
 	testCases := []struct {
-		desc            string
-		inputHasTraceID bool
-		inputCrawlerID  crawler.CrawlerID
+		desc                  string
+		inputHasTraceID       bool
+		inputCrawlerID        crawler.CrawlerID
+		inputCrawlerInputData crawler.CrawlerInputData
 		testhelper.TestCaseForPubSub
 		expectedError string
 	}{
@@ -24,6 +25,9 @@ func TestPublishCrawlEvent(t *testing.T) {
 			desc:            "",
 			inputHasTraceID: true,
 			inputCrawlerID:  "hoge",
+			inputCrawlerInputData: crawler.CrawlerInputData{
+				"foo": "bar",
+			},
 			TestCaseForPubSub: testhelper.TestCaseForPubSub{
 				SetUp: func(ctx context.Context, fcli *pubsub.Client) error {
 					_, err := fcli.CreateTopic(ctx, topicIDCrawlEvent)
@@ -45,7 +49,7 @@ func TestPublishCrawlEvent(t *testing.T) {
 			if tC.inputHasTraceID {
 				ctx = context.WithValue(ctx, "traceId", "foo")
 			}
-			err := queue.PublishCrawlEvent(ctx, tC.inputCrawlerID)
+			err := queue.PublishCrawlEvent(ctx, tC.inputCrawlerID, tC.inputCrawlerInputData)
 			test_helper.AssertError(t, tC.expectedError, err)
 		})
 	}
@@ -60,9 +64,14 @@ func TestRecieveCrawlEvent(t *testing.T) {
 		return
 	}
 	queue := NewQueue(pcli, "topic-TestPublishCrawlEvent")
-	crawlerID, err := queue.RecieveCrawlEvent(ctx, []byte(`{"CrawlID":"c1"}`))
+	crawlerID, crawlerInputData, err := queue.RecieveCrawlEvent(ctx, []byte(`{"CrawlID":"c1"}`))
 	assert.Nil(t, err)
 	assert.Equal(t, crawler.CrawlerID("c1"), crawlerID)
-	crawlerID, err = queue.RecieveCrawlEvent(ctx, []byte(`aaa`))
+	assert.Nil(t, crawlerInputData)
+	crawlerID, crawlerInputData, err = queue.RecieveCrawlEvent(ctx, []byte(`{"CrawlID":"c1","CrawlerInputData":{"foo":"bar"}}`))
+	assert.Nil(t, err)
+	assert.Equal(t, crawler.CrawlerID("c1"), crawlerID)
+	assert.Equal(t, crawler.CrawlerInputData{"foo": "bar"}, crawlerInputData)
+	_, _, err = queue.RecieveCrawlEvent(ctx, []byte(`aaa`))
 	assert.NotNil(t, err)
 }

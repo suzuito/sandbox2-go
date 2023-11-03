@@ -41,17 +41,17 @@ func (m *MockCrawler) EXPECT() *MockCrawlerMockRecorder {
 }
 
 // Fetch mocks base method.
-func (m *MockCrawler) Fetch(ctx context.Context, w io.Writer) error {
+func (m *MockCrawler) Fetch(ctx context.Context, w io.Writer, msg CrawlerInputData) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Fetch", ctx, w)
+	ret := m.ctrl.Call(m, "Fetch", ctx, w, msg)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Fetch indicates an expected call of Fetch.
-func (mr *MockCrawlerMockRecorder) Fetch(ctx, w any) *gomock.Call {
+func (mr *MockCrawlerMockRecorder) Fetch(ctx, w, msg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockCrawler)(nil).Fetch), ctx, w)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockCrawler)(nil).Fetch), ctx, w, msg)
 }
 
 // ID mocks base method.
@@ -83,24 +83,24 @@ func (mr *MockCrawlerMockRecorder) Name() *gomock.Call {
 }
 
 // Parse mocks base method.
-func (m *MockCrawler) Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.TimeSeriesData, error) {
+func (m *MockCrawler) Parse(ctx context.Context, r io.Reader, msg CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Parse", ctx, r)
+	ret := m.ctrl.Call(m, "Parse", ctx, r, msg)
 	ret0, _ := ret[0].([]timeseriesdata.TimeSeriesData)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Parse indicates an expected call of Parse.
-func (mr *MockCrawlerMockRecorder) Parse(ctx, r any) *gomock.Call {
+func (mr *MockCrawlerMockRecorder) Parse(ctx, r, msg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Parse", reflect.TypeOf((*MockCrawler)(nil).Parse), ctx, r)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Parse", reflect.TypeOf((*MockCrawler)(nil).Parse), ctx, r, msg)
 }
 
 // Publish mocks base method.
-func (m *MockCrawler) Publish(ctx context.Context, data ...timeseriesdata.TimeSeriesData) error {
+func (m *MockCrawler) Publish(ctx context.Context, msg CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
 	m.ctrl.T.Helper()
-	varargs := []any{ctx}
+	varargs := []any{ctx, msg}
 	for _, a := range data {
 		varargs = append(varargs, a)
 	}
@@ -110,8 +110,8 @@ func (m *MockCrawler) Publish(ctx context.Context, data ...timeseriesdata.TimeSe
 }
 
 // Publish indicates an expected call of Publish.
-func (mr *MockCrawlerMockRecorder) Publish(ctx any, data ...any) *gomock.Call {
+func (mr *MockCrawlerMockRecorder) Publish(ctx, msg any, data ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]any{ctx}, data...)
+	varargs := append([]any{ctx, msg}, data...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockCrawler)(nil).Publish), varargs...)
 }

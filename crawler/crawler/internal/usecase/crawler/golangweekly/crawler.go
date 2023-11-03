@@ -44,13 +44,13 @@ func (t *Crawler) Name() string {
 	return string(CrawlerID)
 }
 
-func (t *Crawler) Fetch(ctx context.Context, w io.Writer) error {
+func (t *Crawler) Fetch(ctx context.Context, w io.Writer, _ crawler.CrawlerInputData) error {
 	request, _ := http.NewRequestWithContext(
 		ctx, http.MethodGet, "https://cprss.s3.amazonaws.com/golangweekly.com.xml", nil)
 	return terrors.Wrap(t.fetcher.DoRequest(ctx, request, w))
 }
 
-func (t *Crawler) Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.TimeSeriesData, error) {
+func (t *Crawler) Parse(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error) {
 	feed, err := t.fp.Parse(r)
 	if err != nil {
 		return nil, terrors.Wrap(err)
@@ -81,6 +81,6 @@ func (t *Crawler) Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.Time
 	return returned, nil
 }
 
-func (t *Crawler) Publish(ctx context.Context, data ...timeseriesdata.TimeSeriesData) error {
+func (t *Crawler) Publish(ctx context.Context, _ crawler.CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
 	return terrors.Wrap(t.repository.SetTimeSeriesData(ctx, CrawlerID, data...))
 }

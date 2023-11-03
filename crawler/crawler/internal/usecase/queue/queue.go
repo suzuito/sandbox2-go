@@ -10,9 +10,10 @@ type Queue interface {
 	PublishCrawlEvent(
 		ctx context.Context,
 		crawlerID crawler.CrawlerID,
+		crawlerInputData crawler.CrawlerInputData,
 	) error
 	RecieveCrawlEvent(
 		ctx context.Context,
 		rawBytes []byte,
-	) (crawler.CrawlerID, error)
+	) (crawler.CrawlerID, crawler.CrawlerInputData, error)
 }
