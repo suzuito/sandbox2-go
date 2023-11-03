@@ -2,7 +2,6 @@ package golangweekly
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -57,7 +56,6 @@ func (t *Crawler) Parse(ctx context.Context, r io.Reader, _ crawler.CrawlerInput
 	}
 	returned := []timeseriesdata.TimeSeriesData{}
 	for _, item := range feed.Items {
-		fmt.Println(item.Title, item.Link, item.Published)
 		publishedAt, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", item.Published)
 		if err != nil {
 			clog.L.Errorf(ctx, "%+v\n", err)

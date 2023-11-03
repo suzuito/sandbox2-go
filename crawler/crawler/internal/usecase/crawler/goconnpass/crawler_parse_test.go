@@ -3,7 +3,6 @@ package goconnpass
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -77,7 +76,6 @@ func Test(t *testing.T) {
 	crwl := NewCrawler(nil, nil)
 	data, err := crwl.Parse(ctx, bytes.NewReader([]byte(body)), nil)
 	if err != nil {
-		fmt.Printf("%+v\n", err)
 		t.Fail()
 		return
 	}
