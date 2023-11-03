@@ -2,6 +2,7 @@ package inject
 
 import (
 	"context"
+	"net/http"
 
 	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/firestore"
@@ -10,6 +11,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/infra/gcp"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/infra/web"
 	internal_usecase "github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawlerfactory"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/pkg/usecase"
@@ -30,12 +32,18 @@ func NewUsecaseGCP(ctx context.Context) (usecase.Usecase, error) {
 		return nil, terrors.Wrap(err)
 	}
 	pcli, err := pubsub.NewClient(ctx, projectID)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	repository := gcp.NewRepository(fcli, "Crawler")
 	u := internal_usecase.UsecaseImpl{
-		Repository:     gcp.NewRepository(fcli, "Crawler"),
-		Queue:          gcp.NewQueue(pcli, "gcf-CrawlerCrawl"),
-		CrawlerFactory: crawlerfactory.NewDefaultCrawlerFactoryImpl(repository),
-		L:              clog.L,
+		Repository: gcp.NewRepository(fcli, "Crawler"),
+		Queue:      gcp.NewQueue(pcli, "gcf-CrawlerCrawl"),
+		CrawlerFactory: crawlerfactory.NewDefaultCrawlerFactoryImpl(
+			repository,
+			web.NewFetcherHTTP(http.DefaultClient),
+		),
+		L: clog.L,
 	}
 	return &u, nil
 }

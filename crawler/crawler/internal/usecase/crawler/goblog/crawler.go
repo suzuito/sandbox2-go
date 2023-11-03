@@ -11,6 +11,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
@@ -20,12 +21,17 @@ const baseURLGoBlog = "https://go.dev"
 
 type Crawler struct {
 	repository repository.Repository
+	fetcher    fetcher.FetcherHTTP
 	cliHTTP    *http.Client
 }
 
-func NewCrawler(repository repository.Repository) crawler.Crawler {
+func NewCrawler(
+	repository repository.Repository,
+	fetcher fetcher.FetcherHTTP,
+) crawler.Crawler {
 	return &Crawler{
 		repository: repository,
+		fetcher:    fetcher,
 		cliHTTP:    http.DefaultClient,
 	}
 }
@@ -39,18 +45,9 @@ func (t *Crawler) Name() string {
 }
 
 func (t *Crawler) Fetch(ctx context.Context, w io.Writer) error {
-	res, err := t.cliHTTP.Get(baseURLGoBlog + "/blog")
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		return terrors.Wrapf("HTTP error is occured code=%d", res.StatusCode)
-	}
-	if _, err := io.Copy(w, res.Body); err != nil {
-		return terrors.Wrap(err)
-	}
-	return nil
+	request, _ := http.NewRequestWithContext(
+		ctx, http.MethodGet, baseURLGoBlog+"/blog", nil)
+	return terrors.Wrap(t.fetcher.DoRequest(ctx, request, w))
 }
 
 func (t *Crawler) Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.TimeSeriesData, error) {

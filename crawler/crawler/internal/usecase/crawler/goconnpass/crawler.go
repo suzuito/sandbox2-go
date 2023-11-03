@@ -13,6 +13,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 	"github.com/suzuito/sandbox2-go/crawler/internal/constant"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
@@ -22,12 +23,17 @@ const CrawlerID crawler.CrawlerID = "goconnpass"
 
 type Crawler struct {
 	repository repository.Repository
+	fetcher    fetcher.FetcherHTTP
 	cliHTTP    *http.Client
 }
 
-func NewCrawler(repository repository.Repository) crawler.Crawler {
+func NewCrawler(
+	repository repository.Repository,
+	fetcher fetcher.FetcherHTTP,
+) crawler.Crawler {
 	return &Crawler{
 		repository: repository,
+		fetcher:    fetcher,
 		cliHTTP:    http.DefaultClient,
 	}
 }
@@ -52,18 +58,9 @@ func (t *Crawler) Fetch(ctx context.Context, w io.Writer) error {
 	}
 	q.Add("count", "100")
 	u.RawQuery = q.Encode()
-	res, err := t.cliHTTP.Get(u.String())
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		return terrors.Wrapf("HTTP error is occured code=%d", res.StatusCode)
-	}
-	if _, err := io.Copy(w, res.Body); err != nil {
-		return terrors.Wrap(err)
-	}
-	return nil
+	request, _ := http.NewRequestWithContext(
+		ctx, http.MethodGet, u.String(), nil)
+	return terrors.Wrap(t.fetcher.DoRequest(ctx, request, w))
 }
 
 func (t *Crawler) Parse(ctx context.Context, r io.Reader) ([]timeseriesdata.TimeSeriesData, error) {

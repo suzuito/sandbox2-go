@@ -9,6 +9,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goblog"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goconnpass"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/golangweekly"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 )
 
@@ -49,12 +50,13 @@ func newCrawlerFactoryImpl(crawlers []crawler.Crawler) *CrawlerFactoryImpl {
 
 func NewDefaultCrawlerFactoryImpl(
 	repository repository.Repository,
+	fetcherHTTP fetcher.FetcherHTTP,
 ) *CrawlerFactoryImpl {
 	return newCrawlerFactoryImpl(
 		[]crawler.Crawler{
-			goblog.NewCrawler(repository),
-			goconnpass.NewCrawler(repository),
-			golangweekly.NewCrawler(repository),
+			goblog.NewCrawler(repository, fetcherHTTP),
+			goconnpass.NewCrawler(repository, fetcherHTTP),
+			golangweekly.NewCrawler(repository, fetcherHTTP),
 		},
 	)
 }
