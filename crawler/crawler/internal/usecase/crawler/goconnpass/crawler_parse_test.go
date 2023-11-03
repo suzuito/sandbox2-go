@@ -74,8 +74,8 @@ var body = `
 
 func Test(t *testing.T) {
 	ctx := context.Background()
-	p := Parser{}
-	data, err := p.Parse(ctx, bytes.NewReader([]byte(body)))
+	crwl := NewCrawler(nil, nil)
+	data, err := crwl.Parse(ctx, bytes.NewReader([]byte(body)), nil)
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 		t.Fail()

@@ -10,7 +10,8 @@ import (
 )
 
 type CrawlEvent struct {
-	CrawlID crawler.CrawlerID
+	CrawlID          crawler.CrawlerID
+	CrawlerInputData crawler.CrawlerInputData
 }
 
 type Queue struct {
@@ -21,9 +22,11 @@ type Queue struct {
 func (t *Queue) PublishCrawlEvent(
 	ctx context.Context,
 	crawlerID crawler.CrawlerID,
+	crawlerInputData crawler.CrawlerInputData,
 ) error {
 	crawlEvent := CrawlEvent{
-		CrawlID: crawlerID,
+		CrawlID:          crawlerID,
+		CrawlerInputData: crawlerInputData,
 	}
 	rawBytes, err := json.Marshal(crawlEvent)
 	if err != nil {
@@ -48,12 +51,12 @@ func (t *Queue) PublishCrawlEvent(
 func (t *Queue) RecieveCrawlEvent(
 	ctx context.Context,
 	rawBytes []byte,
-) (crawler.CrawlerID, error) {
+) (crawler.CrawlerID, crawler.CrawlerInputData, error) {
 	crawlEvent := CrawlEvent{}
 	if err := json.Unmarshal(rawBytes, &crawlEvent); err != nil {
-		return "", terrors.Wrap(err)
+		return "", nil, terrors.Wrap(err)
 	}
-	return crawlEvent.CrawlID, nil
+	return crawlEvent.CrawlID, crawlEvent.CrawlerInputData, nil
 }
 
 func NewQueue(pcli *pubsub.Client, topicIDCrawlEvent string) *Queue {

@@ -10,8 +10,10 @@ package crawler
 
 import (
 	context "context"
+	io "io"
 	reflect "reflect"
 
+	timeseriesdata "github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -36,6 +38,20 @@ func NewMockCrawler(ctrl *gomock.Controller) *MockCrawler {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockCrawler) EXPECT() *MockCrawlerMockRecorder {
 	return m.recorder
+}
+
+// Fetch mocks base method.
+func (m *MockCrawler) Fetch(ctx context.Context, w io.Writer, msg CrawlerInputData) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Fetch", ctx, w, msg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Fetch indicates an expected call of Fetch.
+func (mr *MockCrawlerMockRecorder) Fetch(ctx, w, msg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockCrawler)(nil).Fetch), ctx, w, msg)
 }
 
 // ID mocks base method.
@@ -66,47 +82,36 @@ func (mr *MockCrawlerMockRecorder) Name() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockCrawler)(nil).Name))
 }
 
-// NewFetcher mocks base method.
-func (m *MockCrawler) NewFetcher(ctx context.Context) (Fetcher, error) {
+// Parse mocks base method.
+func (m *MockCrawler) Parse(ctx context.Context, r io.Reader, msg CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "NewFetcher", ctx)
-	ret0, _ := ret[0].(Fetcher)
+	ret := m.ctrl.Call(m, "Parse", ctx, r, msg)
+	ret0, _ := ret[0].([]timeseriesdata.TimeSeriesData)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// NewFetcher indicates an expected call of NewFetcher.
-func (mr *MockCrawlerMockRecorder) NewFetcher(ctx any) *gomock.Call {
+// Parse indicates an expected call of Parse.
+func (mr *MockCrawlerMockRecorder) Parse(ctx, r, msg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewFetcher", reflect.TypeOf((*MockCrawler)(nil).NewFetcher), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Parse", reflect.TypeOf((*MockCrawler)(nil).Parse), ctx, r, msg)
 }
 
-// NewParser mocks base method.
-func (m *MockCrawler) NewParser(ctx context.Context) (Parser, error) {
+// Publish mocks base method.
+func (m *MockCrawler) Publish(ctx context.Context, msg CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "NewParser", ctx)
-	ret0, _ := ret[0].(Parser)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	varargs := []any{ctx, msg}
+	for _, a := range data {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Publish", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// NewParser indicates an expected call of NewParser.
-func (mr *MockCrawlerMockRecorder) NewParser(ctx any) *gomock.Call {
+// Publish indicates an expected call of Publish.
+func (mr *MockCrawlerMockRecorder) Publish(ctx, msg any, data ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewParser", reflect.TypeOf((*MockCrawler)(nil).NewParser), ctx)
-}
-
-// NewPublisher mocks base method.
-func (m *MockCrawler) NewPublisher(ctx context.Context) (Publisher, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "NewPublisher", ctx)
-	ret0, _ := ret[0].(Publisher)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// NewPublisher indicates an expected call of NewPublisher.
-func (mr *MockCrawlerMockRecorder) NewPublisher(ctx any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewPublisher", reflect.TypeOf((*MockCrawler)(nil).NewPublisher), ctx)
+	varargs := append([]any{ctx, msg}, data...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockCrawler)(nil).Publish), varargs...)
 }

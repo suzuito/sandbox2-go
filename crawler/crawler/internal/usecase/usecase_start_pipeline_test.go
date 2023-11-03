@@ -64,16 +64,19 @@ func TestStartPipelinePeriodically(t *testing.T) {
 						PublishCrawlEvent(
 							gomock.Any(),
 							crawler.CrawlerID("crawler1"),
+							gomock.Any(),
 						),
 					m.Queue.EXPECT().
 						PublishCrawlEvent(
 							gomock.Any(),
 							crawler.CrawlerID("crawler2"),
+							gomock.Any(),
 						),
 					m.Queue.EXPECT().
 						PublishCrawlEvent(
 							gomock.Any(),
 							crawler.CrawlerID("crawler3"),
+							gomock.Any(),
 						),
 				)
 				gomock.InOrder(
@@ -115,17 +118,20 @@ func TestStartPipelinePeriodically(t *testing.T) {
 						PublishCrawlEvent(
 							gomock.Any(),
 							crawler.CrawlerID("crawler1"),
+							gomock.Any(),
 						),
 					m.Queue.EXPECT().
 						PublishCrawlEvent(
 							gomock.Any(),
 							crawler.CrawlerID("crawler2"),
+							gomock.Any(),
 						).
 						Return(fmt.Errorf("dummy error")),
 					m.Queue.EXPECT().
 						PublishCrawlEvent(
 							gomock.Any(),
 							crawler.CrawlerID("crawler3"),
+							gomock.Any(),
 						),
 				)
 				gomock.InOrder(

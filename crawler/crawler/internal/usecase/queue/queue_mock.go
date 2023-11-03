@@ -40,26 +40,27 @@ func (m *MockQueue) EXPECT() *MockQueueMockRecorder {
 }
 
 // PublishCrawlEvent mocks base method.
-func (m *MockQueue) PublishCrawlEvent(ctx context.Context, crawlerID crawler.CrawlerID) error {
+func (m *MockQueue) PublishCrawlEvent(ctx context.Context, crawlerID crawler.CrawlerID, crawlerInputData crawler.CrawlerInputData) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PublishCrawlEvent", ctx, crawlerID)
+	ret := m.ctrl.Call(m, "PublishCrawlEvent", ctx, crawlerID, crawlerInputData)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PublishCrawlEvent indicates an expected call of PublishCrawlEvent.
-func (mr *MockQueueMockRecorder) PublishCrawlEvent(ctx, crawlerID any) *gomock.Call {
+func (mr *MockQueueMockRecorder) PublishCrawlEvent(ctx, crawlerID, crawlerInputData any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishCrawlEvent", reflect.TypeOf((*MockQueue)(nil).PublishCrawlEvent), ctx, crawlerID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishCrawlEvent", reflect.TypeOf((*MockQueue)(nil).PublishCrawlEvent), ctx, crawlerID, crawlerInputData)
 }
 
 // RecieveCrawlEvent mocks base method.
-func (m *MockQueue) RecieveCrawlEvent(ctx context.Context, rawBytes []byte) (crawler.CrawlerID, error) {
+func (m *MockQueue) RecieveCrawlEvent(ctx context.Context, rawBytes []byte) (crawler.CrawlerID, crawler.CrawlerInputData, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RecieveCrawlEvent", ctx, rawBytes)
 	ret0, _ := ret[0].(crawler.CrawlerID)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(crawler.CrawlerInputData)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // RecieveCrawlEvent indicates an expected call of RecieveCrawlEvent.

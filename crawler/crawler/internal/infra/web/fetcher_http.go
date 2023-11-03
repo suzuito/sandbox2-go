@@ -1,4 +1,4 @@
-package goblog
+package web
 
 import (
 	"context"
@@ -8,12 +8,16 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-type Fetcher struct {
-	cliHTTP *http.Client
+type FetcherHTTP struct {
+	cli *http.Client
 }
 
-func (t *Fetcher) Fetch(ctx context.Context, w io.Writer) error {
-	res, err := t.cliHTTP.Get(baseURLGoBlog + "/blog")
+func (t *FetcherHTTP) DoRequest(
+	ctx context.Context,
+	request *http.Request,
+	w io.Writer,
+) error {
+	res, err := t.cli.Do(request)
 	if err != nil {
 		return terrors.Wrap(err)
 	}
@@ -25,4 +29,10 @@ func (t *Fetcher) Fetch(ctx context.Context, w io.Writer) error {
 		return terrors.Wrap(err)
 	}
 	return nil
+}
+
+func NewFetcherHTTP(cli *http.Client) *FetcherHTTP {
+	return &FetcherHTTP{
+		cli: cli,
+	}
 }
