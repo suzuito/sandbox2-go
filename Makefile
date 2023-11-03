@@ -42,9 +42,6 @@ crawler-init:
 	while [ true ]; do curl http://localhost:8082 > /dev/null 2>&1 && echo 'Firebase emulator connection is OK' && break; echo 'Waiting until Firebase emulator connection is OK' && sleep 1; done
 crawler-mock:
 	./mockgen crawler/crawler/internal/entity/crawler/crawler.go
-	./mockgen crawler/crawler/internal/entity/crawler/fetcher.go
-	./mockgen crawler/crawler/internal/entity/crawler/parser.go
-	./mockgen crawler/crawler/internal/entity/crawler/publisher.go
 	./mockgen crawler/crawler/internal/usecase/repository/repository.go
 	./mockgen crawler/crawler/internal/usecase/queue/queue.go
 	./mockgen crawler/crawler/internal/usecase/crawlerfactory/crawlerfactory.go
