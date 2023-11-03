@@ -44,10 +44,6 @@ func (t *Crawler) Name() string {
 	return string(CrawlerID)
 }
 
-func (t *Crawler) NewCrawlerInputDataFromBytes(ctx context.Context, message []byte) (crawler.CrawlerInputData, error) {
-	return nil, nil
-}
-
 func (t *Crawler) Fetch(ctx context.Context, w io.Writer, _ crawler.CrawlerInputData) error {
 	request, _ := http.NewRequestWithContext(
 		ctx, http.MethodGet, baseURLGoBlog+"/blog", nil)
