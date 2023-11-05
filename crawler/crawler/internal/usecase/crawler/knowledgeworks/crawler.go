@@ -4,16 +4,15 @@ import (
 	"context"
 	"io"
 	"net/http"
-	"strings"
-	"time"
 
 	"github.com/mmcdole/gofeed"
-	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/queue"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata/note"
 )
 
 const CrawlerID crawler.CrawlerID = "knowledgeworks"
@@ -21,6 +20,7 @@ const CrawlerID crawler.CrawlerID = "knowledgeworks"
 type Crawler struct {
 	repository repository.Repository
 	fetcher    fetcher.FetcherHTTP
+	queue      queue.Queue
 	fp         *gofeed.Parser
 }
 
@@ -56,29 +56,21 @@ func (t *Crawler) Parse(ctx context.Context, r io.Reader, _ crawler.CrawlerInput
 	}
 	returned := []timeseriesdata.TimeSeriesData{}
 	for _, item := range feed.Items {
-		publishedAt, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", item.Published)
-		if err != nil {
-			clog.L.Errorf(ctx, "%+v\n", err)
-			continue
-		}
-		data := timeseriesdata.TimeSeriesDataBlogFeed{
-			ID: timeseriesdata.TimeSeriesDataID(
-				strings.Replace(
-					strings.Replace(item.GUID, ":", "-", -1),
-					"/",
-					"-",
-					-1,
-				),
-			),
-			PublishedAt: publishedAt,
-			Title:       item.Title,
-			URL:         item.Link,
-		}
-		returned = append(returned, &data)
+		returned = append(returned, &note.TimeSeriesDataNoteArticle{
+			URL: item.Link,
+		})
 	}
 	return returned, nil
 }
 
 func (t *Crawler) Publish(ctx context.Context, _ crawler.CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
-	return terrors.Wrap(t.repository.SetTimeSeriesData(ctx, CrawlerID, data...))
+	for _, d := range data {
+		article := d.(*note.TimeSeriesDataNoteArticle)
+		if err := t.queue.PublishCrawlEvent(ctx, "knowledgeworks", crawler.CrawlerInputData{
+			"URL": article.URL,
+		}); err != nil {
+			return terrors.Wrap(err)
+		}
+	}
+	return nil
 }
