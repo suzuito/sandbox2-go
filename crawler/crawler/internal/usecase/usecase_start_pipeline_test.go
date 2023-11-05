@@ -26,6 +26,7 @@ func TestStartPipelinePeriodically(t *testing.T) {
 						gomock.Any(),
 						gomock.Any(),
 						gomock.Any(),
+						gomock.Any(),
 					).
 					Return(crawlers)
 				gomock.InOrder(
@@ -53,6 +54,7 @@ func TestStartPipelinePeriodically(t *testing.T) {
 				}
 				m.CrawlerFactory.EXPECT().
 					GetCrawlers(
+						gomock.Any(),
 						gomock.Any(),
 						gomock.Any(),
 						gomock.Any(),
@@ -107,6 +109,7 @@ func TestStartPipelinePeriodically(t *testing.T) {
 				}
 				m.CrawlerFactory.EXPECT().
 					GetCrawlers(
+						gomock.Any(),
 						gomock.Any(),
 						gomock.Any(),
 						gomock.Any(),
