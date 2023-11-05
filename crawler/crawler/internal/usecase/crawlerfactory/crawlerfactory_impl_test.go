@@ -32,6 +32,6 @@ func TestCrawlerFactoryImpl(t *testing.T) {
 		assert.Equal(t, 1, len(crwls))
 	})
 	t.Run("NewDefaultCrawlerFactoryImpl", func(t *testing.T) {
-		NewDefaultCrawlerFactoryImpl(nil, nil)
+		NewDefaultCrawlerFactoryImpl(nil, nil, nil)
 	})
 }

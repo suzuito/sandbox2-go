@@ -12,6 +12,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgework"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworks"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/queue"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 )
 
@@ -52,6 +53,7 @@ func newCrawlerFactoryImpl(crawlers []crawler.Crawler) *CrawlerFactoryImpl {
 
 func NewDefaultCrawlerFactoryImpl(
 	repository repository.Repository,
+	queue queue.Queue,
 	fetcherHTTP fetcher.FetcherHTTP,
 ) *CrawlerFactoryImpl {
 	return newCrawlerFactoryImpl(
@@ -59,7 +61,7 @@ func NewDefaultCrawlerFactoryImpl(
 			goblog.NewCrawler(repository, fetcherHTTP),
 			goconnpass.NewCrawler(repository, fetcherHTTP),
 			golangweekly.NewCrawler(repository, fetcherHTTP),
-			knowledgeworks.NewCrawler(repository, fetcherHTTP),
+			knowledgeworks.NewCrawler(queue, fetcherHTTP),
 			knowledgework.NewCrawler(repository, fetcherHTTP),
 		},
 	)

@@ -10,7 +10,6 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/queue"
-	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata/note"
 )
@@ -18,20 +17,19 @@ import (
 const CrawlerID crawler.CrawlerID = "knowledgeworks"
 
 type Crawler struct {
-	repository repository.Repository
-	fetcher    fetcher.FetcherHTTP
-	queue      queue.Queue
-	fp         *gofeed.Parser
+	fetcher fetcher.FetcherHTTP
+	queue   queue.Queue
+	fp      *gofeed.Parser
 }
 
 func NewCrawler(
-	repository repository.Repository,
+	queue queue.Queue,
 	fetcher fetcher.FetcherHTTP,
 ) crawler.Crawler {
 	return &Crawler{
-		repository: repository,
-		fetcher:    fetcher,
-		fp:         gofeed.NewParser(),
+		fetcher: fetcher,
+		queue:   queue,
+		fp:      gofeed.NewParser(),
 	}
 }
 
