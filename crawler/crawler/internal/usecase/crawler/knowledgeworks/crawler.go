@@ -64,7 +64,7 @@ func (t *Crawler) Parse(ctx context.Context, r io.Reader, _ crawler.CrawlerInput
 func (t *Crawler) Publish(ctx context.Context, _ crawler.CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
 	for _, d := range data {
 		article := d.(*note.TimeSeriesDataNoteArticle)
-		if err := t.queue.PublishCrawlEvent(ctx, "knowledgeworks", crawler.CrawlerInputData{
+		if err := t.queue.PublishCrawlEvent(ctx, "knowledgework", crawler.CrawlerInputData{
 			"URL": article.URL,
 		}); err != nil {
 			return terrors.Wrap(err)
