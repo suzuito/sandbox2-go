@@ -38,7 +38,6 @@ func main() {
 		clog.L.Errorf(ctx, "%+v", err)
 		os.Exit(1)
 	}
-	// crawlerID := goconnpass.CrawlerID
 	crawlerID := crawler.CrawlerID(*crawlerIDString)
 	crawlerInputData := crawler.CrawlerInputData{}
 	if err := json.Unmarshal([]byte(*crawlerInputDataString), &crawlerInputData); err != nil {
