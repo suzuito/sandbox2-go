@@ -9,7 +9,7 @@ if [ x"$version" = "x" ]; then
     exit 1
 fi
 
-if ! [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+if ! [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
     echo "Invalid version ${version}"
     exit 2
 fi
