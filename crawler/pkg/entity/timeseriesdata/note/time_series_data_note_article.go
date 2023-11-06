@@ -11,7 +11,10 @@ import (
 // ex) https://note.com/knowledgework/n/n46b7881a16a6
 type TimeSeriesDataNoteArticle struct {
 	URL            string
+	Title          string
+	Description    string
 	ArticleContent string
+	ImageURL       string
 	PublishedAt    time.Time
 	Tags           []TimeSeriesDataNoteArticleTag
 }

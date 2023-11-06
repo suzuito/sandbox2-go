@@ -23,6 +23,12 @@ func (t *Parser) Parse(
 		return nil, terrors.Wrap(err)
 	}
 	article := TimeSeriesDataNoteArticle{}
+	// Title
+	selTitle := doc.Find("title").First()
+	if selTitle == nil {
+		return nil, terrors.Wrapf("Cannot find title tag")
+	}
+	article.Title = selTitle.Text()
 	// URL
 	selCanonical := doc.Find("link[rel=canonical]")
 	if selCanonical.Length() <= 0 {
@@ -33,12 +39,21 @@ func (t *Parser) Parse(
 		return nil, terrors.Wrapf("Cannot find href attr of link[rel=canonical] tag")
 	}
 	article.URL = hrefURLString
+	// ImageURL
+	article.ImageURL = doc.Find("meta[property='og:image']").First().AttrOr("content", "")
 	// ArticleContent
 	selArticleContent := doc.Find(".p-article__content")
 	if selArticleContent.Length() <= 0 {
 		return nil, terrors.Wrapf("Cannot find html tag of .p-article__content")
 	}
 	article.ArticleContent = selArticleContent.First().Text()
+	// Description
+	selDescription := doc.Find("meta[name=description]").First()
+	if selDescription == nil {
+		article.Description = article.ArticleContent[:100]
+	} else {
+		article.Description = selDescription.AttrOr("content", article.ArticleContent[:100])
+	}
 	// PublishedAt
 	selArticlePublishedAt := doc.Find(".o-noteContentHeader__info time")
 	if selArticlePublishedAt.Length() <= 0 {
