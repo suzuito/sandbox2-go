@@ -7,7 +7,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goblog"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goconnpass"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/golangweekly"
-	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworks"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworkblogs"
 )
 
 func (t *UsecaseImpl) StartPipelinePeriodically(
@@ -19,7 +19,7 @@ func (t *UsecaseImpl) StartPipelinePeriodically(
 		goblog.CrawlerID,
 		goconnpass.CrawlerID,
 		golangweekly.CrawlerID,
-		knowledgeworks.CrawlerID,
+		knowledgeworkblogs.CrawlerID,
 	)
 	for _, crw := range crawlers {
 		t.L.Infof(ctx, "Start %s (%s)", crw.ID(), crw.Name())

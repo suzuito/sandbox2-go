@@ -1,4 +1,4 @@
-package knowledgeworks
+package knowledgeworkblogs
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata/note"
 )
 
-const CrawlerID crawler.CrawlerID = "knowledgeworks"
+const CrawlerID crawler.CrawlerID = "knowledgeworkblogs"
 
 type Crawler struct {
 	fetcher fetcher.FetcherHTTP
@@ -64,7 +64,7 @@ func (t *Crawler) Parse(ctx context.Context, r io.Reader, _ crawler.CrawlerInput
 func (t *Crawler) Publish(ctx context.Context, _ crawler.CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
 	for _, d := range data {
 		article := d.(*note.TimeSeriesDataNoteArticle)
-		if err := t.queue.PublishCrawlEvent(ctx, "knowledgework", crawler.CrawlerInputData{
+		if err := t.queue.PublishCrawlEvent(ctx, "knowledgeworkblog", crawler.CrawlerInputData{
 			"URL": article.URL,
 		}); err != nil {
 			return terrors.Wrap(err)

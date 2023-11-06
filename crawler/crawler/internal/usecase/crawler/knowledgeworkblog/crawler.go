@@ -1,4 +1,4 @@
-package knowledgework
+package knowledgeworkblog
 
 import (
 	"context"
@@ -17,7 +17,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata/note"
 )
 
-const CrawlerID crawler.CrawlerID = "knowledgework"
+const CrawlerID crawler.CrawlerID = "knowledgeworkblog"
 
 type Crawler struct {
 	repository repository.Repository
