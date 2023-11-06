@@ -69,13 +69,8 @@ func (t *Crawler) Parse(ctx context.Context, r io.Reader, input crawler.CrawlerI
 		return nil, terrors.Wrap(err)
 	}
 	hasGolangTag := slices.ContainsFunc(article.Tags, func(tag note.TimeSeriesDataNoteArticleTag) bool {
-		if strings.ToLower(tag.Name) == "go" {
-			return true
-		}
-		if strings.ToLower(tag.Name) == "golang" {
-			return true
-		}
-		if strings.ToLower(tag.Name) == "go言語" {
+		name := strings.ToLower(tag.Name)
+		if name == "go" || name == "golang" || name == "go言語" {
 			return true
 		}
 		return false
