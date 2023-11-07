@@ -64,7 +64,7 @@ func (t *Crawler) Fetch(ctx context.Context, w io.Writer, input crawler.CrawlerI
 	return terrors.Wrap(t.fetcher.DoRequest(ctx, request, w))
 }
 
-func (t *Crawler) Parse(ctx context.Context, r io.Reader, input crawler.CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error) {
+func (t *Crawler) Parse(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error) {
 	parser := note.Parser{}
 	article, err := parser.Parse(ctx, r)
 	if err != nil {

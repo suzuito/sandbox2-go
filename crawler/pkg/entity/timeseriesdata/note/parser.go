@@ -10,6 +10,13 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
+func subString(s string, n int) string {
+	if len(s) > n {
+		return s[:n]
+	}
+	return s
+}
+
 // Parser for article on note (note.com)
 // ex) https://note.com/knowledgework/n/n46b7881a16a6
 type Parser struct{}
@@ -50,9 +57,9 @@ func (t *Parser) Parse(
 	// Description
 	selDescription := doc.Find("meta[name=description]").First()
 	if selDescription == nil {
-		article.Description = article.ArticleContent[:100]
+		article.Description = subString(article.ArticleContent, 100)
 	} else {
-		article.Description = selDescription.AttrOr("content", article.ArticleContent[:100])
+		article.Description = selDescription.AttrOr("content", subString(article.ArticleContent, 100))
 	}
 	// PublishedAt
 	selArticlePublishedAt := doc.Find(".o-noteContentHeader__info time")
