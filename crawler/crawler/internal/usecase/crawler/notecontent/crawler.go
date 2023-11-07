@@ -75,23 +75,6 @@ func (t *Crawler) Parse(ctx context.Context, r io.Reader, input crawler.CrawlerI
 		returned = append(returned, article)
 	}
 	return returned, nil
-	/*
-	   	hasGolangTag := slices.ContainsFunc(article.Tags, func(tag note.TimeSeriesDataNoteArticleTag) bool {
-	   		name := strings.ToLower(tag.Name)
-	   		if name == "go" || name == "golang" || name == "go言語" {
-	   			return true
-	   		}
-	   		return false
-	   	})
-
-	   returned := []timeseriesdata.TimeSeriesData{}
-
-	   	if hasGolangTag {
-	   		returned = append(returned, article)
-	   	}
-
-	   return returned, nil
-	*/
 }
 
 func (t *Crawler) Publish(ctx context.Context, _ crawler.CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error {
