@@ -12,6 +12,11 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/internal/constant"
 )
 
+func TestSubString(t *testing.T) {
+	assert.Equal(t, "ab", subString("abc", 2))
+	assert.Equal(t, "a", subString("a", 2))
+}
+
 func TestParse(t *testing.T) {
 	testCases := []struct {
 		desc        string
@@ -63,6 +68,63 @@ func TestParse(t *testing.T) {
 			expected: TimeSeriesDataNoteArticle{
 				Title:          "title1",
 				Description:    "desc1",
+				URL:            "https://www.example.com/v1",
+				ArticleContent: "\n\t\t\t\t\t\tThis is content\n\t\t\t\t\t",
+				ImageURL:       "https://www.example.com/v2",
+				PublishedAt:    time.Date(2023, time.September, 29, 15, 0, 0, 0, constant.JST),
+				Tags: []TimeSeriesDataNoteArticleTag{
+					{Name: "デザイン"},
+					{Name: "デザイナー"},
+					{Name: "ナレッジワーク"},
+				},
+			},
+		},
+		{
+			desc: `Success
+			Get content as a description if tag having 'meta[name=description]' is not found
+			`,
+			inputR: bytes.NewBufferString(`
+			<!doctype html>
+			<html data-n-head-ssr lang="ja" data-n-head="%7B%22lang%22:%7B%22ssr%22:%22ja%22%7D%7D">
+			<head>
+				<title>title1</title>
+				<link data-n-head="ssr" rel="canonical" href="https://www.example.com/v1">
+				<!-- meta data-n-head="ssr" data-hid="description" name="description" content="desc1" -->
+				<meta data-n-head="ssr" data-hid="og:image" property="og:image" content="https://www.example.com/v2">
+			</head>
+			<body>
+				<div class="o-noteContentHeader__info">
+					<div class="o-noteContentHeader__name">
+						<time datetime="2023-09-29T15:00:00.000+09:00">2023年9月29日 15:00</time>
+					</div>
+					<ul id="tagListBody" class="m-tagList__body">
+						<li tabindex="-1" class="m-tagList__item" style="display:;">
+							<div class="a-tag__label">
+								#デザイン
+								<!---->
+							</div>
+						</li>
+						<li tabindex="-1" class="m-tagList__item" style="display:;">
+							<div class="a-tag__label">
+								#デザイナー
+								<!---->
+							</div>
+						</li>
+						<li tabindex="-1" class="m-tagList__item" style="display:;">
+							<div class="a-tag__label">
+								#ナレッジワーク
+							</div>
+						</li>
+					</ul>
+					<div class="p-article__content" data-v-c5502208>
+						This is content
+					</div>
+			</body>
+			</html>
+			`),
+			expected: TimeSeriesDataNoteArticle{
+				Title:          "title1",
+				Description:    "\n\t\t\t\t\t\tThis is content\n\t\t\t\t\t",
 				URL:            "https://www.example.com/v1",
 				ArticleContent: "\n\t\t\t\t\t\tThis is content\n\t\t\t\t\t",
 				ImageURL:       "https://www.example.com/v2",

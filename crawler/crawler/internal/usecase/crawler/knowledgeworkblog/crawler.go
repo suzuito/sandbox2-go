@@ -1,9 +1,6 @@
 package knowledgeworkblog
 
 import (
-	"slices"
-	"strings"
-
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/notecontent"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
@@ -21,15 +18,6 @@ func NewCrawler(
 		CrawlerID,
 		repository,
 		fetcher,
-		func(article *note.TimeSeriesDataNoteArticle) bool {
-			hasGolangTag := slices.ContainsFunc(article.Tags, func(tag note.TimeSeriesDataNoteArticleTag) bool {
-				name := strings.ToLower(tag.Name)
-				if name == "go" || name == "golang" || name == "go言語" {
-					return true
-				}
-				return false
-			})
-			return hasGolangTag
-		},
+		note.HasGolangTag,
 	)
 }
