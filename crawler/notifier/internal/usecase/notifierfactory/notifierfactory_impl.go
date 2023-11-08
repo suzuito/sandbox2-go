@@ -10,6 +10,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/notifier/internal/usecase/notifier/govillageblogfeed"
 	"github.com/suzuito/sandbox2-go/crawler/notifier/internal/usecase/notifier/govillageconnpassevent"
 	"github.com/suzuito/sandbox2-go/crawler/notifier/internal/usecase/notifier/govillagegolangweekly"
+	"github.com/suzuito/sandbox2-go/crawler/notifier/internal/usecase/notifier/govillagenote"
 )
 
 type NotifierFactoryImpl struct {
@@ -74,6 +75,15 @@ func NewDefaultNotifierFactoryImpl(
 					`Crawler/TimeSeriesData/golangweekly/.+$`,
 				},
 				Notifier: govillagegolangweekly.NewNotifier(
+					discordGoSession,
+					goVillageDiscordChannelIDNews,
+				),
+			},
+			{
+				DocPathFirestoreMatchers: []string{
+					`Crawler/TimeSeriesData/knowledgeworkblog/.+$`,
+				},
+				Notifier: govillagenote.NewNotifier(
 					discordGoSession,
 					goVillageDiscordChannelIDNews,
 				),

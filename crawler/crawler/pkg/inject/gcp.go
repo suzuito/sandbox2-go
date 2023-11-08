@@ -36,11 +36,13 @@ func NewUsecaseGCP(ctx context.Context) (usecase.Usecase, error) {
 		return nil, terrors.Wrap(err)
 	}
 	repository := gcp.NewRepository(fcli, "Crawler")
+	queue := gcp.NewQueue(pcli, "gcf-CrawlerCrawl")
 	u := internal_usecase.UsecaseImpl{
-		Repository: gcp.NewRepository(fcli, "Crawler"),
-		Queue:      gcp.NewQueue(pcli, "gcf-CrawlerCrawl"),
+		Repository: repository,
+		Queue:      queue,
 		CrawlerFactory: crawlerfactory.NewDefaultCrawlerFactoryImpl(
 			repository,
+			queue,
 			web.NewFetcherHTTP(http.DefaultClient),
 		),
 		L: clog.L,

@@ -29,11 +29,13 @@ func NewUsecaseLocal(ctx context.Context) (*usecase.UsecaseImpl, error) {
 	}
 	pcli, err := pubsub.NewClient(ctx, projectID)
 	repository := gcp.NewRepository(fcli, "Crawler")
+	queue := gcp.NewQueue(pcli, "gcf-CrawlerCrawl")
 	u := usecase.UsecaseImpl{
-		Repository: gcp.NewRepository(fcli, "Crawler"),
-		Queue:      gcp.NewQueue(pcli, "gcf-CrawlerCrawl"),
+		Repository: repository,
+		Queue:      queue,
 		CrawlerFactory: crawlerfactory.NewDefaultCrawlerFactoryImpl(
 			repository,
+			queue,
 			web.NewFetcherHTTP(http.DefaultClient),
 		),
 		L: clog.L,

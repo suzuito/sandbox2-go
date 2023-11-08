@@ -9,7 +9,10 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goblog"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goconnpass"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/golangweekly"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworkblog"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworkblogs"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/queue"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 )
 
@@ -50,6 +53,7 @@ func newCrawlerFactoryImpl(crawlers []crawler.Crawler) *CrawlerFactoryImpl {
 
 func NewDefaultCrawlerFactoryImpl(
 	repository repository.Repository,
+	queue queue.Queue,
 	fetcherHTTP fetcher.FetcherHTTP,
 ) *CrawlerFactoryImpl {
 	return newCrawlerFactoryImpl(
@@ -57,6 +61,8 @@ func NewDefaultCrawlerFactoryImpl(
 			goblog.NewCrawler(repository, fetcherHTTP),
 			goconnpass.NewCrawler(repository, fetcherHTTP),
 			golangweekly.NewCrawler(repository, fetcherHTTP),
+			knowledgeworkblogs.NewCrawler(queue, fetcherHTTP),
+			knowledgeworkblog.NewCrawler(repository, fetcherHTTP),
 		},
 	)
 }
