@@ -158,7 +158,7 @@ func TestParse(t *testing.T) {
 				return true
 			},
 			inputR:      bytes.NewBufferString(`hoge`),
-			expectedErr: `Cannot find link\[rel=canonical\] tag`,
+			expectedErr: `Cannot find title tag`,
 		},
 	}
 	for _, tC := range testCases {
