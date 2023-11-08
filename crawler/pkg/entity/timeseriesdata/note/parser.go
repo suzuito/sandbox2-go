@@ -8,6 +8,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/crawler/internal/constant"
 )
 
 func subString(s string, n int) string {
@@ -33,6 +34,9 @@ func (t *Parser) Parse(
 	// Title
 	selTitle := doc.Find("title").First()
 	if selTitle == nil {
+		return nil, terrors.Wrapf("Cannot find title tag")
+	}
+	if len(selTitle.Text()) <= 0 {
 		return nil, terrors.Wrapf("Cannot find title tag")
 	}
 	article.Title = selTitle.Text()
@@ -74,7 +78,7 @@ func (t *Parser) Parse(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	article.PublishedAt = publishedAt
+	article.PublishedAt = publishedAt.In(constant.JST)
 	// Tags
 	selTags := doc.Find(".m-tagList__item")
 	selTags.Each(func(i int, s *goquery.Selection) {
