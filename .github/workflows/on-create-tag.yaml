@@ -1,0 +1,13 @@
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  on-create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh api -X POST /repos/suzuito/sandbox2-go-gcf/dispatches -f event_type=create_pr_to_update_dependants_go_package -F 'client_payload[version]'='${{  github.ref_name }}' -F 'client_payload[package]'='github.com/suzuito/sandbox2-go'
+        env:
+          GH_TOKEN: ${{ github.token }}
