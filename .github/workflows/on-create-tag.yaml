@@ -1,7 +1,8 @@
 on:
   push:
     tags:
-      - 'v**'
+      - 'v*.*.*'
+      - 'v*.*.*-*.*'
 
 jobs:
   on-create-tag:
