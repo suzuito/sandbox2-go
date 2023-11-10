@@ -14,6 +14,7 @@ require (
 	github.com/go-playground/validator/v10 v10.15.5
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v50 v50.2.0
+	github.com/hashicorp/go-version v1.6.0
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mmcdole/gofeed v1.2.1
@@ -25,7 +26,7 @@ require (
 	go.abhg.dev/goldmark/toc v0.7.0
 	go.uber.org/mock v0.3.0
 	golang.org/x/oauth2 v0.13.0
-	google.golang.org/api v0.149.0
+	google.golang.org/api v0.150.0
 	google.golang.org/grpc v1.59.0
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/gorm v1.25.5
@@ -57,7 +58,6 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -75,7 +75,7 @@ require (
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sync v0.4.0 // indirect
+	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
@@ -83,7 +83,7 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20231016165738-49dd2c1f3d0b // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231016165738-49dd2c1f3d0b // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20231016165738-49dd2c1f3d0b // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231030173426-d783a09b4405 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
