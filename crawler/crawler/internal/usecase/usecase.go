@@ -8,8 +8,9 @@ import (
 )
 
 type UsecaseImpl struct {
-	Repository     repository.Repository
-	Queue          queue.Queue
-	CrawlerFactory crawlerfactory.CrawlerFactory
-	L              clog.Logger
+	Repository      repository.Repository
+	Queue           queue.Queue
+	CrawlerFactory  crawlerfactory.CrawlerFactory
+	CrawlerFactory2 crawlerfactory.CrawlerFactory2
+	L               clog.Logger
 }
