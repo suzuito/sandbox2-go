@@ -2,17 +2,22 @@ package crawlerfactory
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/entity/crawler"
-	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/fetcher"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goblog"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/goconnpass"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/golangweekly"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworkblog"
+	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/crawler/knowledgeworkblogs"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/queue"
 	"github.com/suzuito/sandbox2-go/crawler/crawler/internal/usecase/repository"
 )
 
 type CrawlerFactory2Impl struct {
-	crawlers map[crawler.CrawlerID]crawler.Crawler2
+	crawlers map[crawler.CrawlerID]*crawler.Crawler2
 }
 
 func (t *CrawlerFactory2Impl) GetCrawler(ctx context.Context, crawlerID crawler.CrawlerID) (*crawler.Crawler2, error) {
@@ -20,7 +25,7 @@ func (t *CrawlerFactory2Impl) GetCrawler(ctx context.Context, crawlerID crawler.
 	if !exist {
 		return nil, terrors.Wrapf("Crawler %s is not found", crawlerID)
 	}
-	return &crawler, nil
+	return crawler, nil
 }
 
 func (t *CrawlerFactory2Impl) GetCrawlers(ctx context.Context, crawlerIDs ...crawler.CrawlerID) []*crawler.Crawler2 {
@@ -31,14 +36,14 @@ func (t *CrawlerFactory2Impl) GetCrawlers(ctx context.Context, crawlerIDs ...cra
 			clog.L.Errorf(ctx, "crawlerID(%s) is not found", crawlerID)
 			continue
 		}
-		crawlers = append(crawlers, &crawler)
+		crawlers = append(crawlers, crawler)
 	}
 	return crawlers
 }
 
-func newCrawlerFactory2Impl(crawlers []crawler.Crawler2) *CrawlerFactory2Impl {
+func newCrawlerFactory2Impl(crawlers []*crawler.Crawler2) *CrawlerFactory2Impl {
 	factory := CrawlerFactory2Impl{
-		crawlers: map[crawler.CrawlerID]crawler.Crawler2{},
+		crawlers: map[crawler.CrawlerID]*crawler.Crawler2{},
 	}
 	for _, crawler := range crawlers {
 		factory.crawlers[crawler.ID] = crawler
@@ -47,11 +52,22 @@ func newCrawlerFactory2Impl(crawlers []crawler.Crawler2) *CrawlerFactory2Impl {
 }
 
 func NewDefaultCrawlerFactory2Impl(
+	httpClient *http.Client,
 	repository repository.Repository,
 	queue queue.Queue,
-	fetcherHTTP fetcher.FetcherHTTP,
 ) *CrawlerFactory2Impl {
 	return newCrawlerFactory2Impl(
-		[]crawler.Crawler2{},
+		[]*crawler.Crawler2{
+			goblog.NewCrawler2(repository),
+			goconnpass.NewCrawler2(repository),
+			golangweekly.NewCrawler2(repository),
+			knowledgeworkblogs.NewCrawler2(
+				httpClient,
+				queue,
+			),
+			knowledgeworkblog.NewCrawler2(
+				
+			)
+		},
 	)
 }

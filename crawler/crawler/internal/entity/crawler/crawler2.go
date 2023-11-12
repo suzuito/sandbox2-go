@@ -8,6 +8,7 @@ import (
 )
 
 type Crawler2 struct {
+	ID        CrawlerID
 	Fetcher   Fetcher
 	Parser    Parser
 	Publisher Publisher
@@ -18,7 +19,7 @@ type Fetcher interface {
 }
 
 type Parser interface {
-	Do(ctx context.Context, r io.Writer, input CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error)
+	Do(ctx context.Context, r io.Reader, input CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error)
 }
 
 type Publisher interface {
