@@ -87,7 +87,7 @@ Run crawler app
 Run notifier app
 
 ```bash
-go run internal/crawler/crawler/cmd/local/crawl/*.go
+go run ./crawler/cmd/crawl/main.go -crawler-id knowledgeworkblog -crawler-input-data '{"URL":"https://note.com/knowledgework/n/n4d7b97ff802c"}'
 go run internal/crawler/notifier/cmd/local/notify/*.go
 ```
 
