@@ -1,9 +1,10 @@
-package web
+package fetcherimpl
 
 import (
 	"context"
 	"io"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
@@ -11,18 +12,37 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
-type FetcherHTTPStatic struct {
+type FetcherHTTP struct {
 	Cli                *http.Client
-	Req                *http.Request
 	StatusCodesSuccess []int
 }
 
-func (t *FetcherHTTPStatic) ID() crawler.FetcherID {
-	return "fetcher_http_static"
+func (t *FetcherHTTP) ID() crawler.FetcherID {
+	return crawler.FetcherID("fetcher_http")
 }
 
-func (t *FetcherHTTPStatic) Do(ctx context.Context, w io.Writer, _ crawler.CrawlerInputData) error {
-	res, err := t.Cli.Do(t.Req)
+func (t *FetcherHTTP) Do(ctx context.Context, w io.Writer, input crawler.CrawlerInputData) error {
+	urlString, exists := input["URL"]
+	if !exists {
+		return terrors.Wrapf("input[\"URL\"] not found in input")
+	}
+	method, exists := input["Method"]
+	if !exists {
+		method = http.MethodGet
+	}
+	methodAsString := ""
+	switch v := method.(type) {
+	case string:
+		methodAsString = v
+	default:
+		return terrors.Wrapf("input[\"Method\"] must be string in input")
+	}
+	u, err := url.Parse(urlString.(string))
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	req, _ := http.NewRequestWithContext(ctx, methodAsString, u.String(), nil)
+	res, err := t.Cli.Do(req)
 	if err != nil {
 		return terrors.Wrap(err)
 	}
@@ -38,29 +58,16 @@ func (t *FetcherHTTPStatic) Do(ctx context.Context, w io.Writer, _ crawler.Crawl
 	return nil
 }
 
-func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, args *factory.NewFuncFetcherArgument) (crawler.Fetcher, error) {
-	f := FetcherHTTPStatic{}
+func NewFetcherHTTP(def *crawler.FetcherDefinition, args *factory.NewFuncFetcherArgument) (crawler.Fetcher, error) {
+	f := FetcherHTTP{}
 	if f.ID() != def.ID {
 		return nil, factory.ErrNoMatchedFetcherID
 	}
 	f.Cli = args.HTTPClient
-	urlString, err := crawler.GetFromArgumentDefinition[string](def.Argument, "URL")
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	method, err := crawler.GetFromArgumentDefinition[string](def.Argument, "Method")
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
 	statusCodesSuccess, err := crawler.GetFromArgumentDefinition[[]int](def.Argument, "StatusCodesSuccess")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	req, err := http.NewRequest(method, urlString, nil)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	f.Req = req
 	f.StatusCodesSuccess = statusCodesSuccess
 	return &f, nil
 }

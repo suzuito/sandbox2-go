@@ -2,11 +2,11 @@ package factorynewfuncs
 
 import (
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/web"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/fetcherimpl"
 )
 
 var NewFuncsFetcher = []factory.NewFuncFetcher{
-	web.NewFetcherHTTP,
-	web.NewFetcherHTTPStatic,
-	web.NewFetcherHTTPConnpass,
+	fetcherimpl.NewFetcherHTTP,
+	fetcherimpl.NewFetcherHTTPStatic,
+	fetcherimpl.NewFetcherHTTPConnpass,
 }

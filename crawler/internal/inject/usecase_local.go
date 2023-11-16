@@ -42,12 +42,13 @@ func NewUsecaseLocal(ctx context.Context) (usecase.Usecase, error) {
 	}
 	logger := slog.New(&slogHandler)
 	timeSeriesDataRepository := infra.NewTimeSeriesDataRepository(fcli, "Crawler")
+	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(pcli, "gcf-CrawlerCrawl")
 	httpClient := http.DefaultClient
 	u := usecase.UsecaseImpl{
 		L:                        logger,
-		TriggerCrawlerQueue:      infra.NewTriggerCrawlerQueue(pcli, "gcf-CrawlerCrawl"),
+		TriggerCrawlerQueue:      triggerCrawlerQueue,
 		CrawlerRepository:        infra.NewCrawlerRepository(crawlerdefinitions.AvailableCrawlers),
-		CrawlerFactory:           infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository),
+		CrawlerFactory:           infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository, triggerCrawlerQueue),
 		TimeSeriesDataRepository: timeSeriesDataRepository,
 	}
 	return &u, nil

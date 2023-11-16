@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
 
 var Def = crawler.CrawlerDefinition{
@@ -27,7 +28,7 @@ var Def = crawler.CrawlerDefinition{
 	PublisherDefinition: crawler.PublisherDefinition{
 		ID: "timeseriesdatarepository",
 		Argument: crawler.ArgumentDefinition{
-			"CrawlerID": "knowledgeworkblog",
+			"TimeSeriesDataBaseID": timeseriesdata.TimeSeriesDataBaseID("knowledgeworkblog"),
 		},
 	},
 }

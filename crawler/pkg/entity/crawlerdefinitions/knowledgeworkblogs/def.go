@@ -20,9 +20,9 @@ var Def = crawler.CrawlerDefinition{
 		ID: "rss",
 	},
 	PublisherDefinition: crawler.PublisherDefinition{
-		ID: "enqueue_crawl",
+		ID: "enqueuecrawl",
 		Argument: crawler.ArgumentDefinition{
-			"CrawlerID": "knowledgeworkblog",
+			"CrawlerID": crawler.CrawlerID("knowledgeworkblog"),
 		},
 	},
 }

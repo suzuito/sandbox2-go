@@ -1,4 +1,4 @@
-package web
+package fetcherimpl
 
 import (
 	"context"

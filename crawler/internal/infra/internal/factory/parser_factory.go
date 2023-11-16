@@ -20,7 +20,7 @@ func (t *ParserFactory) Get(ctx context.Context, def *crawler.ParserDefinition) 
 	for _, newFunc := range t.NewFuncs {
 		f, err := newFunc(def, &NewFuncParserArgument{})
 		if err != nil {
-			if errors.Is(err, ErrNoMatchedFetcherID) {
+			if errors.Is(err, ErrNoMatchedParserID) {
 				continue
 			}
 			return nil, terrors.Wrap(err)

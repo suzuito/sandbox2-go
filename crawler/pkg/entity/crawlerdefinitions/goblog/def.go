@@ -12,7 +12,7 @@ var Def = crawler.CrawlerDefinition{
 	FetcherDefinition: crawler.FetcherDefinition{
 		ID: "fetcher_http_static",
 		Argument: crawler.ArgumentDefinition{
-			"URL":                "https://go.dev",
+			"URL":                "https://go.dev/blog",
 			"Method":             http.MethodGet,
 			"StatusCodesSuccess": []int{http.StatusOK},
 		},
