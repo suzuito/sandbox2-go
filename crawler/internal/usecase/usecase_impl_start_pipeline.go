@@ -10,7 +10,7 @@ import (
 func (t *UsecaseImpl) StartPipelinePeriodically(
 	ctx context.Context,
 ) error {
-	t.L.Infof(ctx, "StartPipelinePeriodically")
+	t.L.InfoContext(ctx, "StartPipelinePeriodically")
 	crawlers, err := t.CrawlerRepository.GetCrawlerDefinitions(
 		ctx,
 		// goblog.CrawlerID,
@@ -22,9 +22,10 @@ func (t *UsecaseImpl) StartPipelinePeriodically(
 		return terrors.Wrap(err)
 	}
 	for _, crw := range crawlers {
-		t.L.Infof(ctx, "Start %s (%s)", crw.ID)
+		loggerPerCrawler := t.L.With("crawlerID", crw.ID)
+		loggerPerCrawler.InfoContext(ctx, "PublishCrawlEvent")
 		if err := t.TriggerCrawlerQueue.PublishCrawlEvent(ctx, crw.ID, crawler.CrawlerInputData{}); err != nil {
-			t.L.Errorf(ctx, "PublishCrawlEvent of '%s' is failed : %+v", crw.ID, err)
+			loggerPerCrawler.ErrorContext(ctx, "Failed to PublishCrawlEvent", "err", err)
 			continue
 		}
 	}

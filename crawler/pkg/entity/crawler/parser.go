@@ -10,5 +10,6 @@ import (
 type ParserID string
 
 type Parser interface {
+	ID() ParserID
 	Do(ctx context.Context, r io.Reader, input CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error)
 }

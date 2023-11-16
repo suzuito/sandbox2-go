@@ -9,5 +9,6 @@ import (
 type PublisherID string
 
 type Publisher interface {
+	ID() PublisherID
 	Do(ctx context.Context, input CrawlerInputData, data ...timeseriesdata.TimeSeriesData) error
 }

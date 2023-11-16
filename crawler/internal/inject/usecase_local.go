@@ -2,7 +2,9 @@ package inject
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/pubsub"
@@ -29,13 +31,24 @@ func NewUsecaseLocal(ctx context.Context) (usecase.Usecase, error) {
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	slogHandler := clog.CustomHandler{
+		Handler: slog.NewTextHandler(
+			os.Stdout,
+			&slog.HandlerOptions{
+				Level:     slog.LevelDebug,
+				AddSource: true,
+			},
+		),
+	}
+	logger := slog.New(&slogHandler)
+	timeSeriesDataRepository := infra.NewTimeSeriesDataRepository(fcli, "Crawler")
 	httpClient := http.DefaultClient
 	u := usecase.UsecaseImpl{
-		L:                        clog.L,
+		L:                        logger,
 		TriggerCrawlerQueue:      infra.NewTriggerCrawlerQueue(pcli, "gcf-CrawlerCrawl"),
 		CrawlerRepository:        infra.NewCrawlerRepository(crawlerdefinitions.AvailableCrawlers),
-		CrawlerFactory:           infra.NewCrawlerFactory(httpClient),
-		TimeSeriesDataRepository: infra.NewTimeSeriesDataRepository(fcli, "Crawler"),
+		CrawlerFactory:           infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository),
+		TimeSeriesDataRepository: timeSeriesDataRepository,
 	}
 	return &u, nil
 }
