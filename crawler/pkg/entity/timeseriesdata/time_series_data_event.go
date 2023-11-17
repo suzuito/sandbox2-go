@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type TimeSeriesDataConnpassEvent struct {
+type TimeSeriesDataEvent struct {
 	EventID     int64
 	Title       string
 	Catch       string
@@ -17,18 +17,18 @@ type TimeSeriesDataConnpassEvent struct {
 	Address     string
 	Lat         float64
 	Lon         float64
-	Organizer   *TimeSeriesDataConnpassEventOrganizer
+	Organizer   *TimeSeriesDataEventOrganizer
 }
 
-func (t *TimeSeriesDataConnpassEvent) GetID() TimeSeriesDataID {
+func (t *TimeSeriesDataEvent) GetID() TimeSeriesDataID {
 	return TimeSeriesDataID(fmt.Sprintf("connpass-%d", t.EventID))
 }
 
-func (t *TimeSeriesDataConnpassEvent) GetPublishedAt() time.Time {
+func (t *TimeSeriesDataEvent) GetPublishedAt() time.Time {
 	return t.StartedAt
 }
 
-type TimeSeriesDataConnpassEventOrganizer struct {
+type TimeSeriesDataEventOrganizer struct {
 	Name     string
 	URL      string
 	ImageURL string

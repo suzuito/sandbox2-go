@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-func TestTimeSeriesDataConnpassEvent_GetID(t *testing.T) {
-	event := &TimeSeriesDataConnpassEvent{
+func TestTimeSeriesDataEvent_GetID(t *testing.T) {
+	event := &TimeSeriesDataEvent{
 		EventID: 12345,
 		Title:   "Sample Event",
 	}
@@ -17,9 +17,9 @@ func TestTimeSeriesDataConnpassEvent_GetID(t *testing.T) {
 	}
 }
 
-func TestTimeSeriesDataConnpassEvent_GetPublishedAt(t *testing.T) {
+func TestTimeSeriesDataEvent_GetPublishedAt(t *testing.T) {
 	date := time.Date(2023, 10, 14, 0, 0, 0, 0, time.UTC)
-	event := &TimeSeriesDataConnpassEvent{
+	event := &TimeSeriesDataEvent{
 		EventID:   12345,
 		Title:     "Sample Event",
 		StartedAt: date,

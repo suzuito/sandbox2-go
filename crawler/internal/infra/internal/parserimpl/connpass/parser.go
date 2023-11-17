@@ -56,7 +56,7 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 		} else {
 			description = doc.Text()
 		}
-		returned = append(returned, &timeseriesdata.TimeSeriesDataConnpassEvent{
+		returned = append(returned, &timeseriesdata.TimeSeriesDataEvent{
 			EventID:     event.EventID,
 			Title:       event.Title,
 			Catch:       event.Catch,
@@ -68,7 +68,7 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 			Address:     event.Address,
 			Lat:         lat,
 			Lon:         lon,
-			Organizer: &timeseriesdata.TimeSeriesDataConnpassEventOrganizer{
+			Organizer: &timeseriesdata.TimeSeriesDataEventOrganizer{
 				Name:     event.OwnerDisplayName,
 				URL:      fmt.Sprintf("https://connpass.com/%s", event.OwnerNickName),
 				ImageURL: "https://connpass.com/static/img/api/connpass_logo_4.png",

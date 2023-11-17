@@ -24,16 +24,16 @@ func (t *Notifier) ID() notifier.NotifierID {
 }
 
 func (t *Notifier) NewEmptyTimeSeriesData() timeseriesdata.TimeSeriesData {
-	return &timeseriesdata.TimeSeriesDataConnpassEvent{}
+	return &timeseriesdata.TimeSeriesDataEvent{}
 }
 
 func (t *Notifier) Notify(
 	ctx context.Context,
 	d timeseriesdata.TimeSeriesData,
 ) error {
-	event, ok := d.(*timeseriesdata.TimeSeriesDataConnpassEvent)
+	event, ok := d.(*timeseriesdata.TimeSeriesDataEvent)
 	if !ok {
-		return terrors.Wrapf("Cannot cast from timeseriesdata.TimeSeriesData to *timeseriesdata.TimeSeriesDataConnpassEvent")
+		return terrors.Wrapf("Cannot cast from timeseriesdata.TimeSeriesData to *timeseriesdata.TimeSeriesDataEvent")
 	}
 	colorCode, _ := strconv.ParseInt("FF0000", 16, 64)
 	loc, _ := time.LoadLocation("Asia/Tokyo")
