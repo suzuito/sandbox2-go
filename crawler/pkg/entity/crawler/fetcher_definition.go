@@ -1,6 +1,6 @@
 package crawler
 
-import "github.com/suzuito/sandbox2-go/crawler/pkg/argument"
+import "github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 
 type FetcherDefinition struct {
 	ID       FetcherID

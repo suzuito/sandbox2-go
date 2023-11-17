@@ -3,7 +3,7 @@ package goblog
 import (
 	"net/http"
 
-	"github.com/suzuito/sandbox2-go/crawler/pkg/argument"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
