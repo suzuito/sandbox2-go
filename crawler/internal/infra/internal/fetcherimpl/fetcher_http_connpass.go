@@ -9,6 +9,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
@@ -56,11 +57,11 @@ func (t *FetcherHTTPConnpass) Do(ctx context.Context, w io.Writer, _ crawler.Cra
 }
 
 func NewFetcherHTTPConnpass(def *crawler.FetcherDefinition, args *factory.NewFuncFetcherArgument) (crawler.Fetcher, error) {
-	days, err := crawler.GetFromArgumentDefinition[int](def.Argument, "Days")
+	days, err := argument.GetFromArgumentDefinition[int](def.Argument, "Days")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	query, err := crawler.GetFromArgumentDefinition[url.Values](def.Argument, "Query")
+	query, err := argument.GetFromArgumentDefinition[url.Values](def.Argument, "Query")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -9,13 +9,13 @@ import (
 func TestHasGolangTag(t *testing.T) {
 	testCases := []struct {
 		desc         string
-		inputArticle TimeSeriesDataNoteArticle
+		inputArticle NoteArticle
 		expected     bool
 	}{
 		{
 			desc: "go",
-			inputArticle: TimeSeriesDataNoteArticle{
-				Tags: []TimeSeriesDataNoteArticleTag{
+			inputArticle: NoteArticle{
+				Tags: []NoteArticleTag{
 					{Name: "GO"},
 				},
 			},
@@ -23,8 +23,8 @@ func TestHasGolangTag(t *testing.T) {
 		},
 		{
 			desc: "golang",
-			inputArticle: TimeSeriesDataNoteArticle{
-				Tags: []TimeSeriesDataNoteArticleTag{
+			inputArticle: NoteArticle{
+				Tags: []NoteArticleTag{
 					{Name: "Golang"},
 				},
 			},
@@ -32,8 +32,8 @@ func TestHasGolangTag(t *testing.T) {
 		},
 		{
 			desc: "golang",
-			inputArticle: TimeSeriesDataNoteArticle{
-				Tags: []TimeSeriesDataNoteArticleTag{
+			inputArticle: NoteArticle{
+				Tags: []NoteArticleTag{
 					{Name: "Go言語"},
 				},
 			},
@@ -41,8 +41,8 @@ func TestHasGolangTag(t *testing.T) {
 		},
 		{
 			desc: "GOO",
-			inputArticle: TimeSeriesDataNoteArticle{
-				Tags: []TimeSeriesDataNoteArticleTag{
+			inputArticle: NoteArticle{
+				Tags: []NoteArticleTag{
 					{Name: "GOO"},
 				},
 			},

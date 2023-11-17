@@ -3,6 +3,7 @@ package rss
 import (
 	"context"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -33,11 +34,21 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 			clog.L.Errorf(ctx, "%+v\n", err)
 			continue
 		}
-		data := timeseriesdata.TimeSeriesDataRSS{
-			GUID:        item.GUID,
+		data := timeseriesdata.TimeSeriesDataBlogFeed{
+			ID: timeseriesdata.TimeSeriesDataID(strings.Replace(
+				strings.Replace(item.GUID, ":", "-", -1),
+				"/",
+				"-",
+				-1,
+			)),
 			PublishedAt: publishedAt,
 			Title:       item.Title,
 			URL:         item.Link,
+			Author: &timeseriesdata.TimeSeriesDataBlogFeedAuthor{
+				Name:     "Golang Weekly",
+				URL:      "https://golangweekly.com/",
+				ImageURL: "https://golangweekly.com/images/gopher-keith-57.png",
+			},
 		}
 		returned = append(returned, &data)
 	}

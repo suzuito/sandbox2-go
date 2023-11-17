@@ -21,7 +21,7 @@ func TestParse(t *testing.T) {
 	testCases := []struct {
 		desc        string
 		inputR      io.Reader
-		expected    TimeSeriesDataNoteArticle
+		expected    NoteArticle
 		expectedErr string
 	}{
 		{
@@ -65,14 +65,14 @@ func TestParse(t *testing.T) {
 			</body>
 			</html>
 			`),
-			expected: TimeSeriesDataNoteArticle{
+			expected: NoteArticle{
 				Title:          "title1",
 				Description:    "desc1",
 				URL:            "https://www.example.com/v1",
 				ArticleContent: "\n\t\t\t\t\t\tThis is content\n\t\t\t\t\t",
 				ImageURL:       "https://www.example.com/v2",
 				PublishedAt:    time.Date(2023, time.September, 29, 15, 0, 0, 0, constant.JST),
-				Tags: []TimeSeriesDataNoteArticleTag{
+				Tags: []NoteArticleTag{
 					{Name: "デザイン"},
 					{Name: "デザイナー"},
 					{Name: "ナレッジワーク"},
@@ -122,14 +122,14 @@ func TestParse(t *testing.T) {
 			</body>
 			</html>
 			`),
-			expected: TimeSeriesDataNoteArticle{
+			expected: NoteArticle{
 				Title:          "title1",
 				Description:    "\n\t\t\t\t\t\tThis is content\n\t\t\t\t\t",
 				URL:            "https://www.example.com/v1",
 				ArticleContent: "\n\t\t\t\t\t\tThis is content\n\t\t\t\t\t",
 				ImageURL:       "https://www.example.com/v2",
 				PublishedAt:    time.Date(2023, time.September, 29, 15, 0, 0, 0, constant.JST),
-				Tags: []TimeSeriesDataNoteArticleTag{
+				Tags: []NoteArticleTag{
 					{Name: "デザイン"},
 					{Name: "デザイナー"},
 					{Name: "ナレッジワーク"},

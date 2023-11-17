@@ -19,4 +19,8 @@ type Usecase interface {
 	StartPipelinePeriodically(
 		ctx context.Context,
 	) error
+	NotifyOnGCF(
+		ctx context.Context,
+		fullPath string,
+	) error
 }

@@ -3,6 +3,7 @@ package notecontent
 import (
 	"context"
 	"io"
+	"strings"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
@@ -24,7 +25,23 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return []timeseriesdata.TimeSeriesData{d}, nil
+	blogFeed := timeseriesdata.TimeSeriesDataBlogFeed{}
+	blogFeed.ID = timeseriesdata.TimeSeriesDataID(strings.ReplaceAll(strings.ReplaceAll(d.URL, ":", "-"), "/", "-"))
+	blogFeed.Title = d.Title
+	blogFeed.Summary = d.Description
+	blogFeed.PublishedAt = d.PublishedAt
+	blogFeed.ArticleContent = d.ArticleContent
+	blogFeed.Thumbnail = &timeseriesdata.TimeSeriesDataBlogFeedThumbnail{
+		ImageURL: d.ImageURL,
+	}
+	blogFeed.URL = d.URL
+	blogFeed.Author = &timeseriesdata.TimeSeriesDataBlogFeedAuthor{
+		URL:  d.AuthorURL,
+		Name: d.AuthorName,
+	}
+	return []timeseriesdata.TimeSeriesData{
+		&blogFeed,
+	}, nil
 }
 
 func New(def *crawler.ParserDefinition, _ *factory.NewFuncParserArgument) (crawler.Parser, error) {

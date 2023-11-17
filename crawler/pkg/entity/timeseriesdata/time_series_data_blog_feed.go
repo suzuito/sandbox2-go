@@ -5,10 +5,14 @@ import (
 )
 
 type TimeSeriesDataBlogFeed struct {
-	ID          TimeSeriesDataID
-	PublishedAt time.Time
-	Title       string
-	URL         string
+	ID             TimeSeriesDataID
+	URL            string
+	PublishedAt    time.Time
+	Title          string
+	Summary        string
+	ArticleContent string
+	Thumbnail      *TimeSeriesDataBlogFeedThumbnail
+	Author         *TimeSeriesDataBlogFeedAuthor
 }
 
 func (t *TimeSeriesDataBlogFeed) GetID() TimeSeriesDataID {
@@ -17,4 +21,14 @@ func (t *TimeSeriesDataBlogFeed) GetID() TimeSeriesDataID {
 
 func (t *TimeSeriesDataBlogFeed) GetPublishedAt() time.Time {
 	return t.PublishedAt
+}
+
+type TimeSeriesDataBlogFeedThumbnail struct {
+	ImageURL string
+}
+
+type TimeSeriesDataBlogFeedAuthor struct {
+	URL      string
+	Name     string
+	ImageURL string
 }

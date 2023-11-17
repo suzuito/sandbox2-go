@@ -3,6 +3,7 @@ package goconnpass
 import (
 	"net/url"
 
+	"github.com/suzuito/sandbox2-go/crawler/pkg/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
@@ -11,7 +12,7 @@ var Def = crawler.CrawlerDefinition{
 	ID: "goconnpass",
 	FetcherDefinition: crawler.FetcherDefinition{
 		ID: "fetcher_http_connpass",
-		Argument: crawler.ArgumentDefinition{
+		Argument: argument.ArgumentDefinition{
 			"Query": url.Values{
 				"count": []string{"100"},
 				"keyword_or": []string{
@@ -28,7 +29,7 @@ var Def = crawler.CrawlerDefinition{
 	},
 	PublisherDefinition: crawler.PublisherDefinition{
 		ID: "timeseriesdatarepository",
-		Argument: crawler.ArgumentDefinition{
+		Argument: argument.ArgumentDefinition{
 			"TimeSeriesDataBaseID": timeseriesdata.TimeSeriesDataBaseID("goconnpass"),
 		},
 	},

@@ -12,4 +12,9 @@ type TimeSeriesDataRepository interface {
 		timeSeriesDataBaseID timeseriesdata.TimeSeriesDataBaseID,
 		timeSeriesData ...timeseriesdata.TimeSeriesData,
 	) error
+	GetTimeSeriesDataFromFullPathFirestore(
+		ctx context.Context,
+		fulPath string,
+		d timeseriesdata.TimeSeriesData,
+	) error
 }

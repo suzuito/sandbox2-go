@@ -9,6 +9,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
@@ -64,7 +65,7 @@ func NewFetcherHTTP(def *crawler.FetcherDefinition, args *factory.NewFuncFetcher
 		return nil, factory.ErrNoMatchedFetcherID
 	}
 	f.Cli = args.HTTPClient
-	statusCodesSuccess, err := crawler.GetFromArgumentDefinition[[]int](def.Argument, "StatusCodesSuccess")
+	statusCodesSuccess, err := argument.GetFromArgumentDefinition[[]int](def.Argument, "StatusCodesSuccess")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

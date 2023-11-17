@@ -52,6 +52,11 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 			PublishedAt: publishedAt,
 			Title:       title,
 			URL:         blogURL,
+			Author: &timeseriesdata.TimeSeriesDataBlogFeedAuthor{
+				Name:     "goblog",
+				URL:      "https://go.dev",
+				ImageURL: "https://go.dev/images/favicon-gopher.png",
+			},
 		}
 		returned = append(returned, &data)
 	})

@@ -8,6 +8,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
@@ -44,15 +45,15 @@ func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, args *factory.NewFuncF
 		return nil, factory.ErrNoMatchedFetcherID
 	}
 	f.Cli = args.HTTPClient
-	urlString, err := crawler.GetFromArgumentDefinition[string](def.Argument, "URL")
+	urlString, err := argument.GetFromArgumentDefinition[string](def.Argument, "URL")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	method, err := crawler.GetFromArgumentDefinition[string](def.Argument, "Method")
+	method, err := argument.GetFromArgumentDefinition[string](def.Argument, "Method")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	statusCodesSuccess, err := crawler.GetFromArgumentDefinition[[]int](def.Argument, "StatusCodesSuccess")
+	statusCodesSuccess, err := argument.GetFromArgumentDefinition[[]int](def.Argument, "StatusCodesSuccess")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -42,3 +42,19 @@ func (t *TimeSeriesDataRepository) SetTimeSeriesData(
 	}
 	return nil
 }
+
+func (t *TimeSeriesDataRepository) GetTimeSeriesDataFromFullPathFirestore(
+	ctx context.Context,
+	fullPath string,
+	d timeseriesdata.TimeSeriesData,
+) error {
+	doc := t.Cli.Doc(fullPath)
+	snp, err := doc.Get(ctx)
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	if err := snp.DataTo(d); err != nil {
+		return terrors.Wrap(err)
+	}
+	return nil
+}

@@ -13,5 +13,7 @@ type UsecaseImpl struct {
 	TriggerCrawlerQueue      queue.TriggerCrawlerQueue
 	CrawlerRepository        repository.CrawlerRepository
 	CrawlerFactory           factory.CrawlerFactory
+	NotifierRepository       repository.NotifierRepository
+	NotifierFactory          factory.NotifierFactory
 	TimeSeriesDataRepository repository.TimeSeriesDataRepository
 }

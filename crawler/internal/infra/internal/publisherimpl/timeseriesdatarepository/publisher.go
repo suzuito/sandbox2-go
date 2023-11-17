@@ -6,6 +6,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/repository"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
@@ -31,7 +32,7 @@ func New(def *crawler.PublisherDefinition, arg *factory.NewFuncPublisherArgument
 		return nil, factory.ErrNoMatchedPublisherID
 	}
 	var err error
-	publisher.TimeSeriesDataBaseID, err = crawler.GetFromArgumentDefinition[timeseriesdata.TimeSeriesDataBaseID](def.Argument, "TimeSeriesDataBaseID")
+	publisher.TimeSeriesDataBaseID, err = argument.GetFromArgumentDefinition[timeseriesdata.TimeSeriesDataBaseID](def.Argument, "TimeSeriesDataBaseID")
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -25,12 +25,12 @@ type Parser struct{}
 func (t *Parser) Parse(
 	ctx context.Context,
 	r io.Reader,
-) (*TimeSeriesDataNoteArticle, error) {
+) (*NoteArticle, error) {
 	doc, err := goquery.NewDocumentFromReader(r)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	article := TimeSeriesDataNoteArticle{}
+	article := NoteArticle{}
 	// Title
 	selTitle := doc.Find("title").First()
 	if selTitle == nil {
@@ -58,6 +58,12 @@ func (t *Parser) Parse(
 		return nil, terrors.Wrapf("Cannot find html tag of .p-article__content")
 	}
 	article.ArticleContent = selArticleContent.First().Text()
+	// Author
+	authorHeader := doc.Find(".o-noteContentHeader__name a").First()
+	article.AuthorName = authorHeader.Text()
+	if authorURL, exists := authorHeader.Attr("href"); exists {
+		article.AuthorURL = "https://note.com" + authorURL
+	}
 	// Description
 	selDescription := doc.Find("meta[name=description]").First()
 	if selDescription == nil {
@@ -85,7 +91,7 @@ func (t *Parser) Parse(
 		txt := s.Text()
 		replaced := regexp.MustCompile(`\s+`).ReplaceAll([]byte(txt), []byte{})
 		replaced = regexp.MustCompile(`^#`).ReplaceAll(replaced, []byte{})
-		article.Tags = append(article.Tags, TimeSeriesDataNoteArticleTag{
+		article.Tags = append(article.Tags, NoteArticleTag{
 			Name: string(replaced),
 		})
 	})
