@@ -25,7 +25,7 @@ var Def = crawler.CrawlerDefinition{
 		},
 	},
 	ParserDefinition: crawler.ParserDefinition{
-		ID: "goconnpass",
+		ID: "connpass",
 	},
 	PublisherDefinition: crawler.PublisherDefinition{
 		ID: "timeseriesdatarepository",

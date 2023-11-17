@@ -1,4 +1,4 @@
-package goconnpass
+package connpass
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ type Parser struct {
 }
 
 func (t *Parser) ID() crawler.ParserID {
-	return "goconnpass"
+	return "connpass"
 }
 
 func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData) ([]timeseriesdata.TimeSeriesData, error) {
