@@ -14,7 +14,6 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase"
-	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawlerdefinitions"
 )
 
 func NewUsecaseLocal(ctx context.Context) (usecase.Usecase, error) {
@@ -54,7 +53,7 @@ func NewUsecaseLocal(ctx context.Context) (usecase.Usecase, error) {
 	u := usecase.UsecaseImpl{
 		L:                        logger,
 		TriggerCrawlerQueue:      triggerCrawlerQueue,
-		CrawlerRepository:        infra.NewCrawlerRepository(crawlerdefinitions.AvailableCrawlers),
+		CrawlerRepository:        infra.NewCrawlerRepository(AvailableCrawlers),
 		CrawlerFactory:           infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository, triggerCrawlerQueue),
 		NotifierRepository:       infra.NewNotifierRepository(NewAvailableNotifiers(&env)),
 		NotifierFactory:          infra.NewNotifierFactory(discordGoSession),

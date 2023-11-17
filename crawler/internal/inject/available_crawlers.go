@@ -1,4 +1,4 @@
-package crawlerdefinitions
+package inject
 
 import (
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
