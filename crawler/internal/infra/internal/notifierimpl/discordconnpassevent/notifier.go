@@ -37,26 +37,28 @@ func (t *Notifier) Notify(
 	}
 	colorCode, _ := strconv.ParseInt("FF0000", 16, 64)
 	loc, _ := time.LoadLocation("Asia/Tokyo")
+	embed := discordgo.MessageEmbed{}
+	embed.Title = event.Title
+	embed.URL = event.EventURL
+	embed.Description = event.Catch
+	embed.Color = int(colorCode)
+	if event.Organizer != nil {
+		embed.Author = &discordgo.MessageEmbedAuthor{
+			Name:    event.Organizer.Name,
+			URL:     event.Organizer.URL,
+			IconURL: event.Organizer.ImageURL,
+		}
+	}
+	embed.Fields = []*discordgo.MessageEmbedField{}
+	embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{Name: "開始", Value: event.StartedAt.In(loc).Format(time.RFC3339), Inline: true})
+	embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{Name: "終了", Value: event.EndedAt.In(loc).Format(time.RFC3339), Inline: true})
+	embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{Name: "開催場所", Value: event.Place, Inline: true})
 	if _, err := t.DiscordClient.ChannelMessageSendComplex(
 		t.DiscordChannelID,
 		&discordgo.MessageSend{
 			Content: "",
 			Embeds: []*discordgo.MessageEmbed{
-				{
-					Title:       event.Title,
-					URL:         event.EventURL,
-					Description: event.Catch,
-					Color:       int(colorCode),
-					Footer: &discordgo.MessageEmbedFooter{
-						Text:    "connpass",
-						IconURL: "https://connpass.com/static/img/api/connpass_logo_4.png",
-					},
-					Fields: []*discordgo.MessageEmbedField{
-						{Name: "開始", Value: event.StartedAt.In(loc).Format(time.RFC3339), Inline: true},
-						{Name: "終了", Value: event.EndedAt.In(loc).Format(time.RFC3339), Inline: true},
-						{Name: "開催場所", Value: event.Place, Inline: true},
-					},
-				},
+				&embed,
 			},
 		},
 	); err != nil {

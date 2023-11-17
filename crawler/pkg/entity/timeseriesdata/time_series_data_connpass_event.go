@@ -17,6 +17,7 @@ type TimeSeriesDataConnpassEvent struct {
 	Address     string
 	Lat         float64
 	Lon         float64
+	Organizer   *TimeSeriesDataConnpassEventOrganizer
 }
 
 func (t *TimeSeriesDataConnpassEvent) GetID() TimeSeriesDataID {
@@ -25,4 +26,10 @@ func (t *TimeSeriesDataConnpassEvent) GetID() TimeSeriesDataID {
 
 func (t *TimeSeriesDataConnpassEvent) GetPublishedAt() time.Time {
 	return t.StartedAt
+}
+
+type TimeSeriesDataConnpassEventOrganizer struct {
+	Name     string
+	URL      string
+	ImageURL string
 }

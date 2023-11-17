@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"strconv"
 	"time"
@@ -67,6 +68,11 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 			Address:     event.Address,
 			Lat:         lat,
 			Lon:         lon,
+			Organizer: &timeseriesdata.TimeSeriesDataConnpassEventOrganizer{
+				Name:     event.OwnerDisplayName,
+				URL:      fmt.Sprintf("https://connpass.com/%s", event.OwnerNickName),
+				ImageURL: "https://connpass.com/static/img/api/connpass_logo_4.png",
+			},
 		})
 	}
 	return returned, nil
@@ -81,17 +87,19 @@ func New(def *crawler.ParserDefinition, _ *factory.NewFuncParserArgument) (crawl
 }
 
 type connpassAPIResponseEvent struct {
-	EventID     int64  `json:"event_id"`
-	Title       string `json:"title"`
-	Catch       string `json:"catch"`
-	Description string `json:"description"`
-	EventURL    string `json:"event_url"`
-	StartedAt   string `json:"started_at"`
-	EndedAt     string `json:"ended_at"`
-	Place       string `json:"place"`
-	Address     string `json:"address"`
-	Lat         string `json:"lat"`
-	Lon         string `json:"lon"`
+	EventID          int64  `json:"event_id"`
+	Title            string `json:"title"`
+	Catch            string `json:"catch"`
+	Description      string `json:"description"`
+	EventURL         string `json:"event_url"`
+	StartedAt        string `json:"started_at"`
+	EndedAt          string `json:"ended_at"`
+	Place            string `json:"place"`
+	Address          string `json:"address"`
+	Lat              string `json:"lat"`
+	Lon              string `json:"lon"`
+	OwnerNickName    string `json:"owner_nickname"`
+	OwnerDisplayName string `json:"owner_display_name"`
 }
 
 type connpassAPIResponse struct {
