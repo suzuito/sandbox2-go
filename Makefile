@@ -41,14 +41,9 @@ crawler-init:
 	docker compose up -d crawler-firebase-emulator
 	while [ true ]; do curl http://localhost:8082 > /dev/null 2>&1 && echo 'Firebase emulator connection is OK' && break; echo 'Waiting until Firebase emulator connection is OK' && sleep 1; done
 crawler-mock:
-	./mockgen crawler/crawler/internal/entity/crawler/crawler.go
-	./mockgen crawler/crawler/internal/usecase/repository/repository.go
-	./mockgen crawler/crawler/internal/usecase/fetcher/fetcher_http.go
-	./mockgen crawler/crawler/internal/usecase/queue/queue.go
-	./mockgen crawler/crawler/internal/usecase/crawlerfactory/crawlerfactory.go
-	./mockgen crawler/notifier/internal/entity/notifier/notifier.go
-	./mockgen crawler/notifier/internal/usecase/repository/repository.go
-	./mockgen crawler/notifier/internal/usecase/notifierfactory/notifierfactory.go
-	./mockgen crawler/notifier/internal/usecase/discord/discordgo_session.go
+	./mockgen crawler/pkg/entity/crawler/fetcher.go
+	./mockgen crawler/pkg/entity/crawler/parser.go
+	./mockgen crawler/pkg/entity/crawler/publisher.go
+	./mockgen crawler/pkg/entity/notifier/notifier.go
 crawler-test:
 	sh test.sh ./crawler/...
