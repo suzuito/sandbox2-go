@@ -1,4 +1,4 @@
-package gcp
+package triggercrawlerqueue
 
 import (
 	"context"

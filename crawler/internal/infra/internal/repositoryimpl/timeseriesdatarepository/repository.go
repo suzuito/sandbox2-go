@@ -1,4 +1,4 @@
-package gcp
+package timeseriesdatarepository
 
 import (
 	"context"
@@ -9,19 +9,19 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
 
-type TimeSeriesDataRepository struct {
+type Repository struct {
 	Cli            *firestore.Client
 	BaseCollection string
 }
 
-func (t *TimeSeriesDataRepository) firestoreDocTimeSeriesData(
+func (t *Repository) firestoreDocTimeSeriesData(
 	timeSeriesDataBaseID timeseriesdata.TimeSeriesDataBaseID,
 	id timeseriesdata.TimeSeriesDataID,
 ) *firestore.DocumentRef {
 	return t.Cli.Doc(fmt.Sprintf("%s/TimeSeriesData/%s/%s", t.BaseCollection, timeSeriesDataBaseID, id))
 }
 
-func (t *TimeSeriesDataRepository) SetTimeSeriesData(
+func (t *Repository) SetTimeSeriesData(
 	ctx context.Context,
 	timeSeriesDataBaseID timeseriesdata.TimeSeriesDataBaseID,
 	data ...timeseriesdata.TimeSeriesData,
@@ -43,7 +43,7 @@ func (t *TimeSeriesDataRepository) SetTimeSeriesData(
 	return nil
 }
 
-func (t *TimeSeriesDataRepository) GetTimeSeriesDataFromFullPathFirestore(
+func (t *Repository) GetTimeSeriesDataFromFullPathFirestore(
 	ctx context.Context,
 	fullPath string,
 	d timeseriesdata.TimeSeriesData,

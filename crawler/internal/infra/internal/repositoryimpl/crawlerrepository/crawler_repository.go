@@ -1,4 +1,4 @@
-package gcp
+package crawlerrepository
 
 import (
 	"context"
@@ -7,11 +7,11 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
-type CrawlerRepository struct {
+type Repository struct {
 	Crawlers map[crawler.CrawlerID]*crawler.CrawlerDefinition
 }
 
-func (t *CrawlerRepository) GetCrawlerDefinition(
+func (t *Repository) GetCrawlerDefinition(
 	ctx context.Context,
 	id crawler.CrawlerID,
 ) (*crawler.CrawlerDefinition, error) {
@@ -22,7 +22,7 @@ func (t *CrawlerRepository) GetCrawlerDefinition(
 	return crawlerDefinition, nil
 }
 
-func (t *CrawlerRepository) GetCrawlerDefinitions(
+func (t *Repository) GetCrawlerDefinitions(
 	ctx context.Context,
 	crawlerIDs ...crawler.CrawlerID,
 ) ([]*crawler.CrawlerDefinition, error) {
