@@ -13,10 +13,10 @@ func (t *UsecaseImpl) StartPipelinePeriodically(
 	t.L.InfoContext(ctx, "StartPipelinePeriodically")
 	crawlers, err := t.CrawlerRepository.GetCrawlerDefinitions(
 		ctx,
-		// goblog.CrawlerID,
-		// goconnpass.CrawlerID,
-		// golangweekly.CrawlerID,
-		// knowledgeworkblogs.CrawlerID,
+		crawler.CrawlerID("goblog"),
+		crawler.CrawlerID("goconnpass"),
+		crawler.CrawlerID("golangweekly"),
+		crawler.CrawlerID("knowledgeworkblogs"),
 	)
 	if err != nil {
 		return terrors.Wrap(err)
