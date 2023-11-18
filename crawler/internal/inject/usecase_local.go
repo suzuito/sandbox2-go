@@ -14,9 +14,10 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase"
+	pkg_usecase "github.com/suzuito/sandbox2-go/crawler/pkg/usecase"
 )
 
-func NewUsecaseLocal(ctx context.Context) (usecase.Usecase, error) {
+func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 	var env Environment
 	err := envconfig.Process("", &env)
 	if err != nil {

@@ -16,9 +16,10 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra"
 	"github.com/suzuito/sandbox2-go/crawler/internal/inject"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase"
+	pkg_usecase "github.com/suzuito/sandbox2-go/crawler/pkg/usecase"
 )
 
-func NewUsecaseGCP(ctx context.Context) (usecase.Usecase, error) {
+func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 	projectID, err := metadata.ProjectID()
 	if err != nil {
 		return nil, terrors.Wrap(err)
