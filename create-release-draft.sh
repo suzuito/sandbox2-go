@@ -3,6 +3,7 @@
 set -e
 
 version=$1
+target=$2
 
 if [ x"$version" = "x" ]; then
     echo "Usage: release.sh <version>"
@@ -14,4 +15,4 @@ if ! [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
     exit 2
 fi
 
-gh release create ${version} --title="${version}" --generate-notes --target=main --draft
+gh release create ${version} --title="${version}" --generate-notes --target=${target} --draft
