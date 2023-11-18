@@ -7,6 +7,7 @@ import (
 )
 
 func TestHasGolangTag(t *testing.T) {
+	funcHasGolangTag := FuncHasTag([]string{"go", "go言語", "golang"})
 	testCases := []struct {
 		desc         string
 		inputArticle NoteArticle
@@ -54,7 +55,7 @@ func TestHasGolangTag(t *testing.T) {
 			assert.Equal(
 				t,
 				tC.expected,
-				HasGolangTag(&tC.inputArticle),
+				funcHasGolangTag(&tC.inputArticle),
 			)
 		})
 	}

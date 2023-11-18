@@ -3,7 +3,6 @@ package notecontent
 import (
 	"context"
 	"io"
-	"slices"
 	"strings"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
@@ -15,7 +14,7 @@ import (
 )
 
 type Parser struct {
-	FilterByTags []string
+	FilterByTag []string
 }
 
 func (t *Parser) ID() crawler.ParserID {
@@ -28,14 +27,7 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	isGoArticle := false
-	for _, tag := range d.Tags {
-		isGoArticle = slices.Contains(t.FilterByTags, tag.Name)
-		if isGoArticle {
-			break
-		}
-	}
-	if !isGoArticle {
+	if !note.FuncHasTag(t.FilterByTag)(d) {
 		return []timeseriesdata.TimeSeriesData{}, nil
 	}
 	blogFeed := timeseriesdata.TimeSeriesDataBlogFeed{}
@@ -66,6 +58,6 @@ func New(def *crawler.ParserDefinition, _ *factory.NewFuncParserArgument) (crawl
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	parser.FilterByTags = filterByTags
+	parser.FilterByTag = filterByTags
 	return &parser, nil
 }
