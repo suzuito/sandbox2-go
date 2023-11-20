@@ -39,6 +39,7 @@ func TestParse(t *testing.T) {
 				<div class="o-noteContentHeader__info">
 					<div class="o-noteContentHeader__name">
 						<time datetime="2023-09-29T15:00:00.000+09:00">2023年9月29日 15:00</time>
+						<a href="/author1">author1</a>
 					</div>
 					<ul id="tagListBody" class="m-tagList__body">
 						<li tabindex="-1" class="m-tagList__item" style="display:;">
@@ -72,6 +73,8 @@ func TestParse(t *testing.T) {
 				ArticleContent: "\n\t\t\t\t\t\tThis is content\n\t\t\t\t\t",
 				ImageURL:       "https://www.example.com/v2",
 				PublishedAt:    time.Date(2023, time.September, 29, 15, 0, 0, 0, constant.JST),
+				AuthorURL:      "https://note.com/author1",
+				AuthorName:     "author1",
 				Tags: []NoteArticleTag{
 					{Name: "デザイン"},
 					{Name: "デザイナー"},
