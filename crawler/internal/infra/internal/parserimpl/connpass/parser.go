@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/suzuito/sandbox2-go/common/constant"
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/crawler/internal/constant"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"

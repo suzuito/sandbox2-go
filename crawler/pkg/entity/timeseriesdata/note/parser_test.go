@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/suzuito/sandbox2-go/common/constant"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
-	"github.com/suzuito/sandbox2-go/crawler/internal/constant"
 )
 
 func TestSubString(t *testing.T) {
