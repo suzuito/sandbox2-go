@@ -1,0 +1,29 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  subproject-source-checker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.21.x' ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go run ./cmd/subproject-source-checker/main.go -rule-file ./package-check-list.yaml
+  subproject-source-import-checker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.21.x' ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go run ./cmd/subproject-source-import-checker/main.go -rule-file ./import-check-list.yaml
