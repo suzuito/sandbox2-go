@@ -1,0 +1,13 @@
+- name: crawler配下のディレクトリ作成ルール
+  path: ^crawler$
+  allowed:
+  - ^cmd$
+  - ^pkg$
+  - ^internal$
+- name: crawler/pkg, crawler/internal配下のディレクトリ作成ルール
+  path: ^crawler/(pkg|internal)$
+  allowed:
+  - ^entity$
+  - ^usecase$
+  - ^infra$
+  - ^inject$
