@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/suzuito/sandbox2-go/common/constant"
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/crawler/internal/constant"
 )
 
 func subString(s string, n int) string {
