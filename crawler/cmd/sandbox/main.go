@@ -6,12 +6,12 @@ import (
 	"os"
 
 	"cloud.google.com/go/pubsub"
-	"github.com/suzuito/sandbox2-go/crawler/testhelper"
+	"github.com/suzuito/sandbox2-go/common/test_helper"
 )
 
 func main() {
 	ctx := context.Background()
-	cli, err := testhelper.NewPubSubClient(ctx)
+	cli, err := test_helper.NewPubSubClient(ctx)
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 		os.Exit(1)
