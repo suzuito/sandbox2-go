@@ -1,40 +1,41 @@
-- name: entityからusecase,inject,infra,cmd層のimportを禁止する
-  src:
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/entity$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/entity/.*$
-  forbidden:
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra/.*$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase/.*$
-- name: usecaseからinject,infra,cmd層のimportを禁止する
-  src:
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase/.*$
-  forbidden:
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra/.*$
-- name: infraからinject,cmd層のimportを禁止する
-  src:
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra/.*$
-  forbidden:
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
-- name: injectからcmd層のimportを禁止する
-  src:
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
-    - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
-  forbidden:
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
-    - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$
+rules:
+  - name: entityからusecase,inject,infra,cmd層のimportを禁止する
+    srcImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/entity$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/entity/.*$
+    forbiddenImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra/.*$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase/.*$
+  - name: usecaseからinject,infra,cmd層のimportを禁止する
+    srcImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/usecase/.*$
+    forbiddenImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra/.*$
+  - name: infraからinject,cmd層のimportを禁止する
+    srcImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/infra/.*$
+    forbiddenImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
+  - name: injectからcmd層のimportを禁止する
+    srcImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject$
+      - ^github\.com/suzuito/sandbox2-go/crawler/(internal|pkg)/inject/.*$
+    forbiddenImportPathPatterns:
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd$
+      - ^github\.com/suzuito/sandbox2-go/crawler/cmd/.*$

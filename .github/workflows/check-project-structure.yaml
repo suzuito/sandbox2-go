@@ -26,4 +26,5 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
-      - run: go run ./cmd/subproject-source-import-checker/main.go -rule-file ./import-check-list.yaml
+      - run: go install github.com/suzuito/import-checker
+      - run: $(go env GOPATH)/bin/import-checker -rule-file ./import-check-list.yaml
