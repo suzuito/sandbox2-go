@@ -121,13 +121,15 @@ go run ./crawler/cmd/crawl/main.go -crawler-id knowledgeworkblog -crawler-input-
 go run ./crawler/cmd/notify/main.go -full-path Crawler/TimeSeriesData/goblog/goblog-2023-08-14
 ```
 
-## Deployment
+## デプロイ
 
-Define
+定義
 
-- Make sandbox2-go package available in public
-- Publish docker image of blog for CloudRun
+- github.com/suzuito/sandbox2-go モジュールをインターネット上に公開すること
+- blog CloudRun 用の Docker image を Google Container Resitory へアップロードすること
 
-Procedure
+手順
 
-1. Run Github actions `create-release-draft`
+1. Github action `create-release-draft` を実行する。
+  a. Github action が release draft を作成する。
+2. Release draft を公開する。
