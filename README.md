@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/suzuito/sandbox2-go/graph/badge.svg?token=Rj1wZ7rRgW)](https://codecov.io/gh/suzuito/sandbox2-go)
+
 # sandbox2-go
 
 趣味開発用のSandboxレポジトリ。
