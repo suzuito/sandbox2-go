@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,14 +18,14 @@ func (t *DummyFetcher) Do(_ context.Context, _ io.Writer, _ crawler.CrawlerInput
 	return nil
 }
 
-func Test(t *testing.T) {
+func TestFetcherFactory(t *testing.T) {
 	var dummyFetcher1 crawler.Fetcher = &DummyFetcher{}
 	testCases := []struct {
-		desc            string
-		inputDef        crawler.FetcherDefinition
-		inputNewFuncs   []NewFuncFetcher
-		expectedError   string
-		expectedFetcher crawler.Fetcher
+		desc          string
+		inputDef      crawler.FetcherDefinition
+		inputNewFuncs []NewFuncFetcher
+		expectedError string
+		expected      crawler.Fetcher
 	}{
 		{
 			desc: `FetcherをFactoryから取得できるケース
@@ -44,7 +43,7 @@ func Test(t *testing.T) {
 					return dummyFetcher1, nil
 				},
 			},
-			expectedFetcher: dummyFetcher1,
+			expected: dummyFetcher1,
 		},
 		{
 			desc: `NewFetcherFuncが意図しないエラーを返すケース`,
@@ -77,12 +76,11 @@ func Test(t *testing.T) {
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
 			f := FetcherFactory{
-				HTTPClient: http.DefaultClient,
-				NewFuncs:   tC.inputNewFuncs,
+				NewFuncs: tC.inputNewFuncs,
 			}
 			fetcher, err := f.Get(context.Background(), &tC.inputDef)
 			test_helper.AssertError(t, tC.expectedError, err)
-			assert.Equal(t, tC.expectedFetcher, fetcher)
+			assert.Equal(t, tC.expected, fetcher)
 		})
 	}
 }
