@@ -45,5 +45,7 @@ crawler-mock:
 	./mockgen crawler/pkg/entity/crawler/parser.go
 	./mockgen crawler/pkg/entity/crawler/publisher.go
 	./mockgen crawler/pkg/entity/notifier/notifier.go
+	./mockgen crawler/internal/usecase/factory/crawler.go
+	./mockgen crawler/internal/usecase/factory/notifier.go
 crawler-test:
 	sh test.sh ./crawler/...
