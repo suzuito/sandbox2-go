@@ -32,5 +32,5 @@ func (t *NotifierFactory) Get(ctx context.Context, def *notifier.NotifierDefinit
 		}
 		return f, nil
 	}
-	return nil, terrors.Wrapf("Parser '%s' is not found in available list", def.ID)
+	return nil, terrors.Wrapf("Notifier '%s' is not found in available list", def.ID)
 }
