@@ -48,6 +48,12 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 			&slog.HandlerOptions{
 				Level:     slog.LevelInfo,
 				AddSource: true,
+				ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+					if a.Key == slog.LevelKey {
+						a.Key = "severity"
+					}
+					return a
+				},
 			},
 		),
 	}
