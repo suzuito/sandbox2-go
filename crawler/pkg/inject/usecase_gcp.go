@@ -43,11 +43,17 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 	discordGoSession.LogLevel = discordgo.LogDebug
 	discordGoSession.Debug = true
 	slogHandler := clog.CustomHandler{
-		Handler: slog.NewTextHandler(
+		Handler: slog.NewJSONHandler(
 			os.Stdout,
 			&slog.HandlerOptions{
-				Level:     slog.LevelDebug,
+				Level:     slog.LevelInfo,
 				AddSource: true,
+				ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+					if a.Key == slog.LevelKey {
+						a.Key = "severity"
+					}
+					return a
+				},
 			},
 		),
 	}
