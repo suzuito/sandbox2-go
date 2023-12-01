@@ -17,7 +17,9 @@ func (t *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		"fetcher",
 		map[string]any{
 			"request": map[string]any{
-				"host": req.URL.Host,
+				"host":  req.URL.Host,
+				"path":  req.URL.Path,
+				"query": req.URL.Query(),
 			},
 		},
 	)
