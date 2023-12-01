@@ -61,6 +61,7 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 	timeSeriesDataRepository := infra.NewTimeSeriesDataRepository(fcli, "Crawler")
 	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(pcli, "gcf-CrawlerCrawl")
 	httpClient := http.DefaultClient
+	httpClient.Transport = infra.NewRequestLogRoundTripper(logger)
 	u := usecase.UsecaseImpl{
 		L:                        logger,
 		TriggerCrawlerQueue:      triggerCrawlerQueue,
