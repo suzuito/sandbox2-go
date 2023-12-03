@@ -23,7 +23,7 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.2
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	github.com/yuin/goldmark-meta v1.1.0
-	go.abhg.dev/goldmark/toc v0.7.0
+	go.abhg.dev/goldmark/toc v0.9.0
 	go.uber.org/mock v0.3.0
 	golang.org/x/oauth2 v0.15.0
 	google.golang.org/api v0.152.0

@@ -113,7 +113,7 @@ func TestMarkdown2HTMLImpl_Generate_HTML(t *testing.T) {
 ### タイトル1-1-1
 テキスト1-1-1
 `,
-			expectedHTML: `<h1>Table of Contents</h1>
+			expectedHTML: `<h1 id="table-of-contents">Table of Contents</h1>
 <ul>
 <li>
 <a href="#1">タイトル1</a><ul>
@@ -141,7 +141,7 @@ func TestMarkdown2HTMLImpl_Generate_HTML(t *testing.T) {
 
 https://www.example.com
 `,
-			expectedHTML: `<h1>Table of Contents</h1>
+			expectedHTML: `<h1 id="table-of-contents">Table of Contents</h1>
 <ul>
 <li>
 <a href="#heading">タイトル</a></li>
