@@ -29,9 +29,8 @@ func (t *FetcherHTTPStatic) Do(ctx context.Context, w io.Writer, _ crawler.Crawl
 	}
 	defer res.Body.Close()
 	if !slices.Contains(t.StatusCodesSuccess, res.StatusCode) {
-		body, _ := io.ReadAll(res.Body)
 		status := res.StatusCode
-		return terrors.Wrapf("HTTP error : status=%d body=%s", status, body)
+		return terrors.Wrapf("HTTP error : status=%d", status)
 	}
 	if _, err := io.Copy(w, res.Body); err != nil {
 		return terrors.Wrapf("Failed to io.Copy: %+v", err)

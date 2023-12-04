@@ -72,9 +72,6 @@ func TestNewFetcherHTTPConnpass(t *testing.T) {
 				&tC.inputArgs,
 			)
 			test_helper.AssertError(t, tC.expectedError, err)
-			if err != nil {
-				return
-			}
 		})
 	}
 }
