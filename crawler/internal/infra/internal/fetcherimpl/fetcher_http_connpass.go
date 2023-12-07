@@ -14,9 +14,10 @@ import (
 )
 
 type FetcherHTTPConnpass struct {
-	Cli   *http.Client
-	Query url.Values
-	Days  int
+	Cli         *http.Client
+	TimeNowFunc func() time.Time
+	Query       url.Values
+	Days        int
 }
 
 func (t *FetcherHTTPConnpass) ID() crawler.FetcherID {
@@ -31,7 +32,7 @@ func (t *FetcherHTTPConnpass) Do(ctx context.Context, w io.Writer, _ crawler.Cra
 			q.Add(k, vv)
 		}
 	}
-	d := time.Now()
+	d := t.TimeNowFunc()
 	for i := 0; i < t.Days; i++ {
 		q.Add("ymd", d.Add(time.Duration(i)*time.Hour*24).Format("20060102"))
 	}
@@ -46,9 +47,8 @@ func (t *FetcherHTTPConnpass) Do(ctx context.Context, w io.Writer, _ crawler.Cra
 	}
 	defer res.Body.Close()
 	if res.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(res.Body)
 		status := res.StatusCode
-		return terrors.Wrapf("HTTP error : status=%d body=%s", status, body)
+		return terrors.Wrapf("HTTP error : status=%d", status)
 	}
 	if _, err := io.Copy(w, res.Body); err != nil {
 		return terrors.Wrapf("Failed to io.Copy: %+v", err)
@@ -57,6 +57,10 @@ func (t *FetcherHTTPConnpass) Do(ctx context.Context, w io.Writer, _ crawler.Cra
 }
 
 func NewFetcherHTTPConnpass(def *crawler.FetcherDefinition, args *factory.NewFuncFetcherArgument) (crawler.Fetcher, error) {
+	f := FetcherHTTPConnpass{}
+	if f.ID() != def.ID {
+		return nil, factory.ErrNoMatchedFetcherID
+	}
 	days, err := argument.GetFromArgumentDefinition[int](def.Argument, "Days")
 	if err != nil {
 		return nil, terrors.Wrap(err)
@@ -65,9 +69,9 @@ func NewFetcherHTTPConnpass(def *crawler.FetcherDefinition, args *factory.NewFun
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return &FetcherHTTPConnpass{
-		Cli:   args.HTTPClient,
-		Days:  days,
-		Query: query,
-	}, nil
+	f.TimeNowFunc = time.Now
+	f.Days = days
+	f.Query = query
+	f.Cli = args.HTTPClient
+	return &f, nil
 }
