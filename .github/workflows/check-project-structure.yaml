@@ -12,7 +12,7 @@ jobs:
         go: [ '1.21.x' ]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
       - run: go run ./cmd/subproject-source-checker/main.go -rule-file ./package-check-list.yaml
@@ -23,7 +23,7 @@ jobs:
         go: [ '1.21.x' ]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
       - run: go get github.com/suzuito/import-checker && go install github.com/suzuito/import-checker
