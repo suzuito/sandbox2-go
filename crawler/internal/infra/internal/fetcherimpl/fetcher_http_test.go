@@ -142,7 +142,7 @@ func TestFetcherHTTPDo(t *testing.T) {
 				"Method": "GET",
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
-			expectedError:           "HTTP error : status=404 body=",
+			expectedError:           "HTTP error : status=404",
 		},
 	}
 	for _, tC := range testCases {
