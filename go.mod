@@ -26,7 +26,7 @@ require (
 	go.abhg.dev/goldmark/toc v0.9.0
 	go.uber.org/mock v0.3.0
 	golang.org/x/oauth2 v0.15.0
-	google.golang.org/api v0.152.0
+	google.golang.org/api v0.153.0
 	google.golang.org/grpc v1.59.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.2
