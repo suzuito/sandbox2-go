@@ -11,8 +11,8 @@ type CrawlerRepository interface {
 		ctx context.Context,
 		id crawler.CrawlerID,
 	) (*crawler.CrawlerDefinition, error)
-	GetCrawlerDefinitions(
+	GetCrawlerStarterSettings(
 		ctx context.Context,
-		crawlerIDs ...crawler.CrawlerID,
-	) ([]*crawler.CrawlerDefinition, error)
+		starterID crawler.CrawlerStarterSettingID,
+	) ([]*crawler.CrawlerStarterSetting, error)
 }

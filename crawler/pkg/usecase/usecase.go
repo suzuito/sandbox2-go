@@ -18,6 +18,7 @@ type Usecase interface {
 	) error
 	StartPipelinePeriodically(
 		ctx context.Context,
+		crawlerStarterSettingID crawler.CrawlerStarterSettingID,
 	) error
 	NotifyOnGCF(
 		ctx context.Context,

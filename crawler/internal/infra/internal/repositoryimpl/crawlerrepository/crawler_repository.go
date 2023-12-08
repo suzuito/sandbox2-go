@@ -8,7 +8,8 @@ import (
 )
 
 type Repository struct {
-	Crawlers map[crawler.CrawlerID]*crawler.CrawlerDefinition
+	Crawlers        map[crawler.CrawlerID]*crawler.CrawlerDefinition
+	CrawlerSettings []*crawler.CrawlerStarterSetting
 }
 
 func (t *Repository) GetCrawlerDefinition(
@@ -35,4 +36,17 @@ func (t *Repository) GetCrawlerDefinitions(
 		defs = append(defs, crawlerDefinition)
 	}
 	return defs, nil
+}
+
+func (t *Repository) GetCrawlerStarterSettings(
+	ctx context.Context,
+	crawlerStarterSettingID crawler.CrawlerStarterSettingID,
+) ([]*crawler.CrawlerStarterSetting, error) {
+	returned := []*crawler.CrawlerStarterSetting{}
+	for _, setting := range t.CrawlerSettings {
+		if setting.ID == crawlerStarterSettingID {
+			returned = append(returned, setting)
+		}
+	}
+	return returned, nil
 }
