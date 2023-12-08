@@ -23,21 +23,6 @@ func (t *Repository) GetCrawlerDefinition(
 	return crawlerDefinition, nil
 }
 
-func (t *Repository) GetCrawlerDefinitions(
-	ctx context.Context,
-	crawlerIDs ...crawler.CrawlerID,
-) ([]*crawler.CrawlerDefinition, error) {
-	defs := []*crawler.CrawlerDefinition{}
-	for _, id := range crawlerIDs {
-		crawlerDefinition, exists := t.Crawlers[id]
-		if !exists {
-			return nil, terrors.Wrapf("CrawlerDefinition[%s] is not found", id)
-		}
-		defs = append(defs, crawlerDefinition)
-	}
-	return defs, nil
-}
-
 func (t *Repository) GetCrawlerStarterSettings(
 	ctx context.Context,
 	crawlerStarterSettingID crawler.CrawlerStarterSettingID,
