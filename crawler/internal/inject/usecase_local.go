@@ -55,7 +55,7 @@ func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 	u := usecase.UsecaseImpl{
 		L:                        logger,
 		TriggerCrawlerQueue:      triggerCrawlerQueue,
-		CrawlerRepository:        infra.NewCrawlerRepository(AvailableCrawlers),
+		CrawlerRepository:        infra.NewCrawlerRepository(AvailableCrawlers, CrawlerStarterSettings),
 		CrawlerFactory:           infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository, triggerCrawlerQueue),
 		NotifierRepository:       infra.NewNotifierRepository(NewAvailableNotifiers(&env)),
 		NotifierFactory:          infra.NewNotifierFactory(discordGoSession),
