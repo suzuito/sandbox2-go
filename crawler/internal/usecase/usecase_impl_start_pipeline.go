@@ -11,7 +11,7 @@ func (t *UsecaseImpl) StartPipelinePeriodically(
 	ctx context.Context,
 	crawlerStarterSettingID crawler.CrawlerStarterSettingID,
 ) error {
-	t.L.InfoContext(ctx, "StartPipelinePeriodically")
+	t.L.InfoContext(ctx, "StartPipelinePeriodically", "crawlerStarterID", crawlerStarterSettingID)
 	settings, err := t.CrawlerRepository.GetCrawlerStarterSettings(ctx, crawlerStarterSettingID)
 	if err != nil {
 		return terrors.Wrap(err)
