@@ -62,7 +62,7 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(
 		pcli,
 		"gcf-CrawlerCrawl",
-		"gcf-DispatchCrawl",
+		"gcf-CrawlerDispatchCrawl",
 	)
 	httpClient := http.DefaultClient
 	httpClient.Transport = infra.NewRequestLogRoundTripper(logger)
