@@ -11,18 +11,18 @@ func (t *UsecaseImpl) StartPipelinePeriodically(
 	ctx context.Context,
 	crawlerStarterSettingID crawler.CrawlerStarterSettingID,
 ) error {
-	loggerPerStarter := t.L.With("crawlerStarterID", crawlerStarterSettingID)
-	loggerPerStarter.InfoContext(ctx, "StartPipelinePeriodically")
+	logger := t.L.With("crawlerStarterID", crawlerStarterSettingID)
+	logger.InfoContext(ctx, "StartPipelinePeriodically")
 	settings, err := t.CrawlerRepository.GetCrawlerStarterSettings(ctx, crawlerStarterSettingID)
 	if err != nil {
-		loggerPerStarter.ErrorContext(ctx, "Failed to GetCrawlerStarterSettings", "err", err)
+		logger.ErrorContext(ctx, "Failed to GetCrawlerStarterSettings", "err", err)
 		return terrors.Wrap(err)
 	}
 	for _, setting := range settings {
-		loggerPerCrawler := loggerPerStarter.With("crawlerID", setting.CrawlerID)
-		loggerPerCrawler.InfoContext(ctx, "PublishCrawlEvent")
-		if err := t.TriggerCrawlerQueue.PublishCrawlEvent(ctx, setting.CrawlerID, setting.CrawlerInputData); err != nil {
-			loggerPerCrawler.ErrorContext(ctx, "Failed to PublishCrawlEvent", "err", err)
+		loggerPerCrawler := logger.With("crawlerID", setting.CrawlerID)
+		loggerPerCrawler.InfoContext(ctx, "PublishDispatchCrawlEvent")
+		if err := t.TriggerCrawlerQueue.PublishDispatchCrawlEvent(ctx, setting.CrawlerID, setting.CrawlerInputData); err != nil {
+			loggerPerCrawler.ErrorContext(ctx, "Failed to PublishDispatchCrawlEvent", "err", err)
 			continue
 		}
 	}

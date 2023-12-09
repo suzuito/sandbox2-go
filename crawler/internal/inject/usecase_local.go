@@ -49,7 +49,11 @@ func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 	}
 	logger := slog.New(&slogHandler)
 	timeSeriesDataRepository := infra.NewTimeSeriesDataRepository(fcli, "Crawler")
-	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(pcli, "gcf-CrawlerCrawl")
+	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(
+		pcli,
+		"gcf-CrawlerCrawl",
+		"gcf-DispatchCrawl",
+	)
 	httpClient := http.DefaultClient
 	httpClient.Transport = infra.NewRequestLogRoundTripper(logger)
 	u := usecase.UsecaseImpl{

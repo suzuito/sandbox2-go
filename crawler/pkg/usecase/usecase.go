@@ -7,6 +7,15 @@ import (
 )
 
 type Usecase interface {
+	DispatchCrawlOnGCF(
+		ctx context.Context,
+		rawBytes []byte,
+	) error
+	DispatchCrawl(
+		ctx context.Context,
+		crawlerID crawler.CrawlerID,
+		crawlerInputData crawler.CrawlerInputData,
+	) error
 	CrawlOnGCF(
 		ctx context.Context,
 		rawBytes []byte,
