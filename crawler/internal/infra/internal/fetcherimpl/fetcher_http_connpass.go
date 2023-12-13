@@ -3,6 +3,7 @@ package fetcherimpl
 import (
 	"context"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"time"
@@ -24,7 +25,7 @@ func (t *FetcherHTTPConnpass) ID() crawler.FetcherID {
 	return "fetcher_http_connpass"
 }
 
-func (t *FetcherHTTPConnpass) Do(ctx context.Context, w io.Writer, _ crawler.CrawlerInputData) error {
+func (t *FetcherHTTPConnpass) Do(ctx context.Context, logger *slog.Logger, w io.Writer, _ crawler.CrawlerInputData) error {
 	u, _ := url.Parse("https://connpass.com/api/v1/event/")
 	q := u.Query()
 	for k, v := range t.Query {
@@ -41,6 +42,7 @@ func (t *FetcherHTTPConnpass) Do(ctx context.Context, w io.Writer, _ crawler.Cra
 	if err != nil {
 		return terrors.Wrap(err)
 	}
+	LogRequest(logger, req)
 	res, err := t.Cli.Do(req)
 	if err != nil {
 		return terrors.Wrap(err)

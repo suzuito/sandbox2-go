@@ -83,6 +83,7 @@ func TestFetcherHTTPConnpassDo(t *testing.T) {
 		inputTimeNowFunc func() time.Time
 		inputQuery       url.Values
 		inputDays        int
+		expectedLogLines []string
 		expectedError    string
 	}{
 		{
@@ -102,6 +103,9 @@ func TestFetcherHTTPConnpassDo(t *testing.T) {
 					MatchParam("ymd", "20010103").
 					MatchParam("ymd", "20010104").
 					Reply(http.StatusOK)
+			},
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:connpass.com path:/api/v1/event/ query:map[hoge:[fuga] ymd:[20010102 20010103 20010104]]]]"`,
 			},
 		},
 		{
@@ -123,6 +127,9 @@ func TestFetcherHTTPConnpassDo(t *testing.T) {
 					ReplyError(errors.New("dummy"))
 			},
 			expectedError: `dummy`,
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:connpass.com path:/api/v1/event/ query:map[hoge:[fuga] ymd:[20010102 20010103 20010104]]]]"`,
+			},
 		},
 		{
 			desc: "HTTP error (not 200)",
@@ -143,6 +150,9 @@ func TestFetcherHTTPConnpassDo(t *testing.T) {
 					Reply(http.StatusNotFound)
 			},
 			expectedError: `HTTP error : status=404`,
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:connpass.com path:/api/v1/event/ query:map[hoge:[fuga] ymd:[20010102 20010103 20010104]]]]"`,
+			},
 		},
 	}
 	for _, tC := range testCases {
@@ -156,8 +166,10 @@ func TestFetcherHTTPConnpassDo(t *testing.T) {
 			}
 			tC.setUp()
 			w := bytes.NewBuffer([]byte{})
-			err := f.Do(context.Background(), w, nil)
+			logger, logBuffer := newMockLogger()
+			err := f.Do(context.Background(), logger, w, nil)
 			test_helper.AssertError(t, tC.expectedError, err)
+			assertLogString(t, tC.expectedLogLines, logBuffer.String())
 		})
 	}
 }

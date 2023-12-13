@@ -17,7 +17,6 @@ func (t *UsecaseImpl) CrawlOnGCF(
 		t.L.ErrorContext(ctx, "Failed to RecieveCrawlEvent", "err", err)
 		return terrors.Wrap(err)
 	}
-	ctx = context.WithValue(ctx, "crawlerId", crawlerID) // WARN: should not use built-in type string as key for value; define your own type to avoid collisions (SA1029)go-staticcheck
 	if err := t.Crawl(ctx, crawlerID, crawlerInputData); err != nil {
 		return terrors.Wrap(err)
 	}
@@ -43,7 +42,7 @@ func (t *UsecaseImpl) Crawl(
 	}
 	data := []byte{}
 	w := bytes.NewBuffer(data)
-	if err := crawler.Fetcher.Do(ctx, w, crawlerInputData); err != nil {
+	if err := crawler.Fetcher.Do(ctx, logger, w, crawlerInputData); err != nil {
 		t.L.ErrorContext(ctx, "Failed to Fetch", "err", err)
 		return terrors.Wrap(err)
 	}

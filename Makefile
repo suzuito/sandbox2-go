@@ -48,6 +48,7 @@ crawler-mock:
 	./mockgen crawler/internal/usecase/factory/crawler.go
 	./mockgen crawler/internal/usecase/factory/notifier.go
 	./mockgen crawler/internal/usecase/repository/crawler.go
+	./mockgen crawler/internal/usecase/repository/crawler_configuration.go
 	./mockgen crawler/internal/usecase/queue/trigger_crawler.go
 crawler-test:
 	sh test.sh ./crawler/...

@@ -61,12 +61,14 @@ func TestNewFetcherHTTP(t *testing.T) {
 		})
 	}
 }
+
 func TestFetcherHTTPDo(t *testing.T) {
 	testCases := []struct {
 		desc                    string
 		setUp                   func()
 		inputCrawlerInputData   crawler.CrawlerInputData
 		inputStatusCodesSuccess []int
+		expectedLogLines        []string
 		expectedError           string
 	}{
 		{
@@ -81,6 +83,9 @@ func TestFetcherHTTPDo(t *testing.T) {
 				"Method": "GET",
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
+			},
 		},
 		{
 			desc: "Success (omit Method)",
@@ -93,6 +98,9 @@ func TestFetcherHTTPDo(t *testing.T) {
 				"URL": "https://www.example.com/hoge/",
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
+			},
 		},
 		{
 			desc: "Error - URL not found",
@@ -129,6 +137,9 @@ func TestFetcherHTTPDo(t *testing.T) {
 				"URL": "https://www.example.com/hoge/",
 			},
 			expectedError: "Get \"https://www.example.com/hoge/\": dummy",
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
+			},
 		},
 		{
 			desc: "Error - HTTP request failed",
@@ -143,6 +154,9 @@ func TestFetcherHTTPDo(t *testing.T) {
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
 			expectedError:           "HTTP error : status=404",
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/error/ query:map[]]]"`,
+			},
 		},
 	}
 	for _, tC := range testCases {
@@ -155,8 +169,10 @@ func TestFetcherHTTPDo(t *testing.T) {
 				tC.setUp()
 			}
 			w := bytes.NewBuffer([]byte{})
-			err := f.Do(context.Background(), w, tC.inputCrawlerInputData)
+			logger, logBuffer := newMockLogger()
+			err := f.Do(context.Background(), logger, w, tC.inputCrawlerInputData)
 			test_helper.AssertError(t, tC.expectedError, err)
+			assertLogString(t, tC.expectedLogLines, logBuffer.String())
 		})
 	}
 }

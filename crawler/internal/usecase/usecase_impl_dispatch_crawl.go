@@ -16,11 +16,7 @@ func (t *UsecaseImpl) DispatchCrawlOnGCF(
 		t.L.ErrorContext(ctx, "Failed to RecieveCrawlEvent", "err", err)
 		return terrors.Wrap(err)
 	}
-	ctx = context.WithValue(ctx, "crawlerId", crawlerID) // WARN: should not use built-in type string as key for value; define your own type to avoid collisions (SA1029)go-staticcheck
-	if err := t.DispatchCrawl(ctx, crawlerID, crawlerInputData); err != nil {
-		return terrors.Wrap(err)
-	}
-	return nil
+	return terrors.Wrap(t.DispatchCrawl(ctx, crawlerID, crawlerInputData))
 }
 
 func (t *UsecaseImpl) DispatchCrawl(

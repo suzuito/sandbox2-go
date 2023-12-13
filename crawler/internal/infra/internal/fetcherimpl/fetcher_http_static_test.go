@@ -88,6 +88,7 @@ func TestFetcherHTTPStaticDo(t *testing.T) {
 		setUp                   func()
 		inputReqFunc            func() *http.Request
 		inputStatusCodesSuccess []int
+		expectedLogLines        []string
 		expectedError           string
 	}{
 		{
@@ -102,6 +103,9 @@ func TestFetcherHTTPStaticDo(t *testing.T) {
 				return req
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
+			},
 		},
 		{
 			desc: "Error",
@@ -115,6 +119,9 @@ func TestFetcherHTTPStaticDo(t *testing.T) {
 				return req
 			},
 			expectedError: `Get "https://www.example.com/hoge/": dummy`,
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
+			},
 		},
 		{
 			desc: "HTTPError",
@@ -129,6 +136,9 @@ func TestFetcherHTTPStaticDo(t *testing.T) {
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
 			expectedError:           "HTTP error : status=404",
+			expectedLogLines: []string{
+				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
+			},
 		},
 	}
 	for _, tC := range testCases {
@@ -140,8 +150,10 @@ func TestFetcherHTTPStaticDo(t *testing.T) {
 			}
 			tC.setUp()
 			w := bytes.NewBuffer([]byte{})
-			err := f.Do(context.Background(), w, nil)
+			logger, logBuffer := newMockLogger()
+			err := f.Do(context.Background(), logger, w, nil)
 			test_helper.AssertError(t, tC.expectedError, err)
+			assertLogString(t, tC.expectedLogLines, logBuffer.String())
 		})
 	}
 }

@@ -13,9 +13,10 @@ import (
 )
 
 type utMocks struct {
-	MockLogBuffer           *bytes.Buffer
-	MockCrawlerRepository   *repository.MockCrawlerRepository
-	MockTriggerCrawlerQueue *queue.MockTriggerCrawlerQueue
+	MockLogBuffer                      *bytes.Buffer
+	MockCrawlerRepository              *repository.MockCrawlerRepository
+	MockCrawlerConfigurationRepository *repository.MockCrawlerConfigurationRepository
+	MockTriggerCrawlerQueue            *queue.MockTriggerCrawlerQueue
 }
 
 func (t *utMocks) NewUsecase() *UsecaseImpl {
@@ -35,17 +36,19 @@ func (t *utMocks) NewUsecase() *UsecaseImpl {
 	)
 	l := slog.New(h)
 	return &UsecaseImpl{
-		L:                   l,
-		CrawlerRepository:   t.MockCrawlerRepository,
-		TriggerCrawlerQueue: t.MockTriggerCrawlerQueue,
+		L:                              l,
+		CrawlerRepository:              t.MockCrawlerRepository,
+		CrawlerConfigurationRepository: t.MockCrawlerConfigurationRepository,
+		TriggerCrawlerQueue:            t.MockTriggerCrawlerQueue,
 	}
 }
 
 func newUTMocks(ctrl *gomock.Controller) *utMocks {
 	return &utMocks{
-		MockLogBuffer:           bytes.NewBufferString(""),
-		MockCrawlerRepository:   repository.NewMockCrawlerRepository(ctrl),
-		MockTriggerCrawlerQueue: queue.NewMockTriggerCrawlerQueue(ctrl),
+		MockLogBuffer:                      bytes.NewBufferString(""),
+		MockCrawlerRepository:              repository.NewMockCrawlerRepository(ctrl),
+		MockCrawlerConfigurationRepository: repository.NewMockCrawlerConfigurationRepository(ctrl),
+		MockTriggerCrawlerQueue:            queue.NewMockTriggerCrawlerQueue(ctrl),
 	}
 }
 
