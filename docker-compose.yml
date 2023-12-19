@@ -3,6 +3,7 @@ services:
     build:
       dockerfile: Dockerfile.mysql
       context: ./.service/blog/
+    platform: linux/x86_64
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
       LC_ALL: ja_JP.UTF-8
