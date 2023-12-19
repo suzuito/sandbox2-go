@@ -33,7 +33,7 @@ func TestStartPipelinePeriodically(t *testing.T) {
 							},
 						}, nil)
 					mocks.MockTriggerCrawlerQueue.EXPECT().
-						PublishCrawlEvent(
+						PublishDispatchCrawlEvent(
 							context.Background(),
 							crawler.CrawlerID("crawler001"),
 							crawler.CrawlerInputData{},
@@ -41,7 +41,7 @@ func TestStartPipelinePeriodically(t *testing.T) {
 				},
 				expectedLogLines: []string{
 					"level=INFO msg=StartPipelinePeriodically crawlerStarterID=starter001",
-					"level=INFO msg=PublishCrawlEvent crawlerStarterID=starter001 crawlerID=crawler001",
+					"level=INFO msg=PublishDispatchCrawlEvent crawlerStarterID=starter001 crawlerID=crawler001",
 				},
 			},
 			inputCrawlerStarterSettingID: "starter001",
@@ -88,13 +88,13 @@ func TestStartPipelinePeriodically(t *testing.T) {
 						}, nil)
 					gomock.InOrder(
 						mocks.MockTriggerCrawlerQueue.EXPECT().
-							PublishCrawlEvent(
+							PublishDispatchCrawlEvent(
 								context.Background(),
 								crawler.CrawlerID("crawler001"),
 								crawler.CrawlerInputData{},
 							).Return(errors.New("dummy")),
 						mocks.MockTriggerCrawlerQueue.EXPECT().
-							PublishCrawlEvent(
+							PublishDispatchCrawlEvent(
 								context.Background(),
 								crawler.CrawlerID("crawler002"),
 								crawler.CrawlerInputData{},
@@ -103,9 +103,9 @@ func TestStartPipelinePeriodically(t *testing.T) {
 				},
 				expectedLogLines: []string{
 					"level=INFO msg=StartPipelinePeriodically crawlerStarterID=starter001",
-					"level=INFO msg=PublishCrawlEvent crawlerStarterID=starter001 crawlerID=crawler001",
-					"level=ERROR msg=\"Failed to PublishCrawlEvent\" crawlerStarterID=starter001 crawlerID=crawler001 err=dummy",
-					"level=INFO msg=PublishCrawlEvent crawlerStarterID=starter001 crawlerID=crawler002",
+					"level=INFO msg=PublishDispatchCrawlEvent crawlerStarterID=starter001 crawlerID=crawler001",
+					"level=ERROR msg=\"Failed to PublishDispatchCrawlEvent\" crawlerStarterID=starter001 crawlerID=crawler001 err=dummy",
+					"level=INFO msg=PublishDispatchCrawlEvent crawlerStarterID=starter001 crawlerID=crawler002",
 				},
 			},
 			inputCrawlerStarterSettingID: "starter001",

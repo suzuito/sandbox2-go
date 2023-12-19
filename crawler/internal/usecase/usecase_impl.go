@@ -9,11 +9,12 @@ import (
 )
 
 type UsecaseImpl struct {
-	L                        *slog.Logger
-	TriggerCrawlerQueue      queue.TriggerCrawlerQueue
-	CrawlerRepository        repository.CrawlerRepository
-	CrawlerFactory           factory.CrawlerFactory
-	NotifierRepository       repository.NotifierRepository
-	NotifierFactory          factory.NotifierFactory
-	TimeSeriesDataRepository repository.TimeSeriesDataRepository
+	L                              *slog.Logger
+	TriggerCrawlerQueue            queue.TriggerCrawlerQueue
+	CrawlerRepository              repository.CrawlerRepository
+	CrawlerConfigurationRepository repository.CrawlerConfigurationRepository
+	CrawlerFactory                 factory.CrawlerFactory
+	NotifierRepository             repository.NotifierRepository
+	NotifierFactory                factory.NotifierFactory
+	TimeSeriesDataRepository       repository.TimeSeriesDataRepository
 }

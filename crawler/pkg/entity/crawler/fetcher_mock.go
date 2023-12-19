@@ -11,6 +11,7 @@ package crawler
 import (
 	context "context"
 	io "io"
+	slog "log/slog"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -40,17 +41,17 @@ func (m *MockFetcher) EXPECT() *MockFetcherMockRecorder {
 }
 
 // Do mocks base method.
-func (m *MockFetcher) Do(ctx context.Context, w io.Writer, input CrawlerInputData) error {
+func (m *MockFetcher) Do(ctx context.Context, logger *slog.Logger, w io.Writer, input CrawlerInputData) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Do", ctx, w, input)
+	ret := m.ctrl.Call(m, "Do", ctx, logger, w, input)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Do indicates an expected call of Do.
-func (mr *MockFetcherMockRecorder) Do(ctx, w, input any) *gomock.Call {
+func (mr *MockFetcherMockRecorder) Do(ctx, logger, w, input any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Do", reflect.TypeOf((*MockFetcher)(nil).Do), ctx, w, input)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Do", reflect.TypeOf((*MockFetcher)(nil).Do), ctx, logger, w, input)
 }
 
 // ID mocks base method.

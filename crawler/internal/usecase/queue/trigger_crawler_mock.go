@@ -40,17 +40,31 @@ func (m *MockTriggerCrawlerQueue) EXPECT() *MockTriggerCrawlerQueueMockRecorder 
 }
 
 // PublishCrawlEvent mocks base method.
-func (m *MockTriggerCrawlerQueue) PublishCrawlEvent(ctx context.Context, crawlerID crawler.CrawlerID, crawlerInputData crawler.CrawlerInputData) error {
+func (m *MockTriggerCrawlerQueue) PublishCrawlEvent(ctx context.Context, crawlerID crawler.CrawlerID, crawlerInputData crawler.CrawlerInputData, crawlFunctionID crawler.CrawlFunctionID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PublishCrawlEvent", ctx, crawlerID, crawlerInputData)
+	ret := m.ctrl.Call(m, "PublishCrawlEvent", ctx, crawlerID, crawlerInputData, crawlFunctionID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PublishCrawlEvent indicates an expected call of PublishCrawlEvent.
-func (mr *MockTriggerCrawlerQueueMockRecorder) PublishCrawlEvent(ctx, crawlerID, crawlerInputData any) *gomock.Call {
+func (mr *MockTriggerCrawlerQueueMockRecorder) PublishCrawlEvent(ctx, crawlerID, crawlerInputData, crawlFunctionID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishCrawlEvent", reflect.TypeOf((*MockTriggerCrawlerQueue)(nil).PublishCrawlEvent), ctx, crawlerID, crawlerInputData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishCrawlEvent", reflect.TypeOf((*MockTriggerCrawlerQueue)(nil).PublishCrawlEvent), ctx, crawlerID, crawlerInputData, crawlFunctionID)
+}
+
+// PublishDispatchCrawlEvent mocks base method.
+func (m *MockTriggerCrawlerQueue) PublishDispatchCrawlEvent(ctx context.Context, crawlerID crawler.CrawlerID, crawlerInputData crawler.CrawlerInputData) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PublishDispatchCrawlEvent", ctx, crawlerID, crawlerInputData)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PublishDispatchCrawlEvent indicates an expected call of PublishDispatchCrawlEvent.
+func (mr *MockTriggerCrawlerQueueMockRecorder) PublishDispatchCrawlEvent(ctx, crawlerID, crawlerInputData any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishDispatchCrawlEvent", reflect.TypeOf((*MockTriggerCrawlerQueue)(nil).PublishDispatchCrawlEvent), ctx, crawlerID, crawlerInputData)
 }
 
 // RecieveCrawlEvent mocks base method.

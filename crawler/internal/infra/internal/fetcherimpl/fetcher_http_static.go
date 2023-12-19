@@ -3,6 +3,7 @@ package fetcherimpl
 import (
 	"context"
 	"io"
+	"log/slog"
 	"net/http"
 	"slices"
 
@@ -22,7 +23,8 @@ func (t *FetcherHTTPStatic) ID() crawler.FetcherID {
 	return "fetcher_http_static"
 }
 
-func (t *FetcherHTTPStatic) Do(ctx context.Context, w io.Writer, _ crawler.CrawlerInputData) error {
+func (t *FetcherHTTPStatic) Do(ctx context.Context, logger *slog.Logger, w io.Writer, _ crawler.CrawlerInputData) error {
+	LogRequest(logger, t.Req)
 	res, err := t.Cli.Do(t.Req)
 	if err != nil {
 		return terrors.Wrap(err)

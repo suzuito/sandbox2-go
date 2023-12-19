@@ -3,6 +3,7 @@ package fetcherimpl
 import (
 	"context"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"slices"
@@ -22,7 +23,7 @@ func (t *FetcherHTTP) ID() crawler.FetcherID {
 	return crawler.FetcherID("fetcher_http")
 }
 
-func (t *FetcherHTTP) Do(ctx context.Context, w io.Writer, input crawler.CrawlerInputData) error {
+func (t *FetcherHTTP) Do(ctx context.Context, logger *slog.Logger, w io.Writer, input crawler.CrawlerInputData) error {
 	urlString, exists := input["URL"]
 	if !exists {
 		return terrors.Wrapf("input[\"URL\"] not found in input")
@@ -43,6 +44,7 @@ func (t *FetcherHTTP) Do(ctx context.Context, w io.Writer, input crawler.Crawler
 		return terrors.Wrap(err)
 	}
 	req, _ := http.NewRequestWithContext(ctx, methodAsString, u.String(), nil)
+	LogRequest(logger, req)
 	res, err := t.Cli.Do(req)
 	if err != nil {
 		return terrors.Wrap(err)

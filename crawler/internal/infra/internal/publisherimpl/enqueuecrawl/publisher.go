@@ -31,7 +31,7 @@ func (t *Publisher) Do(ctx context.Context, _ crawler.CrawlerInputData, data ...
 		if err := json.Unmarshal(jsonBytes, &input); err != nil {
 			return terrors.Wrap(err)
 		}
-		if err := t.TriggerCrawlerQueue.PublishCrawlEvent(ctx, t.CrawlerID, input); err != nil {
+		if err := t.TriggerCrawlerQueue.PublishDispatchCrawlEvent(ctx, t.CrawlerID, input); err != nil {
 			return terrors.Wrap(err)
 		}
 	}

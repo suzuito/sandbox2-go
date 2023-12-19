@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ import (
 type DummyFetcher struct{}
 
 func (t *DummyFetcher) ID() crawler.FetcherID { return "dummy" }
-func (t *DummyFetcher) Do(_ context.Context, _ io.Writer, _ crawler.CrawlerInputData) error {
+func (t *DummyFetcher) Do(_ context.Context, _ *slog.Logger, _ io.Writer, _ crawler.CrawlerInputData) error {
 	return nil
 }
 

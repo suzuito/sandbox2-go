@@ -59,17 +59,22 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 	}
 	logger := slog.New(&slogHandler)
 	timeSeriesDataRepository := infra.NewTimeSeriesDataRepository(fcli, "Crawler")
-	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(pcli, "gcf-CrawlerCrawl")
+	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(
+		pcli,
+		"gcf-CrawlerCrawl",
+		"gcf-CrawlerDispatchCrawl",
+	)
 	httpClient := http.DefaultClient
 	httpClient.Transport = infra.NewRequestLogRoundTripper(logger)
 	u := usecase.UsecaseImpl{
-		L:                        logger,
-		TriggerCrawlerQueue:      triggerCrawlerQueue,
-		CrawlerRepository:        infra.NewCrawlerRepository(inject.AvailableCrawlers, inject.CrawlerStarterSettings),
-		CrawlerFactory:           infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository, triggerCrawlerQueue),
-		NotifierRepository:       infra.NewNotifierRepository(inject.NewAvailableNotifiers(&env)),
-		NotifierFactory:          infra.NewNotifierFactory(discordGoSession),
-		TimeSeriesDataRepository: timeSeriesDataRepository,
+		L:                              logger,
+		TriggerCrawlerQueue:            triggerCrawlerQueue,
+		CrawlerRepository:              infra.NewCrawlerRepository(inject.AvailableCrawlers, inject.CrawlerStarterSettings),
+		CrawlerConfigurationRepository: infra.NewCrawlerConfigurationRepository(),
+		CrawlerFactory:                 infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository, triggerCrawlerQueue),
+		NotifierRepository:             infra.NewNotifierRepository(inject.NewAvailableNotifiers(&env)),
+		NotifierFactory:                infra.NewNotifierFactory(discordGoSession),
+		TimeSeriesDataRepository:       timeSeriesDataRepository,
 	}
 	return &u, nil
 }

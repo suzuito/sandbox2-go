@@ -8,10 +8,12 @@ import (
 
 func NewTriggerCrawlerQueue(
 	cli *pubsub.Client,
-	topicIDTriggerCrawlerQueue string,
+	baseTopicIDForCrawl string,
+	topicIDForDispatchCrawl string,
 ) queue.TriggerCrawlerQueue {
 	return &triggercrawlerqueue.TriggerCrawlerQueue{
-		Cli:                        cli,
-		TopicIDTriggerCrawlerQueue: topicIDTriggerCrawlerQueue,
+		Cli:                     cli,
+		BaseTopicIDForCrawl:     baseTopicIDForCrawl,
+		TopicIDForDispatchCrawl: topicIDForDispatchCrawl,
 	}
 }
