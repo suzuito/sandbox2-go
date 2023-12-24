@@ -9,6 +9,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
@@ -40,12 +41,12 @@ func (t *FetcherHTTPStatic) Do(ctx context.Context, logger *slog.Logger, w io.Wr
 	return nil
 }
 
-func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, args *factory.NewFuncFetcherArgument) (crawler.Fetcher, error) {
+func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, setting *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 	f := FetcherHTTPStatic{}
 	if f.ID() != def.ID {
 		return nil, factory.ErrNoMatchedFetcherID
 	}
-	f.Cli = args.HTTPClient
+	f.Cli = setting.FetcherFactorySetting.HTTPClient
 	urlString, err := argument.GetFromArgumentDefinition[string](def.Argument, "URL")
 	if err != nil {
 		return nil, terrors.Wrap(err)

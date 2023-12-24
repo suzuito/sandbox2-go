@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
@@ -36,10 +37,10 @@ func TestPublisherFactory(t *testing.T) {
 				ID: "dummy_id_01",
 			},
 			inputNewFuncs: []NewFuncPublisher{
-				func(_ *crawler.PublisherDefinition, _ *NewFuncPublisherArgument) (crawler.Publisher, error) {
+				func(_ *crawler.PublisherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 					return nil, ErrNoMatchedPublisherID
 				},
-				func(_ *crawler.PublisherDefinition, _ *NewFuncPublisherArgument) (crawler.Publisher, error) {
+				func(_ *crawler.PublisherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 					return dummyPublisher, nil
 				},
 			},
@@ -51,7 +52,7 @@ func TestPublisherFactory(t *testing.T) {
 				ID: "dummy_id_01",
 			},
 			inputNewFuncs: []NewFuncPublisher{
-				func(_ *crawler.PublisherDefinition, _ *NewFuncPublisherArgument) (crawler.Publisher, error) {
+				func(_ *crawler.PublisherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 					return nil, fmt.Errorf("dummy")
 				},
 			},
@@ -63,10 +64,10 @@ func TestPublisherFactory(t *testing.T) {
 				ID: "dummy_id_01",
 			},
 			inputNewFuncs: []NewFuncPublisher{
-				func(_ *crawler.PublisherDefinition, _ *NewFuncPublisherArgument) (crawler.Publisher, error) {
+				func(_ *crawler.PublisherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 					return nil, ErrNoMatchedPublisherID
 				},
-				func(_ *crawler.PublisherDefinition, _ *NewFuncPublisherArgument) (crawler.Publisher, error) {
+				func(_ *crawler.PublisherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 					return nil, ErrNoMatchedPublisherID
 				},
 			},

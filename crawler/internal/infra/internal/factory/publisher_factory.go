@@ -5,29 +5,20 @@ import (
 	"errors"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/queue"
-	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/repository"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
-type NewFuncPublisherArgument struct {
-	TriggerCrawlerQueue      queue.TriggerCrawlerQueue
-	TimeSeriesDataRepository repository.TimeSeriesDataRepository
-}
-type NewFuncPublisher func(def *crawler.PublisherDefinition, arg *NewFuncPublisherArgument) (crawler.Publisher, error)
+type NewFuncPublisher func(def *crawler.PublisherDefinition, setting *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error)
 
 type PublisherFactory struct {
-	NewFuncs                 []NewFuncPublisher
-	TriggerCrawlerQueue      queue.TriggerCrawlerQueue
-	TimeSeriesDataRepository repository.TimeSeriesDataRepository
+	CrawlerFactorySetting *factorysetting.CrawlerFactorySetting
+	NewFuncs              []NewFuncPublisher
 }
 
 func (t *PublisherFactory) Get(ctx context.Context, def *crawler.PublisherDefinition) (crawler.Publisher, error) {
 	for _, newFunc := range t.NewFuncs {
-		f, err := newFunc(def, &NewFuncPublisherArgument{
-			TimeSeriesDataRepository: t.TimeSeriesDataRepository,
-			TriggerCrawlerQueue:      t.TriggerCrawlerQueue,
-		})
+		f, err := newFunc(def, t.CrawlerFactorySetting)
 		if err != nil {
 			if errors.Is(err, ErrNoMatchedPublisherID) {
 				continue

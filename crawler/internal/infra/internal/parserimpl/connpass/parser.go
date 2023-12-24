@@ -13,6 +13,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/constant"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
@@ -78,7 +79,7 @@ func (t *Parser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputData
 	return returned, nil
 }
 
-func New(def *crawler.ParserDefinition, _ *factory.NewFuncParserArgument) (crawler.Parser, error) {
+func New(def *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 	parser := Parser{}
 	if def.ID != parser.ID() {
 		return nil, factory.ErrNoMatchedParserID
