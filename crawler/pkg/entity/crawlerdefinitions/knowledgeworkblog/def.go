@@ -14,6 +14,7 @@ var Def = crawler.CrawlerDefinition{
 		ID: "fetcher_http",
 		Argument: argument.ArgumentDefinition{
 			"StatusCodesSuccess": []int{http.StatusOK},
+			"UseCache":           true,
 		},
 	},
 	ParserDefinition: crawler.ParserDefinition{
