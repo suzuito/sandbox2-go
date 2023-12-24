@@ -12,18 +12,12 @@ func NewCrawlerFactory(
 	return &infra_internal_factory.CrawlerFactory{
 		FetcherFactory: infra_internal_factory.FetcherFactory{
 			CrawlerFactorySetting: setting,
-			// HTTPClient: httpClient,
-			// NewFuncs:   factorynewfuncs.NewFuncsFetcher,
 		},
 		ParserFactory: infra_internal_factory.ParserFactory{
 			CrawlerFactorySetting: setting,
-			// NewFuncs: factorynewfuncs.NewFuncsParser,
 		},
 		PublisherFactory: infra_internal_factory.PublisherFactory{
 			CrawlerFactorySetting: setting,
-			// NewFuncs:                 factorynewfuncs.NewFuncsPublisher,
-			// TimeSeriesDataRepository: timeSeriesDataRepository,
-			// TriggerCrawlerQueue:      triggerCrawlerQueue,
 		},
 	}
 }
