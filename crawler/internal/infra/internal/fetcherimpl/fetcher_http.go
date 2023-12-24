@@ -9,6 +9,7 @@ import (
 	"slices"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/httprequestcache"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
@@ -16,7 +17,9 @@ import (
 
 type FetcherHTTP struct {
 	Cli                *http.Client
+	HTTPRequestCache   httprequestcache.HTTPRequestCache
 	StatusCodesSuccess []int
+	UseCache           bool
 }
 
 func (t *FetcherHTTP) ID() crawler.FetcherID {
@@ -70,6 +73,12 @@ func NewFetcherHTTP(def *crawler.FetcherDefinition, args *factory.NewFuncFetcher
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	useCache, err := argument.GetFromArgumentDefinition[bool](def.Argument, "UseCache")
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	f.StatusCodesSuccess = statusCodesSuccess
+	f.UseCache = useCache
+	f.HTTPRequestCache = args.HTTPRequestCache
 	return &f, nil
 }

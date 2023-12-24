@@ -9,16 +9,19 @@ import (
 	"time"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/httprequestcache"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
 type FetcherHTTPConnpass struct {
-	Cli         *http.Client
-	TimeNowFunc func() time.Time
-	Query       url.Values
-	Days        int
+	Cli              *http.Client
+	HTTPRequestCache httprequestcache.HTTPRequestCache
+	TimeNowFunc      func() time.Time
+	Query            url.Values
+	Days             int
+	UseCache         bool
 }
 
 func (t *FetcherHTTPConnpass) ID() crawler.FetcherID {
@@ -71,9 +74,15 @@ func NewFetcherHTTPConnpass(def *crawler.FetcherDefinition, args *factory.NewFun
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	useCache, err := argument.GetFromArgumentDefinition[bool](def.Argument, "UseCache")
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	f.TimeNowFunc = time.Now
 	f.Days = days
 	f.Query = query
 	f.Cli = args.HTTPClient
+	f.HTTPRequestCache = args.HTTPRequestCache
+	f.UseCache = useCache
 	return &f, nil
 }

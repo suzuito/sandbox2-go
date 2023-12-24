@@ -6,11 +6,13 @@ import (
 	"net/http"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/httprequestcache"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
 type NewFuncFetcherArgument struct {
-	HTTPClient *http.Client
+	HTTPClient       *http.Client
+	HTTPRequestCache httprequestcache.HTTPRequestCache
 }
 type NewFuncFetcher func(def *crawler.FetcherDefinition, arg *NewFuncFetcherArgument) (crawler.Fetcher, error)
 
