@@ -11,7 +11,7 @@ import (
 
 	"github.com/h2non/gock"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
@@ -20,7 +20,6 @@ func TestNewFetcherHTTPConnpass(t *testing.T) {
 	testCases := []struct {
 		desc          string
 		inputDef      crawler.FetcherDefinition
-		inputArgs     factory.NewFuncFetcherArgument
 		expectedError string
 	}{
 		{
@@ -69,7 +68,7 @@ func TestNewFetcherHTTPConnpass(t *testing.T) {
 		t.Run(tC.desc, func(t *testing.T) {
 			_, err := NewFetcherHTTPConnpass(
 				&tC.inputDef,
-				&tC.inputArgs,
+				&factorysetting.CrawlerFactorySetting{},
 			)
 			test_helper.AssertError(t, tC.expectedError, err)
 		})

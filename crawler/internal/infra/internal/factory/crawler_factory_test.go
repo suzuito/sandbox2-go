@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/suzuito/sandbox2-go/common/test_helper"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
@@ -22,21 +23,21 @@ func Test(t *testing.T) {
 			desc: "Success",
 			inputFetcherFactory: FetcherFactory{
 				NewFuncs: []NewFuncFetcher{
-					func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+					func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 						return &DummyFetcher{}, nil
 					},
 				},
 			},
 			inputParserFactory: ParserFactory{
 				NewFuncs: []NewFuncParser{
-					func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+					func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 						return &DummyParser{}, nil
 					},
 				},
 			},
 			inputPublisherFactory: PublisherFactory{
 				NewFuncs: []NewFuncPublisher{
-					func(_ *crawler.PublisherDefinition, _ *NewFuncPublisherArgument) (crawler.Publisher, error) {
+					func(_ *crawler.PublisherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 						return &DummyPublisher{}, nil
 					},
 				},
@@ -46,7 +47,7 @@ func Test(t *testing.T) {
 			desc: "Failed to FetcherFactory.Get",
 			inputFetcherFactory: FetcherFactory{
 				NewFuncs: []NewFuncFetcher{
-					func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+					func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 						return nil, errors.New("dummy")
 					},
 				},
@@ -57,14 +58,14 @@ func Test(t *testing.T) {
 			desc: "Failed to ParserFactory.Get",
 			inputFetcherFactory: FetcherFactory{
 				NewFuncs: []NewFuncFetcher{
-					func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+					func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 						return &DummyFetcher{}, nil
 					},
 				},
 			},
 			inputParserFactory: ParserFactory{
 				NewFuncs: []NewFuncParser{
-					func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+					func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 						return nil, errors.New("dummy")
 					},
 				},
@@ -75,21 +76,21 @@ func Test(t *testing.T) {
 			desc: "Success",
 			inputFetcherFactory: FetcherFactory{
 				NewFuncs: []NewFuncFetcher{
-					func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+					func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 						return &DummyFetcher{}, nil
 					},
 				},
 			},
 			inputParserFactory: ParserFactory{
 				NewFuncs: []NewFuncParser{
-					func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+					func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 						return &DummyParser{}, nil
 					},
 				},
 			},
 			inputPublisherFactory: PublisherFactory{
 				NewFuncs: []NewFuncPublisher{
-					func(_ *crawler.PublisherDefinition, _ *NewFuncPublisherArgument) (crawler.Publisher, error) {
+					func(_ *crawler.PublisherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 						return nil, errors.New("dummy")
 					},
 				},

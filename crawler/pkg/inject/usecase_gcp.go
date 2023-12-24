@@ -14,6 +14,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/internal/inject"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase"
 	pkg_usecase "github.com/suzuito/sandbox2-go/crawler/pkg/usecase"
@@ -71,10 +72,19 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 		TriggerCrawlerQueue:            triggerCrawlerQueue,
 		CrawlerRepository:              infra.NewCrawlerRepository(inject.AvailableCrawlers, inject.CrawlerStarterSettings),
 		CrawlerConfigurationRepository: infra.NewCrawlerConfigurationRepository(),
-		CrawlerFactory:                 infra.NewCrawlerFactory(httpClient, timeSeriesDataRepository, triggerCrawlerQueue),
-		NotifierRepository:             infra.NewNotifierRepository(inject.NewAvailableNotifiers(&env)),
-		NotifierFactory:                infra.NewNotifierFactory(discordGoSession),
-		TimeSeriesDataRepository:       timeSeriesDataRepository,
+		CrawlerFactory: infra.NewCrawlerFactory(&factorysetting.CrawlerFactorySetting{
+			FetcherFactorySetting: factorysetting.FetcherFactorySetting{
+				HTTPClient: httpClient,
+			},
+			ParserFactorySetting: factorysetting.ParserFactorySetting{},
+			PublisherFactorySetting: factorysetting.PublisherFactorySetting{
+				TriggerCrawlerQueue:      triggerCrawlerQueue,
+				TimeSeriesDataRepository: timeSeriesDataRepository,
+			},
+		}),
+		NotifierRepository:       infra.NewNotifierRepository(inject.NewAvailableNotifiers(&env)),
+		NotifierFactory:          infra.NewNotifierFactory(discordGoSession),
+		TimeSeriesDataRepository: timeSeriesDataRepository,
 	}
 	return &u, nil
 }

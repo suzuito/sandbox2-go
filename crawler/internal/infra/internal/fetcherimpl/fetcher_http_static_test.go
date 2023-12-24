@@ -9,7 +9,7 @@ import (
 
 	"github.com/h2non/gock"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
@@ -18,7 +18,6 @@ func TestNewFetcherHTTPStatic(t *testing.T) {
 	testCases := []struct {
 		desc          string
 		inputDef      crawler.FetcherDefinition
-		inputArgs     factory.NewFuncFetcherArgument
 		expectedError string
 	}{
 		{
@@ -31,14 +30,12 @@ func TestNewFetcherHTTPStatic(t *testing.T) {
 					"StatusCodesSuccess": []int{http.StatusOK},
 				},
 			},
-			inputArgs: factory.NewFuncFetcherArgument{},
 		},
 		{
 			desc: "URL is not found in argument",
 			inputDef: crawler.FetcherDefinition{
 				ID: "foo",
 			},
-			inputArgs:     factory.NewFuncFetcherArgument{},
 			expectedError: "NoMatchedFetcherID",
 		},
 		{
@@ -47,7 +44,6 @@ func TestNewFetcherHTTPStatic(t *testing.T) {
 				ID:       "fetcher_http_static",
 				Argument: argument.ArgumentDefinition{},
 			},
-			inputArgs:     factory.NewFuncFetcherArgument{},
 			expectedError: `Key 'URL' is not found in AgumentDefinition`,
 		},
 		{
@@ -58,7 +54,6 @@ func TestNewFetcherHTTPStatic(t *testing.T) {
 					"URL": "https://www.example.com/hoge",
 				},
 			},
-			inputArgs:     factory.NewFuncFetcherArgument{},
 			expectedError: `Key 'Method' is not found in AgumentDefinition`,
 		},
 		{
@@ -70,13 +65,12 @@ func TestNewFetcherHTTPStatic(t *testing.T) {
 					"Method": "GET",
 				},
 			},
-			inputArgs:     factory.NewFuncFetcherArgument{},
 			expectedError: `Key 'StatusCodesSuccess' is not found in AgumentDefinition`,
 		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			_, err := NewFetcherHTTPStatic(&tC.inputDef, &tC.inputArgs)
+			_, err := NewFetcherHTTPStatic(&tC.inputDef, &factorysetting.CrawlerFactorySetting{})
 			test_helper.AssertError(t, tC.expectedError, err)
 		})
 	}

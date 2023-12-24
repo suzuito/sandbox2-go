@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
@@ -37,10 +38,10 @@ func TestFetcherFactory(t *testing.T) {
 				ID: crawler.FetcherID("dummy_fetcher_id_01"),
 			},
 			inputNewFuncs: []NewFuncFetcher{
-				func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+				func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 					return nil, ErrNoMatchedFetcherID
 				},
-				func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+				func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 					return dummyFetcher1, nil
 				},
 			},
@@ -52,7 +53,7 @@ func TestFetcherFactory(t *testing.T) {
 				ID: crawler.FetcherID("dummy_fetcher_id_01"),
 			},
 			inputNewFuncs: []NewFuncFetcher{
-				func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+				func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 					return nil, fmt.Errorf("dummy")
 				},
 			},
@@ -64,10 +65,10 @@ func TestFetcherFactory(t *testing.T) {
 				ID: crawler.FetcherID("dummy_fetcher_id_01"),
 			},
 			inputNewFuncs: []NewFuncFetcher{
-				func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+				func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 					return nil, ErrNoMatchedFetcherID
 				},
-				func(_ *crawler.FetcherDefinition, _ *NewFuncFetcherArgument) (crawler.Fetcher, error) {
+				func(_ *crawler.FetcherDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Fetcher, error) {
 					return nil, ErrNoMatchedFetcherID
 				},
 			},

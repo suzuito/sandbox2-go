@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
 )
@@ -37,10 +38,10 @@ func TestParserFactory(t *testing.T) {
 				ID: "dummy_id_01",
 			},
 			inputNewFuncs: []NewFuncParser{
-				func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+				func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 					return nil, ErrNoMatchedParserID
 				},
-				func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+				func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 					return dummyParser, nil
 				},
 			},
@@ -52,7 +53,7 @@ func TestParserFactory(t *testing.T) {
 				ID: "dummy_id_01",
 			},
 			inputNewFuncs: []NewFuncParser{
-				func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+				func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 					return nil, fmt.Errorf("dummy")
 				},
 			},
@@ -64,10 +65,10 @@ func TestParserFactory(t *testing.T) {
 				ID: "dummy_id_01",
 			},
 			inputNewFuncs: []NewFuncParser{
-				func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+				func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 					return nil, ErrNoMatchedParserID
 				},
-				func(_ *crawler.ParserDefinition, _ *NewFuncParserArgument) (crawler.Parser, error) {
+				func(_ *crawler.ParserDefinition, _ *factorysetting.CrawlerFactorySetting) (crawler.Parser, error) {
 					return nil, ErrNoMatchedParserID
 				},
 			},

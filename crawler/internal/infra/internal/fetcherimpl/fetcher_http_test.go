@@ -9,7 +9,7 @@ import (
 
 	"github.com/h2non/gock"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
@@ -18,7 +18,6 @@ func TestNewFetcherHTTP(t *testing.T) {
 	testCases := []struct {
 		desc          string
 		inputDef      crawler.FetcherDefinition
-		inputArgs     factory.NewFuncFetcherArgument
 		expectedError string
 	}{
 		{
@@ -29,7 +28,6 @@ func TestNewFetcherHTTP(t *testing.T) {
 					"StatusCodesSuccess": []int{http.StatusOK},
 				},
 			},
-			inputArgs: factory.NewFuncFetcherArgument{},
 		},
 		{
 			desc: "Invalid ID",
@@ -39,7 +37,6 @@ func TestNewFetcherHTTP(t *testing.T) {
 					"StatusCodesSuccess": []int{http.StatusOK},
 				},
 			},
-			inputArgs:     factory.NewFuncFetcherArgument{},
 			expectedError: "NoMatchedFetcherID",
 		},
 		{
@@ -50,13 +47,12 @@ func TestNewFetcherHTTP(t *testing.T) {
 					// "StatusCodesSuccess" key is missing
 				},
 			},
-			inputArgs:     factory.NewFuncFetcherArgument{},
 			expectedError: "Key 'StatusCodesSuccess' is not found in AgumentDefinition",
 		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			_, err := NewFetcherHTTP(&tC.inputDef, &tC.inputArgs)
+			_, err := NewFetcherHTTP(&tC.inputDef, &factorysetting.CrawlerFactorySetting{})
 			test_helper.AssertError(t, tC.expectedError, err)
 		})
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/repository"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
@@ -24,9 +25,9 @@ func (t *Publisher) Do(ctx context.Context, input crawler.CrawlerInputData, data
 	return terrors.Wrap(t.Repository.SetTimeSeriesData(ctx, t.TimeSeriesDataBaseID, data...))
 }
 
-func New(def *crawler.PublisherDefinition, arg *factory.NewFuncPublisherArgument) (crawler.Publisher, error) {
+func New(def *crawler.PublisherDefinition, setting *factorysetting.CrawlerFactorySetting) (crawler.Publisher, error) {
 	publisher := Publisher{
-		Repository: arg.TimeSeriesDataRepository,
+		Repository: setting.PublisherFactorySetting.TimeSeriesDataRepository,
 	}
 	if def.ID != publisher.ID() {
 		return nil, factory.ErrNoMatchedPublisherID
