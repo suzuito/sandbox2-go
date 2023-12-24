@@ -66,7 +66,6 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 		"gcf-CrawlerDispatchCrawl",
 	)
 	httpClient := http.DefaultClient
-	httpClient.Transport = infra.NewRequestLogRoundTripper(logger)
 	u := usecase.UsecaseImpl{
 		L:                              logger,
 		TriggerCrawlerQueue:            triggerCrawlerQueue,
