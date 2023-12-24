@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3
 	cloud.google.com/go/firestore v1.14.0
 	cloud.google.com/go/pubsub v1.33.0
-	cloud.google.com/go/storage v1.35.1
+	cloud.google.com/go/storage v1.36.0
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/alecthomas/chroma/v2 v2.12.0
 	github.com/bwmarrin/discordgo v0.27.1
