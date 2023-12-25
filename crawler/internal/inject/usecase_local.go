@@ -13,6 +13,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra"
+	infra_factory "github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase"
 	pkg_usecase "github.com/suzuito/sandbox2-go/crawler/pkg/usecase"
@@ -61,7 +62,7 @@ func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 		TriggerCrawlerQueue:            triggerCrawlerQueue,
 		CrawlerRepository:              infra.NewCrawlerRepository(AvailableCrawlers, CrawlerStarterSettings),
 		CrawlerConfigurationRepository: infra.NewCrawlerConfigurationRepository(),
-		CrawlerFactory: infra.NewCrawlerFactory(&factorysetting.CrawlerFactorySetting{
+		CrawlerFactory: infra_factory.NewCrawlerFactory(&factorysetting.CrawlerFactorySetting{
 			FetcherFactorySetting: factorysetting.FetcherFactorySetting{
 				HTTPClient: httpClient,
 			},
