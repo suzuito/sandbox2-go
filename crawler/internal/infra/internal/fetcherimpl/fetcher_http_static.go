@@ -10,14 +10,17 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/fetchercache"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
 type FetcherHTTPStatic struct {
 	Cli                *http.Client
+	FetcherCacheClient fetchercache.Client
 	Req                *http.Request
 	StatusCodesSuccess []int
+	UseCache           bool
 }
 
 func (t *FetcherHTTPStatic) ID() crawler.FetcherID {
@@ -26,16 +29,26 @@ func (t *FetcherHTTPStatic) ID() crawler.FetcherID {
 
 func (t *FetcherHTTPStatic) Do(ctx context.Context, logger *slog.Logger, w io.Writer, _ crawler.CrawlerInputData) error {
 	LogRequest(logger, t.Req)
-	res, err := t.Cli.Do(t.Req)
-	if err != nil {
-		return terrors.Wrap(err)
+	var r io.Reader
+	if t.UseCache {
+		var err error
+		r, err = t.FetcherCacheClient.Do(ctx, t.Req)
+		if err != nil {
+			return terrors.Wrap(err)
+		}
+	} else {
+		res, err := t.Cli.Do(t.Req)
+		if err != nil {
+			return terrors.Wrap(err)
+		}
+		defer res.Body.Close()
+		if !slices.Contains(t.StatusCodesSuccess, res.StatusCode) {
+			status := res.StatusCode
+			return terrors.Wrapf("HTTP error : status=%d", status)
+		}
+		r = res.Body
 	}
-	defer res.Body.Close()
-	if !slices.Contains(t.StatusCodesSuccess, res.StatusCode) {
-		status := res.StatusCode
-		return terrors.Wrapf("HTTP error : status=%d", status)
-	}
-	if _, err := io.Copy(w, res.Body); err != nil {
+	if _, err := io.Copy(w, r); err != nil {
 		return terrors.Wrapf("Failed to io.Copy: %+v", err)
 	}
 	return nil
@@ -46,7 +59,6 @@ func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, setting *factorysettin
 	if f.ID() != def.ID {
 		return nil, factory.ErrNoMatchedFetcherID
 	}
-	f.Cli = setting.FetcherFactorySetting.HTTPClient
 	urlString, err := argument.GetFromArgumentDefinition[string](def.Argument, "URL")
 	if err != nil {
 		return nil, terrors.Wrap(err)
@@ -63,7 +75,14 @@ func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, setting *factorysettin
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	useCache, err := argument.GetFromArgumentDefinition[bool](def.Argument, "UseCache")
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	f.Req = req
 	f.StatusCodesSuccess = statusCodesSuccess
+	f.UseCache = useCache
+	f.Cli = setting.FetcherFactorySetting.HTTPClient
+	f.FetcherCacheClient = setting.FetcherFactorySetting.FetcherCacheClient
 	return &f, nil
 }

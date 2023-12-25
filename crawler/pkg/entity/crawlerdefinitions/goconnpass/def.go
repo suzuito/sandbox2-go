@@ -21,7 +21,8 @@ var Def = crawler.CrawlerDefinition{
 					"gopher",
 				},
 			},
-			"Days": 60,
+			"Days":     60,
+			"UseCache": false,
 		},
 	},
 	ParserDefinition: crawler.ParserDefinition{

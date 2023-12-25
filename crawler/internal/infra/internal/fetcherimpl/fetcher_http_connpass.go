@@ -11,15 +11,18 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/fetchercache"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
 type FetcherHTTPConnpass struct {
-	Cli         *http.Client
-	TimeNowFunc func() time.Time
-	Query       url.Values
-	Days        int
+	Cli                *http.Client
+	FetcherCacheClient fetchercache.Client
+	TimeNowFunc        func() time.Time
+	Query              url.Values
+	Days               int
+	UseCache           bool
 }
 
 func (t *FetcherHTTPConnpass) ID() crawler.FetcherID {
@@ -44,16 +47,25 @@ func (t *FetcherHTTPConnpass) Do(ctx context.Context, logger *slog.Logger, w io.
 		return terrors.Wrap(err)
 	}
 	LogRequest(logger, req)
-	res, err := t.Cli.Do(req)
-	if err != nil {
-		return terrors.Wrap(err)
+	var r io.Reader
+	if t.UseCache {
+		r, err = t.FetcherCacheClient.Do(ctx, req)
+		if err != nil {
+			return terrors.Wrap(err)
+		}
+	} else {
+		res, err := t.Cli.Do(req)
+		if err != nil {
+			return terrors.Wrap(err)
+		}
+		defer res.Body.Close()
+		if res.StatusCode != http.StatusOK {
+			status := res.StatusCode
+			return terrors.Wrapf("HTTP error : status=%d", status)
+		}
+		r = res.Body
 	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		status := res.StatusCode
-		return terrors.Wrapf("HTTP error : status=%d", status)
-	}
-	if _, err := io.Copy(w, res.Body); err != nil {
+	if _, err := io.Copy(w, r); err != nil {
 		return terrors.Wrapf("Failed to io.Copy: %+v", err)
 	}
 	return nil
@@ -72,9 +84,15 @@ func NewFetcherHTTPConnpass(def *crawler.FetcherDefinition, setting *factorysett
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	useCache, err := argument.GetFromArgumentDefinition[bool](def.Argument, "UseCache")
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	f.TimeNowFunc = time.Now
 	f.Days = days
 	f.Query = query
 	f.Cli = setting.FetcherFactorySetting.HTTPClient
+	f.FetcherCacheClient = setting.FetcherFactorySetting.FetcherCacheClient
+	f.UseCache = useCache
 	return &f, nil
 }

@@ -1,7 +1,12 @@
 package factorysetting
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/fetchercache"
+)
 
 type FetcherFactorySetting struct {
-	HTTPClient *http.Client
+	HTTPClient         *http.Client
+	FetcherCacheClient fetchercache.Client
 }
