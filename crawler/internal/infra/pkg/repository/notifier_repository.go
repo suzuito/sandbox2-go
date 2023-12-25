@@ -1,4 +1,4 @@
-package infra
+package repository
 
 import (
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/repositoryimpl/notifierrepository"

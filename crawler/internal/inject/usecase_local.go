@@ -12,9 +12,10 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra"
 	infra_factory "github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
+	infra_queue "github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/queue"
+	infra_repository "github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/repository"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase"
 	pkg_usecase "github.com/suzuito/sandbox2-go/crawler/pkg/usecase"
 )
@@ -50,8 +51,8 @@ func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 		),
 	}
 	logger := slog.New(&slogHandler)
-	timeSeriesDataRepository := infra.NewTimeSeriesDataRepository(fcli, "Crawler")
-	triggerCrawlerQueue := infra.NewTriggerCrawlerQueue(
+	timeSeriesDataRepository := infra_repository.NewTimeSeriesDataRepository(fcli, "Crawler")
+	triggerCrawlerQueue := infra_queue.NewTriggerCrawlerQueue(
 		pcli,
 		"gcf-CrawlerCrawl",
 		"gcf-CrawlerDispatchCrawl",
@@ -60,8 +61,8 @@ func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 	u := usecase.UsecaseImpl{
 		L:                              logger,
 		TriggerCrawlerQueue:            triggerCrawlerQueue,
-		CrawlerRepository:              infra.NewCrawlerRepository(AvailableCrawlers, CrawlerStarterSettings),
-		CrawlerConfigurationRepository: infra.NewCrawlerConfigurationRepository(),
+		CrawlerRepository:              infra_repository.NewCrawlerRepository(AvailableCrawlers, CrawlerStarterSettings),
+		CrawlerConfigurationRepository: infra_repository.NewCrawlerConfigurationRepository(),
 		CrawlerFactory: infra_factory.NewCrawlerFactory(&factorysetting.CrawlerFactorySetting{
 			FetcherFactorySetting: factorysetting.FetcherFactorySetting{
 				HTTPClient: httpClient,
@@ -72,8 +73,8 @@ func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 				TimeSeriesDataRepository: timeSeriesDataRepository,
 			},
 		}),
-		NotifierRepository:       infra.NewNotifierRepository(NewAvailableNotifiers(&env)),
-		NotifierFactory:          infra.NewNotifierFactory(discordGoSession),
+		NotifierRepository:       infra_repository.NewNotifierRepository(NewAvailableNotifiers(&env)),
+		NotifierFactory:          infra_factory.NewNotifierFactory(discordGoSession),
 		TimeSeriesDataRepository: timeSeriesDataRepository,
 	}
 	return &u, nil
