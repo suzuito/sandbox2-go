@@ -1,4 +1,4 @@
-package infra
+package factory
 
 import (
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/internal/factory"
