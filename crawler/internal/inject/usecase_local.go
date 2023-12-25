@@ -12,10 +12,10 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	infra_factory "github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factory"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/factorysetting"
-	infra_queue "github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/queue"
-	infra_repository "github.com/suzuito/sandbox2-go/crawler/internal/infra/pkg/repository"
+	infra_factory "github.com/suzuito/sandbox2-go/crawler/internal/infra/factory"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factorysetting"
+	infra_queue "github.com/suzuito/sandbox2-go/crawler/internal/infra/queue"
+	infra_repository "github.com/suzuito/sandbox2-go/crawler/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase"
 	pkg_usecase "github.com/suzuito/sandbox2-go/crawler/pkg/usecase"
 )
@@ -73,8 +73,10 @@ func NewUsecaseLocal(ctx context.Context) (pkg_usecase.Usecase, error) {
 				TimeSeriesDataRepository: timeSeriesDataRepository,
 			},
 		}),
-		NotifierRepository:       infra_repository.NewNotifierRepository(NewAvailableNotifiers(&env)),
-		NotifierFactory:          infra_factory.NewNotifierFactory(discordGoSession),
+		NotifierRepository: infra_repository.NewNotifierRepository(NewAvailableNotifiers(&env)),
+		NotifierFactory: infra_factory.NewNotifierFactory(&factorysetting.NotifierFactorySetting{
+			DiscordClient: discordGoSession,
+		}),
 		TimeSeriesDataRepository: timeSeriesDataRepository,
 	}
 	return &u, nil
