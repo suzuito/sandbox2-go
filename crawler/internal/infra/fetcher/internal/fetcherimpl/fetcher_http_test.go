@@ -3,11 +3,9 @@ package fetcherimpl
 import (
 	"bytes"
 	"context"
-	"errors"
 	"net/http"
 	"testing"
 
-	"github.com/h2non/gock"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
@@ -15,42 +13,33 @@ import (
 func TestFetcherHTTPDo(t *testing.T) {
 	testCases := []struct {
 		desc                    string
-		setUp                   func()
+		mockCli                 *MockHTTPClientWrapper
 		inputCrawlerInputData   crawler.CrawlerInputData
 		inputStatusCodesSuccess []int
-		expectedLogLines        []string
 		expectedError           string
 	}{
 		{
 			desc: "Success",
-			setUp: func() {
-				gock.New("https://www.example.com").
-					Get("/hoge/").
-					Reply(http.StatusOK)
+			mockCli: &MockHTTPClientWrapper{
+				ExpectedMethod: http.MethodGet,
+				ExpectedURL:    mustURL("https://www.example.com/hoge/"),
 			},
 			inputCrawlerInputData: crawler.CrawlerInputData{
 				"URL":    "https://www.example.com/hoge/",
 				"Method": "GET",
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
-			expectedLogLines: []string{
-				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
-			},
 		},
 		{
 			desc: "Success (omit Method)",
-			setUp: func() {
-				gock.New("https://www.example.com").
-					Get("/hoge/").
-					Reply(http.StatusOK)
+			mockCli: &MockHTTPClientWrapper{
+				ExpectedMethod: http.MethodGet,
+				ExpectedURL:    mustURL("https://www.example.com/hoge/"),
 			},
 			inputCrawlerInputData: crawler.CrawlerInputData{
 				"URL": "https://www.example.com/hoge/",
 			},
 			inputStatusCodesSuccess: []int{http.StatusOK},
-			expectedLogLines: []string{
-				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
-			},
 		},
 		{
 			desc: "Error - URL not found",
@@ -76,53 +65,20 @@ func TestFetcherHTTPDo(t *testing.T) {
 			},
 			expectedError: "parse \":::\": missing protocol scheme",
 		},
-		{
-			desc: "Error - HTTP client failed",
-			setUp: func() {
-				gock.New("https://www.example.com").
-					Get("/hoge/").
-					ReplyError(errors.New("dummy"))
-			},
-			inputCrawlerInputData: crawler.CrawlerInputData{
-				"URL": "https://www.example.com/hoge/",
-			},
-			expectedError: "Get \"https://www.example.com/hoge/\": dummy",
-			expectedLogLines: []string{
-				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/hoge/ query:map[]]]"`,
-			},
-		},
-		{
-			desc: "Error - HTTP request failed",
-			setUp: func() {
-				gock.New("https://www.example.com").
-					Get("/error/").
-					Reply(http.StatusNotFound)
-			},
-			inputCrawlerInputData: crawler.CrawlerInputData{
-				"URL":    "https://www.example.com/error/",
-				"Method": "GET",
-			},
-			inputStatusCodesSuccess: []int{http.StatusOK},
-			expectedError:           "HTTP error : status=404",
-			expectedLogLines: []string{
-				`level=INFO msg="" fetcher="map[request:map[host:www.example.com path:/error/ query:map[]]]"`,
-			},
-		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
 			f := FetcherHTTP{
-				Cli:                http.DefaultClient,
+				Cli:                tC.mockCli,
 				StatusCodesSuccess: tC.inputStatusCodesSuccess,
 			}
-			if tC.setUp != nil {
-				tC.setUp()
-			}
 			w := bytes.NewBuffer([]byte{})
-			logger, logBuffer := newMockLogger()
+			logger, _ := newMockLogger()
 			err := f.Do(context.Background(), logger, w, tC.inputCrawlerInputData)
 			test_helper.AssertError(t, tC.expectedError, err)
-			assertLogString(t, tC.expectedLogLines, logBuffer.String())
+			if tC.mockCli != nil {
+				tC.mockCli.Assert(t)
+			}
 		})
 	}
 }

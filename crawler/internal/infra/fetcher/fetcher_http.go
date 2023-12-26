@@ -14,7 +14,7 @@ func NewFetcherHTTP(def *crawler.FetcherDefinition, setting *factorysetting.Craw
 	if f.ID() != def.ID {
 		return nil, factoryerror.ErrNoMatchedFetcherID
 	}
-	f.Cli = setting.FetcherFactorySetting.HTTPClient
+	f.Cli = setting.FetcherFactorySetting.HTTPClientWrapper
 	statusCodesSuccess, err := argument.GetFromArgumentDefinition[[]int](def.Argument, "StatusCodesSuccess")
 	if err != nil {
 		return nil, terrors.Wrap(err)

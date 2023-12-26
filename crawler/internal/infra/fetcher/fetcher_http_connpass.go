@@ -28,6 +28,6 @@ func NewFetcherHTTPConnpass(def *crawler.FetcherDefinition, setting *factorysett
 	f.TimeNowFunc = time.Now
 	f.Days = days
 	f.Query = query
-	f.Cli = setting.FetcherFactorySetting.HTTPClient
+	f.Cli = setting.FetcherFactorySetting.HTTPClientWrapper
 	return &f, nil
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	infra_factory "github.com/suzuito/sandbox2-go/crawler/internal/infra/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factorysetting"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/httpclientwrapper"
 	infra_queue "github.com/suzuito/sandbox2-go/crawler/internal/infra/queue"
 	infra_repository "github.com/suzuito/sandbox2-go/crawler/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/crawler/internal/inject"
@@ -35,6 +36,7 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	firestoreBaseCollection := "Crawler"
 	pcli, err := pubsub.NewClient(ctx, projectID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
@@ -61,7 +63,7 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 		),
 	}
 	logger := slog.New(&slogHandler)
-	timeSeriesDataRepository := infra_repository.NewTimeSeriesDataRepository(fcli, "Crawler")
+	timeSeriesDataRepository := infra_repository.NewTimeSeriesDataRepository(fcli, firestoreBaseCollection)
 	triggerCrawlerQueue := infra_queue.NewTriggerCrawlerQueue(
 		pcli,
 		"gcf-CrawlerCrawl",
@@ -75,7 +77,10 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 		CrawlerConfigurationRepository: infra_repository.NewCrawlerConfigurationRepository(),
 		CrawlerFactory: infra_factory.NewCrawlerFactory(&factorysetting.CrawlerFactorySetting{
 			FetcherFactorySetting: factorysetting.FetcherFactorySetting{
-				HTTPClient: httpClient,
+				HTTPClientWrapper: httpclientwrapper.NewHTTPClientWrapper(
+					httpClient,
+					infra_repository.NewHTTPClientCacheRepository(fcli, firestoreBaseCollection),
+				),
 			},
 			ParserFactorySetting: factorysetting.ParserFactorySetting{},
 			PublisherFactorySetting: factorysetting.PublisherFactorySetting{

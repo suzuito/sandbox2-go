@@ -1,7 +1,7 @@
 package factorysetting
 
-import "net/http"
+import "github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/httpclientwrapper"
 
 type FetcherFactorySetting struct {
-	HTTPClient *http.Client
+	HTTPClientWrapper httpclientwrapper.HTTPClientWrapper
 }

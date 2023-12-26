@@ -16,7 +16,7 @@ func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, setting *factorysettin
 	if f.ID() != def.ID {
 		return nil, factoryerror.ErrNoMatchedFetcherID
 	}
-	f.Cli = setting.FetcherFactorySetting.HTTPClient
+	f.Cli = setting.FetcherFactorySetting.HTTPClientWrapper
 	urlString, err := argument.GetFromArgumentDefinition[string](def.Argument, "URL")
 	if err != nil {
 		return nil, terrors.Wrap(err)
