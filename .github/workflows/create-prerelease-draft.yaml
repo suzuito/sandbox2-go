@@ -1,0 +1,17 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "version"
+        required: true
+        type: string
+
+jobs:
+  create-prerelease-draft:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash create-prerelease-draft.sh ${{ inputs.version }} ${{ github.ref }}
+        env:
+          GH_TOKEN: ${{ github.token }}
