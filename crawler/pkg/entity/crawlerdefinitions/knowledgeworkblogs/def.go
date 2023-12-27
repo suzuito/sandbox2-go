@@ -15,6 +15,7 @@ var Def = crawler.CrawlerDefinition{
 			"URL":                "https://note.com/knowledgework/rss",
 			"Method":             http.MethodGet,
 			"StatusCodesSuccess": []int{http.StatusOK},
+			"UseCache":           false,
 		},
 	},
 	ParserDefinition: crawler.ParserDefinition{

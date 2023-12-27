@@ -6,8 +6,11 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/suzuito/sandbox2-go/common/httpclientcache"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factorysetting"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/httpclientwrapper/internal/httpclientwrapperimpl"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/repository"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
 type HTTPClientWrapper interface {
@@ -20,9 +23,16 @@ type HTTPClientWrapper interface {
 	) error
 }
 
-func NewHTTPClientWrapper(cli *http.Client, cliCache repository.HTTPClientCacheRepository) HTTPClientWrapper {
+func NewHTTPClientWrapperFromArgument(
+	def *crawler.FetcherDefinition,
+	setting *factorysetting.CrawlerFactorySetting,
+) HTTPClientWrapper {
+	useCache := argument.DefaultGetFromArgumentDefinition[bool](def.Argument, "UseCache", false)
+	httpClientCacheOption := argument.DefaultGetFromArgumentDefinition[*httpclientcache.ClientOption](def.Argument, "HTTPClientCacheOption", nil)
 	return &httpclientwrapperimpl.HTTPClientWrapperImpl{
-		Cli:      cli,
-		CliCache: cliCache,
+		Cli:         setting.FetcherFactorySetting.HTTPClient,
+		UseCache:    useCache,
+		Cache:       setting.FetcherFactorySetting.HTTPClientCacheClient,
+		CacheOption: httpClientCacheOption,
 	}
 }

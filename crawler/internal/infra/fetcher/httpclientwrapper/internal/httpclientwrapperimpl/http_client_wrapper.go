@@ -8,13 +8,15 @@ import (
 	"net/http"
 	"slices"
 
+	"github.com/suzuito/sandbox2-go/common/httpclientcache"
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/repository"
 )
 
 type HTTPClientWrapperImpl struct {
-	Cli      *http.Client
-	CliCache repository.HTTPClientCacheRepository
+	Cli         *http.Client
+	UseCache    bool
+	Cache       httpclientcache.Client
+	CacheOption *httpclientcache.ClientOption
 }
 
 func (t *HTTPClientWrapperImpl) Do(
@@ -24,14 +26,12 @@ func (t *HTTPClientWrapperImpl) Do(
 	w io.Writer,
 	statusCodesSuccess []int,
 ) error {
-	hit, cacheBytes, err := t.CliCache.Get(ctx, req)
-	if err != nil {
-		logger.WarnContext(ctx, "Failed to get cache: %+v", "err", err)
-	} else {
-		if hit {
-			buf := bytes.NewBuffer(cacheBytes)
-			_, err := io.Copy(w, buf)
-			return terrors.Wrap(err)
+	if t.UseCache {
+		hit, err := t.Cache.Get(ctx, req, w, t.CacheOption)
+		if err != nil {
+			logger.WarnContext(ctx, "Failed to get cache: %+v", "err", err)
+		} else if hit {
+			return nil
 		}
 	}
 	LogRequest(logger, req)
@@ -47,11 +47,13 @@ func (t *HTTPClientWrapperImpl) Do(
 	if err != nil {
 		return terrors.Wrapf("Failed to io.Copy: %+v", err)
 	}
-	if err := t.CliCache.Set(ctx, req, resBody); err != nil {
-		logger.WarnContext(ctx, "Failed to set cache: %+v", "err", err)
-	}
 	if _, err := w.Write(resBody); err != nil {
 		return terrors.Wrap(err)
+	}
+	if t.UseCache {
+		if err := t.Cache.Set(ctx, req, res.Header.Get("Content-Type"), bytes.NewBuffer(resBody), t.CacheOption); err != nil {
+			logger.WarnContext(ctx, "Failed to set cache: %+v", "err", err)
+		}
 	}
 	return nil
 }

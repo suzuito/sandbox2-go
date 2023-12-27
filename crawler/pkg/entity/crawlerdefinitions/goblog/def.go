@@ -16,6 +16,7 @@ var Def = crawler.CrawlerDefinition{
 			"URL":                "https://go.dev/blog",
 			"Method":             http.MethodGet,
 			"StatusCodesSuccess": []int{http.StatusOK},
+			"UseCache":           false,
 		},
 	},
 	ParserDefinition: crawler.ParserDefinition{

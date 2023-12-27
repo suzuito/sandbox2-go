@@ -9,13 +9,14 @@ import (
 	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/pubsub"
+	"cloud.google.com/go/storage"
 	"github.com/bwmarrin/discordgo"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
+	"github.com/suzuito/sandbox2-go/common/httpclientcache/gcpimpl"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	infra_factory "github.com/suzuito/sandbox2-go/crawler/internal/infra/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factorysetting"
-	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/httpclientwrapper"
 	infra_queue "github.com/suzuito/sandbox2-go/crawler/internal/infra/queue"
 	infra_repository "github.com/suzuito/sandbox2-go/crawler/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/crawler/internal/inject"
@@ -38,6 +39,10 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 	}
 	firestoreBaseCollection := "Crawler"
 	pcli, err := pubsub.NewClient(ctx, projectID)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	scli, err := storage.NewClient(ctx)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -77,10 +82,8 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 		CrawlerConfigurationRepository: infra_repository.NewCrawlerConfigurationRepository(),
 		CrawlerFactory: infra_factory.NewCrawlerFactory(&factorysetting.CrawlerFactorySetting{
 			FetcherFactorySetting: factorysetting.FetcherFactorySetting{
-				HTTPClientWrapper: httpclientwrapper.NewHTTPClientWrapper(
-					httpClient,
-					infra_repository.NewHTTPClientCacheRepository(fcli, firestoreBaseCollection),
-				),
+				HTTPClient:            httpClient,
+				HTTPClientCacheClient: gcpimpl.New(scli, env.BucketHTTPClientCache),
 			},
 			ParserFactorySetting: factorysetting.ParserFactorySetting{},
 			PublisherFactorySetting: factorysetting.PublisherFactorySetting{

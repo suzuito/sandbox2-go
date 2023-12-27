@@ -16,6 +16,7 @@ var Def = crawler.CrawlerDefinition{
 			"URL":                "https://cprss.s3.amazonaws.com/golangweekly.com.xml",
 			"Method":             http.MethodGet,
 			"StatusCodesSuccess": []int{http.StatusOK},
+			"UseCache":           false,
 		},
 	},
 	ParserDefinition: crawler.ParserDefinition{
