@@ -29,7 +29,7 @@ func (t *HTTPClientWrapperImpl) Do(
 	if t.UseCache {
 		hit, err := t.Cache.Get(ctx, req, w, t.CacheOption)
 		if err != nil {
-			logger.WarnContext(ctx, "Failed to get cache: %+v", "err", err)
+			logger.WarnContext(ctx, "Failed to get cache", "err", err)
 		} else if hit {
 			return nil
 		}
@@ -52,7 +52,7 @@ func (t *HTTPClientWrapperImpl) Do(
 	}
 	if t.UseCache {
 		if err := t.Cache.Set(ctx, req, res.Header.Get("Content-Type"), bytes.NewBuffer(resBody), t.CacheOption); err != nil {
-			logger.WarnContext(ctx, "Failed to set cache: %+v", "err", err)
+			logger.WarnContext(ctx, "Failed to set cache", "err", err)
 		}
 	}
 	return nil
