@@ -43,6 +43,10 @@ func (t *HTTPClientWrapperImpl) Do(
 	if !slices.Contains(statusCodesSuccess, res.StatusCode) {
 		return terrors.Wrapf("HTTP error : status=%d", res.StatusCode)
 	}
+	// resBody 不要？
+	// resBody, err := io.Copy(w, res.Body)
+	// t.Cache.Set(ctx, req, res.Header.Get("Content-Type"), w, t.CacheOption)
+	// にしてもいい？
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return terrors.Wrapf("Failed to io.Copy: %+v", err)

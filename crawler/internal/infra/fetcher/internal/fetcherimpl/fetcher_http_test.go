@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
@@ -73,7 +74,7 @@ func TestFetcherHTTPDo(t *testing.T) {
 				StatusCodesSuccess: tC.inputStatusCodesSuccess,
 			}
 			w := bytes.NewBuffer([]byte{})
-			logger, _ := newMockLogger()
+			logger, _ := clog.NewBytesBufferLogger()
 			err := f.Do(context.Background(), logger, w, tC.inputCrawlerInputData)
 			test_helper.AssertError(t, tC.expectedError, err)
 			if tC.mockCli != nil {

@@ -5,6 +5,7 @@ common-test:
 	sh test.sh ./common/...
 common-mock:
 	./mockgen common/cusecase/clog/logger.go
+	./mockgen common/httpclientcache/client.go
 
 #
 # blog
