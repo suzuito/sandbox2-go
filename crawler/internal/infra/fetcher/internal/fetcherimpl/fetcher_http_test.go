@@ -6,10 +6,15 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
+
+func TestFetcherHTTPID(t *testing.T) {
+	assert.Equal(t, (&FetcherHTTP{}).ID(), crawler.FetcherID("fetcher_http"))
+}
 
 func TestFetcherHTTPDo(t *testing.T) {
 	testCases := []struct {

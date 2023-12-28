@@ -8,9 +8,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
+
+func TestFetcherHTTPConnpassID(t *testing.T) {
+	assert.Equal(t, (&FetcherHTTPConnpass{}).ID(), crawler.FetcherID("fetcher_http_connpass"))
+}
 
 func TestFetcherHTTPConnpassDo(t *testing.T) {
 	testCases := []struct {
