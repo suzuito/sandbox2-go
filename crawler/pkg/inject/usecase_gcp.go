@@ -82,8 +82,12 @@ func NewUsecaseGCP(ctx context.Context) (pkg_usecase.Usecase, error) {
 		CrawlerConfigurationRepository: infra_repository.NewCrawlerConfigurationRepository(),
 		CrawlerFactory: infra_factory.NewCrawlerFactory(&factorysetting.CrawlerFactorySetting{
 			FetcherFactorySetting: factorysetting.FetcherFactorySetting{
-				HTTPClient:            httpClient,
-				HTTPClientCacheClient: gcpimpl.New(scli, env.BucketHTTPClientCache),
+				HTTPClient: httpClient,
+				HTTPClientCacheClient: gcpimpl.New(
+					scli,
+					env.HTTPClientCacheBucket,
+					env.HTTPClientCacheBasePath,
+				),
 			},
 			ParserFactorySetting: factorysetting.ParserFactorySetting{},
 			PublisherFactorySetting: factorysetting.PublisherFactorySetting{

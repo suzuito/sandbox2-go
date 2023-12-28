@@ -35,7 +35,7 @@ func TestSetAndGet(t *testing.T) {
 					Bucket:   testbucket,
 					BasePath: testBasePath,
 					Cli:      scli,
-					nowFunc:  time.Now,
+					NowFunc:  time.Now,
 				}
 				inputBody := bytes.NewBufferString("hoge")
 				inputRequest := http.Request{
@@ -72,7 +72,7 @@ func TestSetAndGet(t *testing.T) {
 					Bucket:   testbucket,
 					BasePath: testBasePath,
 					Cli:      scli,
-					nowFunc:  time.Now,
+					NowFunc:  time.Now,
 				}
 				inputBody := bytes.NewBufferString("hoge")
 				inputRequest := http.Request{
@@ -115,7 +115,7 @@ func TestSetAndGet(t *testing.T) {
 					Bucket:   testbucket,
 					BasePath: testBasePath,
 					Cli:      scli,
-					nowFunc:  time.Now,
+					NowFunc:  time.Now,
 				}
 				inputRequest := http.Request{
 					URL: &url.URL{
@@ -151,7 +151,7 @@ func TestSetAndGet(t *testing.T) {
 					Bucket:   testbucket,
 					BasePath: testBasePath,
 					Cli:      scli,
-					nowFunc:  time.Now,
+					NowFunc:  time.Now,
 				}
 				inputRequest := http.Request{
 					URL: &url.URL{

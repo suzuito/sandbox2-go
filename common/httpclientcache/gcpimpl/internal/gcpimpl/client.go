@@ -17,7 +17,7 @@ type Client struct {
 	Cli      *storage.Client
 	Bucket   string
 	BasePath string
-	nowFunc  func() time.Time
+	NowFunc  func() time.Time
 }
 
 func (t *Client) getPath(key string) string {
@@ -49,7 +49,7 @@ func (t *Client) Get(
 		}
 	}
 	expirationTime := attrs.Created.AddDate(0, 0, ttlInDays)
-	if t.nowFunc().After(expirationTime) {
+	if t.NowFunc().After(expirationTime) {
 		return false, nil
 	}
 	// Read body
