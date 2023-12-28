@@ -8,6 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestKeyStringHashHex(t *testing.T) {
+	keygen := KeyGen{}
+	keygen.IncludeHost = true
+	req, _ := http.NewRequest("GET", "https://www.example.com/", nil)
+	assert.Equal(t, "7c1767b30512b6003fd3c2e618a86522", keygen.KeyStringHashHex(req))
+}
+
 func TestKeyGenKeyString(t *testing.T) {
 	inputRequest1 := http.Request{
 		URL: &url.URL{
