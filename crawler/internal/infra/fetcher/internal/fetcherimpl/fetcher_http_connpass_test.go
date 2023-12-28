@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
 )
 
@@ -44,7 +45,7 @@ func TestFetcherHTTPConnpassDo(t *testing.T) {
 				Days:        tC.inputDays,
 			}
 			w := bytes.NewBuffer([]byte{})
-			logger, _ := newMockLogger()
+			logger, _ := clog.NewBytesBufferLogger()
 			err := f.Do(context.Background(), logger, w, nil)
 			test_helper.AssertError(t, tC.expectedError, err)
 			tC.mockCli.Assert(t)

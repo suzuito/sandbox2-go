@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/test_helper"
 )
 
@@ -38,7 +39,7 @@ func TestFetcherHTTPStaticDo(t *testing.T) {
 				StatusCodesSuccess: tC.inputStatusCodesSuccess,
 			}
 			w := bytes.NewBuffer([]byte{})
-			logger, _ := newMockLogger()
+			logger, _ := clog.NewBytesBufferLogger()
 			err := f.Do(context.Background(), logger, w, nil)
 			test_helper.AssertError(t, tC.expectedError, err)
 			tC.mockCli.Assert(t)
