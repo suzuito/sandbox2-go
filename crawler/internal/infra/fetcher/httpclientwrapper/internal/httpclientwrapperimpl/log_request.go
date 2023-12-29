@@ -1,4 +1,4 @@
-package fetcherimpl
+package httpclientwrapperimpl
 
 import (
 	"log/slog"

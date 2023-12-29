@@ -6,6 +6,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factoryerror"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factorysetting"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/httpclientwrapper"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/internal/fetcherimpl"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
@@ -16,7 +17,6 @@ func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, setting *factorysettin
 	if f.ID() != def.ID {
 		return nil, factoryerror.ErrNoMatchedFetcherID
 	}
-	f.Cli = setting.FetcherFactorySetting.HTTPClient
 	urlString, err := argument.GetFromArgumentDefinition[string](def.Argument, "URL")
 	if err != nil {
 		return nil, terrors.Wrap(err)
@@ -33,6 +33,8 @@ func NewFetcherHTTPStatic(def *crawler.FetcherDefinition, setting *factorysettin
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	cli := httpclientwrapper.NewHTTPClientWrapperFromArgument(def, setting)
+	f.Cli = cli
 	f.Req = req
 	f.StatusCodesSuccess = statusCodesSuccess
 	return &f, nil

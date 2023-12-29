@@ -7,6 +7,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factoryerror"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/factory/factorysetting"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/httpclientwrapper"
 	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/internal/fetcherimpl"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
@@ -25,9 +26,10 @@ func NewFetcherHTTPConnpass(def *crawler.FetcherDefinition, setting *factorysett
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	cli := httpclientwrapper.NewHTTPClientWrapperFromArgument(def, setting)
+	f.Cli = cli
 	f.TimeNowFunc = time.Now
 	f.Days = days
 	f.Query = query
-	f.Cli = setting.FetcherFactorySetting.HTTPClient
 	return &f, nil
 }

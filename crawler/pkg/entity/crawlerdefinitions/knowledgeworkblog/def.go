@@ -3,6 +3,7 @@ package knowledgeworkblog
 import (
 	"net/http"
 
+	"github.com/suzuito/sandbox2-go/common/httpclientcache"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/argument"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/timeseriesdata"
@@ -14,6 +15,16 @@ var Def = crawler.CrawlerDefinition{
 		ID: "fetcher_http",
 		Argument: argument.ArgumentDefinition{
 			"StatusCodesSuccess": []int{http.StatusOK},
+			"UseCache":           true,
+			"HTTPClientCacheOption": &httpclientcache.ClientOption{
+				KeyGen: &httpclientcache.KeyGen{
+					IncludeProtocol: true,
+					IncludeHost:     true,
+					IncludePath:     true,
+					IncludeQuery:    false,
+				},
+				TTLInDays: 30,
+			},
 		},
 	},
 	ParserDefinition: crawler.ParserDefinition{

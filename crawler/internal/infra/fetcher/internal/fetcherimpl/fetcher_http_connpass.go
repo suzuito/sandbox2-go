@@ -9,11 +9,12 @@ import (
 	"time"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/crawler/internal/infra/fetcher/httpclientwrapper"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 )
 
 type FetcherHTTPConnpass struct {
-	Cli         *http.Client
+	Cli         httpclientwrapper.HTTPClientWrapper
 	TimeNowFunc func() time.Time
 	Query       url.Values
 	Days        int
@@ -40,18 +41,5 @@ func (t *FetcherHTTPConnpass) Do(ctx context.Context, logger *slog.Logger, w io.
 	if err != nil {
 		return terrors.Wrap(err)
 	}
-	LogRequest(logger, req)
-	res, err := t.Cli.Do(req)
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		status := res.StatusCode
-		return terrors.Wrapf("HTTP error : status=%d", status)
-	}
-	if _, err := io.Copy(w, res.Body); err != nil {
-		return terrors.Wrapf("Failed to io.Copy: %+v", err)
-	}
-	return nil
+	return terrors.Wrap(t.Cli.Do(ctx, logger, req, w, []int{http.StatusOK}))
 }
