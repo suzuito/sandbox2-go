@@ -7,16 +7,23 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/factory"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/queue"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/repository"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
 	"go.uber.org/mock/gomock"
 )
 
 type utMocks struct {
 	MockLogBuffer                      *bytes.Buffer
+	MockCrawlerFactory                 *factory.MockCrawlerFactory
 	MockCrawlerRepository              *repository.MockCrawlerRepository
 	MockCrawlerConfigurationRepository *repository.MockCrawlerConfigurationRepository
 	MockTriggerCrawlerQueue            *queue.MockTriggerCrawlerQueue
+
+	MockFetcher   *crawler.MockFetcher
+	MockParser    *crawler.MockParser
+	MockPublisher *crawler.MockPublisher
 }
 
 func (t *utMocks) NewUsecase() *UsecaseImpl {
@@ -38,6 +45,7 @@ func (t *utMocks) NewUsecase() *UsecaseImpl {
 	return &UsecaseImpl{
 		L:                              l,
 		CrawlerRepository:              t.MockCrawlerRepository,
+		CrawlerFactory:                 t.MockCrawlerFactory,
 		CrawlerConfigurationRepository: t.MockCrawlerConfigurationRepository,
 		TriggerCrawlerQueue:            t.MockTriggerCrawlerQueue,
 	}
@@ -46,9 +54,13 @@ func (t *utMocks) NewUsecase() *UsecaseImpl {
 func newUTMocks(ctrl *gomock.Controller) *utMocks {
 	return &utMocks{
 		MockLogBuffer:                      bytes.NewBufferString(""),
+		MockCrawlerFactory:                 factory.NewMockCrawlerFactory(ctrl),
 		MockCrawlerRepository:              repository.NewMockCrawlerRepository(ctrl),
 		MockCrawlerConfigurationRepository: repository.NewMockCrawlerConfigurationRepository(ctrl),
 		MockTriggerCrawlerQueue:            queue.NewMockTriggerCrawlerQueue(ctrl),
+		MockFetcher:                        crawler.NewMockFetcher(ctrl),
+		MockParser:                         crawler.NewMockParser(ctrl),
+		MockPublisher:                      crawler.NewMockPublisher(ctrl),
 	}
 }
 
