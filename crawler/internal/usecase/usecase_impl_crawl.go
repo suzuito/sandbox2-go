@@ -17,10 +17,7 @@ func (t *UsecaseImpl) CrawlOnGCF(
 		t.L.ErrorContext(ctx, "Failed to RecieveCrawlEvent", "err", err)
 		return terrors.Wrap(err)
 	}
-	if err := t.Crawl(ctx, crawlerID, crawlerInputData); err != nil {
-		return terrors.Wrap(err)
-	}
-	return nil
+	return terrors.Wrap(t.Crawl(ctx, crawlerID, crawlerInputData))
 }
 
 func (t *UsecaseImpl) Crawl(

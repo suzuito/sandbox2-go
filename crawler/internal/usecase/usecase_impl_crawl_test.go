@@ -11,6 +11,98 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
+func TestCrawlOnGCF(t *testing.T) {
+	testCases := []struct {
+		utTestCase
+		expectedError string
+	}{
+		{
+			utTestCase: utTestCase{
+				desc: "Success",
+				setUp: func(mocks *utMocks) {
+					mocks.MockTriggerCrawlerQueue.EXPECT().
+						RecieveCrawlEvent(
+							gomock.Any(),
+							gomock.Any(),
+						).
+						Return(
+							crawler.CrawlerID("crawler001"),
+							crawler.CrawlerInputData{},
+							nil,
+						)
+					mocks.MockCrawlerRepository.EXPECT().
+						GetCrawlerDefinition(
+							gomock.Any(),
+							crawler.CrawlerID("crawler001"),
+						).
+						Return(&crawler.CrawlerDefinition{}, nil)
+					mocks.MockFetcher.EXPECT().Do(
+						gomock.Any(),
+						gomock.Any(),
+						gomock.Any(),
+						gomock.Any(),
+					)
+					mocks.MockParser.EXPECT().Do(
+						gomock.Any(),
+						gomock.Any(),
+						gomock.Any(),
+					).Return(
+						[]timeseriesdata.TimeSeriesData{
+							&timeseriesdata.TimeSeriesDataEvent{},
+						},
+						nil,
+					)
+					mocks.MockPublisher.EXPECT().Do(
+						gomock.Any(),
+						gomock.Any(),
+						gomock.Any(),
+					)
+					crwl := crawler.Crawler{
+						Fetcher:   mocks.MockFetcher,
+						Parser:    mocks.MockParser,
+						Publisher: mocks.MockPublisher,
+					}
+					mocks.MockCrawlerFactory.EXPECT().
+						Get(gomock.Any(), gomock.Any()).
+						Return(&crwl, nil)
+				},
+				expectedLogLines: []string{
+					"level=INFO msg=Crawl crawlerID=crawler001",
+				},
+			},
+		},
+		{
+			utTestCase: utTestCase{
+				desc: "Failed to TriggerCrawlerQueue.RecieveCrawlEvent",
+				setUp: func(mocks *utMocks) {
+					mocks.MockTriggerCrawlerQueue.EXPECT().
+						RecieveCrawlEvent(
+							gomock.Any(),
+							gomock.Any(),
+						).
+						Return(
+							crawler.CrawlerID("crawler001"),
+							crawler.CrawlerInputData{},
+							errors.New("dummy"),
+						)
+				},
+				expectedLogLines: []string{
+					`level=ERROR msg="Failed to RecieveCrawlEvent" err=dummy`,
+				},
+			},
+			expectedError: "dummy",
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			tC.run(t, func(uc *UsecaseImpl) {
+				err := uc.CrawlOnGCF(context.Background(), []byte("dummy"))
+				test_helper.AssertError(t, tC.expectedError, err)
+			})
+		})
+	}
+}
+
 func TestCrawl(t *testing.T) {
 	testCases := []struct {
 		utTestCase
