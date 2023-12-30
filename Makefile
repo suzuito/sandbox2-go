@@ -53,6 +53,7 @@ crawler-mock:
 	./mockgen crawler/internal/usecase/repository/notifier.go
 	./mockgen crawler/internal/usecase/repository/crawler_configuration.go
 	./mockgen crawler/internal/usecase/queue/trigger_crawler.go
+	./mockgen crawler/internal/usecase/discord/discord_go_session.go
 	./mockgen crawler/internal/infra/fetcher/httpclientwrapper/http_client_wrapper.go
 crawler-test:
 	sh test.sh ./crawler/...
