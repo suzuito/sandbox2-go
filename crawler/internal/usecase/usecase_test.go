@@ -11,6 +11,7 @@ import (
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/queue"
 	"github.com/suzuito/sandbox2-go/crawler/internal/usecase/repository"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
+	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/notifier"
 	"go.uber.org/mock/gomock"
 )
 
@@ -18,12 +19,16 @@ type utMocks struct {
 	MockLogBuffer                      *bytes.Buffer
 	MockCrawlerFactory                 *factory.MockCrawlerFactory
 	MockCrawlerRepository              *repository.MockCrawlerRepository
+	MockNotifierRepository             *repository.MockNotifierRepository
+	MockNotifierFactory                *factory.MockNotifierFactory
 	MockCrawlerConfigurationRepository *repository.MockCrawlerConfigurationRepository
 	MockTriggerCrawlerQueue            *queue.MockTriggerCrawlerQueue
+	MockTimeSeriesDataRepository       *repository.MockTimeSeriesDataRepository
 
 	MockFetcher   *crawler.MockFetcher
 	MockParser    *crawler.MockParser
 	MockPublisher *crawler.MockPublisher
+	MockNotifier  *notifier.MockNotifier
 }
 
 func (t *utMocks) NewUsecase() *UsecaseImpl {
@@ -45,7 +50,10 @@ func (t *utMocks) NewUsecase() *UsecaseImpl {
 	return &UsecaseImpl{
 		L:                              l,
 		CrawlerRepository:              t.MockCrawlerRepository,
+		NotifierRepository:             t.MockNotifierRepository,
 		CrawlerFactory:                 t.MockCrawlerFactory,
+		NotifierFactory:                t.MockNotifierFactory,
+		TimeSeriesDataRepository:       t.MockTimeSeriesDataRepository,
 		CrawlerConfigurationRepository: t.MockCrawlerConfigurationRepository,
 		TriggerCrawlerQueue:            t.MockTriggerCrawlerQueue,
 	}
@@ -55,12 +63,16 @@ func newUTMocks(ctrl *gomock.Controller) *utMocks {
 	return &utMocks{
 		MockLogBuffer:                      bytes.NewBufferString(""),
 		MockCrawlerFactory:                 factory.NewMockCrawlerFactory(ctrl),
+		MockNotifierRepository:             repository.NewMockNotifierRepository(ctrl),
+		MockNotifierFactory:                factory.NewMockNotifierFactory(ctrl),
 		MockCrawlerRepository:              repository.NewMockCrawlerRepository(ctrl),
 		MockCrawlerConfigurationRepository: repository.NewMockCrawlerConfigurationRepository(ctrl),
 		MockTriggerCrawlerQueue:            queue.NewMockTriggerCrawlerQueue(ctrl),
+		MockTimeSeriesDataRepository:       repository.NewMockTimeSeriesDataRepository(ctrl),
 		MockFetcher:                        crawler.NewMockFetcher(ctrl),
 		MockParser:                         crawler.NewMockParser(ctrl),
 		MockPublisher:                      crawler.NewMockPublisher(ctrl),
+		MockNotifier:                       notifier.NewMockNotifier(ctrl),
 	}
 }
 
