@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/mmcdole/gofeed"
+	"github.com/suzuito/sandbox2-go/common/constant"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/crawler/pkg/entity/crawler"
@@ -33,6 +34,7 @@ func (t *RSSParser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputD
 			clog.L.Errorf(ctx, "%+v\n", err)
 			continue
 		}
+		publishedAt = publishedAt.In(constant.JST)
 		data := timeseriesdata.TimeSeriesDataBlogFeed{
 			ID: timeseriesdata.TimeSeriesDataID(strings.Replace(
 				strings.Replace(item.GUID, ":", "-", -1),
@@ -43,11 +45,6 @@ func (t *RSSParser) Do(ctx context.Context, r io.Reader, _ crawler.CrawlerInputD
 			PublishedAt: publishedAt,
 			Title:       item.Title,
 			URL:         item.Link,
-			Author: &timeseriesdata.TimeSeriesDataBlogFeedAuthor{
-				Name:     "Golang Weekly",
-				URL:      "https://golangweekly.com/",
-				ImageURL: "https://golangweekly.com/images/gopher-keith-57.png",
-			},
 		}
 		returned = append(returned, &data)
 	}

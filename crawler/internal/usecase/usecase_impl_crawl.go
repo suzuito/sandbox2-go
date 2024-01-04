@@ -17,10 +17,7 @@ func (t *UsecaseImpl) CrawlOnGCF(
 		t.L.ErrorContext(ctx, "Failed to RecieveCrawlEvent", "err", err)
 		return terrors.Wrap(err)
 	}
-	if err := t.Crawl(ctx, crawlerID, crawlerInputData); err != nil {
-		return terrors.Wrap(err)
-	}
-	return nil
+	return terrors.Wrap(t.Crawl(ctx, crawlerID, crawlerInputData))
 }
 
 func (t *UsecaseImpl) Crawl(
@@ -43,19 +40,19 @@ func (t *UsecaseImpl) Crawl(
 	data := []byte{}
 	w := bytes.NewBuffer(data)
 	if err := crawler.Fetcher.Do(ctx, logger, w, crawlerInputData); err != nil {
-		t.L.ErrorContext(ctx, "Failed to Fetch", "err", err)
+		logger.ErrorContext(ctx, "Failed to Fetch", "err", err)
 		return terrors.Wrap(err)
 	}
 	timeSeriesData, err := crawler.Parser.Do(ctx, w, crawlerInputData)
 	if err != nil {
-		t.L.ErrorContext(ctx, "Failed to Parse", "err", err)
+		logger.ErrorContext(ctx, "Failed to Parse", "err", err)
 		return terrors.Wrap(err)
 	}
 	for _, data := range timeSeriesData {
-		t.L.DebugContext(ctx, "fetched data", "timeSeriesDataID", string(data.GetID()))
+		logger.DebugContext(ctx, "fetched data", "timeSeriesDataID", string(data.GetID()))
 	}
 	if err := crawler.Publisher.Do(ctx, crawlerInputData, timeSeriesData...); err != nil {
-		t.L.ErrorContext(ctx, "Failed to Publish", "err", err)
+		logger.ErrorContext(ctx, "Failed to Publish", "err", err)
 		return terrors.Wrap(err)
 	}
 	return nil
