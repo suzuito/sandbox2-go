@@ -19,7 +19,7 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_CREDS }}'
       - run: make common-test
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           flags: common
   blog-test:
@@ -37,7 +37,7 @@ jobs:
           credentials_json: '${{ secrets.GCP_CREDS }}'
       - run: curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.0/migrate.linux-386.tar.gz | tar xvz && sudo mv ./migrate /bin/
       - run: make blog-init && make blog-init-rdb && make blog-test
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           flags: blog
   crawler-test:
@@ -54,6 +54,6 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_CREDS }}'
       - run: make crawler-init && make crawler-test
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           flags: crawler
