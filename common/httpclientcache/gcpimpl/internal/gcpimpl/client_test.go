@@ -170,7 +170,7 @@ func TestSetAndGet(t *testing.T) {
 						IncludeQuery:    true,
 						QueryKeys:       []string{"key2"},
 					},
-					TTLInDays: 0,
+					TTLInDays: -1,
 				}
 				err = cli.Set(ctx, &inputRequest, "text/html", inputBody, &inputOption)
 				if err != nil {
