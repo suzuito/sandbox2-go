@@ -26,7 +26,7 @@ require (
 	github.com/yuin/goldmark-meta v1.1.0
 	go.abhg.dev/goldmark/toc v0.9.0
 	go.uber.org/mock v0.4.0
-	golang.org/x/oauth2 v0.15.0
+	golang.org/x/oauth2 v0.17.0
 	google.golang.org/api v0.154.0
 	google.golang.org/grpc v1.61.0
 	gopkg.in/yaml.v3 v3.0.1
