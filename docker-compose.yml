@@ -13,6 +13,17 @@ services:
       - ./.service/blog/.conf.d:/etc/mysql/conf.d
     ports:
       - 3306:3306
+  blog2-mysql:
+    build:
+      dockerfile: Dockerfile.mysql
+      context: ./.service/blog2/
+    platform: linux/arm64
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    volumes:
+      - ./.service/blog2/.conf.d:/etc/mysql/conf.d
+    ports:
+      - 3307:3306
   crawler-firebase-emulator:
     build:
       dockerfile: Dockerfile.firebase

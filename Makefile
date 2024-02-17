@@ -45,6 +45,26 @@ blog-mock:
 	./mockgen blog/web/presenters.go
 
 #
+# blog2
+#
+BLOG2_DB_NAME = blog2
+BLOG2_DB_NAME_FOR_UNIT_TEST = blog2_for_unit_test
+blog2-init:
+	docker compose up -d blog2-mysql
+	DB_HOST=127.0.0.1 DB_PORT=3307 sh wait-until-db-open.sh
+blog2-init-rdb:
+	mysql -u root -h 127.0.0.1 -P 3307 -e "create database if not exists $(BLOG2_DB_NAME)"
+	mysql -u root -h 127.0.0.1 -P 3307 -e "create database if not exists $(BLOG2_DB_NAME_FOR_UNIT_TEST)"
+	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3307)/$(BLOG2_DB_NAME)" drop -f
+	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3307)/$(BLOG2_DB_NAME)" up
+	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3307)/$(BLOG2_DB_NAME_FOR_UNIT_TEST)" drop -f
+	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3307)/$(BLOG2_DB_NAME_FOR_UNIT_TEST)" up
+blog2-migrate-create:
+	# Example: make blog2-migrate-create NAME=create_article
+	.bin/migrate create -ext sql -dir ./.service/blog2/.schema/ $(NAME)
+
+
+#
 # crawler
 #
 crawler-init:

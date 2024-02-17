@@ -80,13 +80,26 @@ Migration
 
 ```bash
 # Create new migration
-migrate create -dir .schema -ext sql init
+.bin/migrate create -dir .schema -ext sql init
 ```
 
 #### Test
 
 ```bash
 make blog-test
+```
+
+### blog2
+
+```bash
+make blog2-init
+make blog2-init-rdb
+```
+
+#### Migration
+
+```bash
+NAME=init make blog2-migrate-create
 ```
 
 ### crawler
