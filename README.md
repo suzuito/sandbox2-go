@@ -34,6 +34,11 @@
 
 ## Development
 
+```bash
+# Install air
+go install github.com/cosmtrek/air@latest
+```
+
 ### common
 
 #### Test
@@ -59,7 +64,7 @@ vim ./.service/blog/local.env.sh
 source ./.service/blog/local.env.sh
 
 # server
-air -c ./.service/blog/.air.server.toml
+$(go env GOPATH)/bin/air -c ./.service/blog/.air.server.toml
 curl http://localhost:8080/ping
 
 # check rdb
@@ -94,6 +99,21 @@ make blog-test
 ```bash
 make blog2-init
 make blog2-init-rdb
+```
+
+#### Run
+
+```bash
+make blog2-run-local
+# Environment variables
+cp ./.service/blog2/local.env.sh.sample ./.service/blog2/local.env.sh
+## Modification of environment variables
+vim ./.service/blog2/local.env.sh
+source ./.service/blog2/local.env.sh
+
+# server
+$(go env GOPATH)/bin/air -c ./.service/blog2/.air.server.toml
+curl http://localhost:8080/ping
 ```
 
 #### Migration

@@ -63,7 +63,6 @@ blog2-migrate-create:
 	# Example: make blog2-migrate-create NAME=create_article
 	.bin/migrate create -ext sql -dir ./.service/blog2/.schema/ $(NAME)
 
-
 #
 # crawler
 #
