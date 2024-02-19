@@ -14,8 +14,9 @@ func SetRouter(
 	e.Static("css", "blog2/internal/web/_css")
 	e.Static("images", "blog2/internal/web/_images")
 	e.GET("health", w.GetHealth)
-	e.GET("", func(ctx *gin.Context) {
-	})
+	e.Use(w.MiddlewareAdminAuthe)
+	e.NoRoute(w.NoRoute)
+	e.GET("", w.GetTop)
 	{
 		gArticles := e.Group("articles")
 		gArticles.GET("", func(ctx *gin.Context) {})
@@ -35,7 +36,9 @@ func SetRouter(
 			gTag.GET("edit", func(ctx *gin.Context) {})
 		}
 	}
-	e.GET("login", w.GetLogin)
-	e.POST("login", func(ctx *gin.Context) {})
-	e.POST("logout", func(ctx *gin.Context) {})
+	{
+		gAdmin := e.Group("admin")
+		gAdmin.Use(w.MiddlewareAdminAutho)
+		gAdmin.GET("", w.GetAdminTop)
+	}
 }

@@ -8,5 +8,5 @@ type Environment struct {
 	ArticleHTMLBucket  string `required:"false" envconfig:"ARTICLE_HTML_BUCKET"`
 	SiteOrigin         string `required:"false" split_words:"true"`
 	Env                string `required:"true" split_words:"true"`
-	AdminPassword      string `required:"true" split_words:"true"`
+	AdminToken         string `required:"true" split_words:"true"`
 }

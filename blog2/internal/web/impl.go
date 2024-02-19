@@ -7,13 +7,15 @@ import (
 )
 
 type Impl struct {
-	U usecase.Usecase
-	P presenter.Presenter
+	U          usecase.Usecase
+	P          presenter.Presenter
+	AdminToken string
 }
 
 func NewImpl(u usecase.Usecase, env *environment.Environment) *Impl {
 	return &Impl{
-		U: u,
-		P: &presenter.Impl{},
+		U:          u,
+		P:          &presenter.Impl{},
+		AdminToken: env.AdminToken,
 	}
 }

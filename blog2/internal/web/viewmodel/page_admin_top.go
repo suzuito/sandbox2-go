@@ -1,5 +1,5 @@
 package viewmodel
 
-type PageGetLogin struct {
+type PageAdminTop struct {
 	ComponentCommonHead ComponentCommonHead
 }
