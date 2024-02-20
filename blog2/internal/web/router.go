@@ -44,7 +44,7 @@ func SetRouter(
 			gAdminArticles := gAdmin.Group("articles")
 			gAdminArticles.GET("", w.GetAdminArticles)
 			{
-				gAdminArticle := gAdmin.Group(":articleID")
+				gAdminArticle := gAdminArticles.Group(":articleID")
 				gAdminArticle.GET("", w.GetAdminArticle)
 			}
 		}

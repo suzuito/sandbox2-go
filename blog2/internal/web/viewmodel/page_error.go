@@ -4,3 +4,10 @@ type PageError struct {
 	ComponentCommonHead ComponentCommonHead
 	Message             string
 }
+
+func NewPageErrorUnknownError() *PageError {
+	return &PageError{
+		ComponentCommonHead: ComponentCommonHead{},
+		Message:             "謎のエラーが発生した！",
+	}
+}

@@ -16,10 +16,7 @@ func (t *Impl) GetAdminArticles(ctx *gin.Context) {
 			ctx,
 			http.StatusInternalServerError,
 			"page_error.html",
-			viewmodel.PageError{
-				ComponentCommonHead: viewmodel.ComponentCommonHead{},
-				Message:             "謎のエラーが発生した！",
-			},
+			viewmodel.NewPageErrorUnknownError(),
 		)
 		return
 	}
