@@ -7,9 +7,9 @@ import (
 	"github.com/suzuito/sandbox2-go/blog2/internal/web/viewmodel"
 )
 
-func (w *Impl) MiddlewareAdminAutho(ctx *gin.Context) {
+func (t *Impl) MiddlewareAdminAutho(ctx *gin.Context) {
 	if !ctxGetAdmin(ctx) {
-		w.P.RenderHTML(
+		t.P.RenderHTML(
 			ctx,
 			http.StatusNotFound,
 			"page_error.html",

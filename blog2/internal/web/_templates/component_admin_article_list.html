@@ -1,0 +1,30 @@
+{{define "component_admin_article_list"}}
+<link rel="stylesheet" href="/css/component_admin_article_list.css">
+<div class="component_admin_article_list">
+  {{range .Articles}}
+  <div class="component_admin_article_list_article">
+    <div class="component_admin_article_list_article-title">
+      <a href="/admin/articles/{{.ID}}">
+        {{.Title}}
+        {{if eq .Published false}}
+        <span>(Draft)</span>
+        {{end}}
+      </a>
+    </div>
+    <div class="component_admin_article_list_article-date">
+      {{.PublishedAt.Format "2006-01-02"}}
+    </div>
+    <div class="component_admin_article_list_article-summary">{{.Summary}}</div>
+    <div class="component_admin_article_list_article-tags">
+      {{range .Tags}}
+      <div class="component_admin_article_list_article-tag">
+        <a href="/admin/articles?tags={{.ID}}">
+          {{.ID}}
+        </a>
+      </div>
+      {{end}}
+    </div>
+  </div>
+  {{end}}
+</div>
+{{end}}

@@ -2,7 +2,6 @@ CREATE TABLE articles (
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `title` VARCHAR(128) NOT NULL, -- TODO: Rethink MAX length
     `summary` TEXT NOT NULL,
-    `current_version` INT DEFAULT NULL, -- 外部キーにはできない。不整合の発生をアプリケーション側で防止する
     `published` BOOLEAN NOT NULL DEFAULT FALSE,
     `published_at` TIMESTAMP DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -2,21 +2,19 @@
 <link rel="stylesheet" href="/css/component_header.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="icon" type="image/png" href="/images/favicon.png">
-<link rel="stylesheet" href="/css/component_header.css">
-<link rel="stylesheet" href="/css/component_footer.css">
 <link rel="stylesheet" href="/css/common.css">
-<title>{{.Title}}</title>
-{{if .Meta}}
-<meta name="description" content="{{.Meta.OGP.Description}}">
-<meta property="og:title" content="{{.Meta.OGP.Title}}">
-<meta property="og:description" content="{{.Meta.OGP.Description}}">
-<meta property="og:locale" content="{{.Meta.OGP.Locale}}">
-<meta property="og:type" content="{{.Meta.OGP.Type}}">
-<meta property="og:url" content="{{.Meta.OGP.URL}}">
-<meta property="og:site_name" content="{{.Meta.OGP.SiteName}}">
-<meta property="og:image" content="{{.Meta.OGP.Image}}">
+<title>{{.ComponentCommonHead.Title}}</title>
+{{if .ComponentCommonHead.Meta}}
+<meta name="description" content="{{.ComponentCommonHead.Meta.OGP.Description}}">
+<meta property="og:title" content="{{.ComponentCommonHead.Meta.OGP.Title}}">
+<meta property="og:description" content="{{.ComponentCommonHead.Meta.OGP.Description}}">
+<meta property="og:locale" content="{{.ComponentCommonHead.Meta.OGP.Locale}}">
+<meta property="og:type" content="{{.ComponentCommonHead.Meta.OGP.Type}}">
+<meta property="og:url" content="{{.ComponentCommonHead.Meta.OGP.URL}}">
+<meta property="og:site_name" content="{{.ComponentCommonHead.Meta.OGP.SiteName}}">
+<meta property="og:image" content="{{.ComponentCommonHead.Meta.OGP.Image}}">
 <script type="application/ld+json">
-    {{.Meta.LDJSON}}
+    {{.ComponentCommonHead.Meta.LDJSON}}
   </script>
 {{end}}
 <!-- Google tag (gtag.js) -->

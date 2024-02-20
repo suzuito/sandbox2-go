@@ -1,4 +1,4 @@
-package usecase
+package repository
 
 import (
 	"context"
@@ -6,9 +6,9 @@ import (
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 )
 
-type Usecase interface {
-	GetAdminArticles(
+type RepositoryArticleIndex interface {
+	Search(
 		ctx context.Context,
 		query *entity.ArticleSearchQuery,
-	) (*DTOGetAdminArticles, error)
+	) ([]*entity.ArticleSearchIndex, error)
 }

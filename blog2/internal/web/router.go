@@ -40,5 +40,13 @@ func SetRouter(
 		gAdmin := e.Group("admin")
 		gAdmin.Use(w.MiddlewareAdminAutho)
 		gAdmin.GET("", w.GetAdminTop)
+		{
+			gAdminArticles := gAdmin.Group("articles")
+			gAdminArticles.GET("", w.GetAdminArticles)
+			{
+				gAdminArticle := gAdmin.Group(":articleID")
+				gAdminArticle.GET("", w.GetAdminArticle)
+			}
+		}
 	}
 }
