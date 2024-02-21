@@ -1,7 +1,8 @@
 package web
 
 import (
-	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
+	"log/slog"
+
 	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
 	"github.com/suzuito/sandbox2-go/blog2/internal/web/internal/presenter"
 )
@@ -9,13 +10,10 @@ import (
 type Impl struct {
 	U          usecase.Usecase
 	P          presenter.Presenter
+	L          *slog.Logger
 	AdminToken string
 }
 
-func NewImpl(u usecase.Usecase, env *environment.Environment) *Impl {
-	return &Impl{
-		U:          u,
-		P:          &presenter.Impl{},
-		AdminToken: env.AdminToken,
-	}
+func NewPresenter() presenter.Presenter {
+	return &presenter.Impl{}
 }

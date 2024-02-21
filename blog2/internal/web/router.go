@@ -43,8 +43,10 @@ func SetRouter(
 		{
 			gAdminArticles := gAdmin.Group("articles")
 			gAdminArticles.GET("", w.GetAdminArticles)
+			gAdminArticles.POST("", w.PostAdminArticles)
 			{
 				gAdminArticle := gAdminArticles.Group(":articleID")
+				gAdminArticle.Use(w.MiddlewareGetArticle)
 				gAdminArticle.GET("", w.GetAdminArticle)
 			}
 		}

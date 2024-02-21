@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,5 +29,25 @@ func (t *Impl) GetAdminArticles(ctx *gin.Context) {
 			ComponentCommonHead: viewmodel.ComponentCommonHead{},
 			Articles:            dto.Articles,
 		},
+	)
+}
+
+func (t *Impl) PostAdminArticles(ctx *gin.Context) {
+	t.L.ErrorContext(ctx, "TODO Check CSRF token")
+	dto, err := t.U.PostAdminArticles(ctx)
+	if err != nil {
+		t.L.ErrorContext(ctx, "Failed to create article", "err", err)
+		t.P.RenderHTML(
+			ctx,
+			http.StatusInternalServerError,
+			"page_error.html",
+			viewmodel.NewPageErrorUnknownError(),
+		)
+		return
+	}
+	t.P.Redirect(
+		ctx,
+		http.StatusFound,
+		fmt.Sprintf("/admin/articles/%s", dto.Article.ID),
 	)
 }

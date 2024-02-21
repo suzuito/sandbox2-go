@@ -8,4 +8,5 @@ import (
 
 type RepositoryArticle interface {
 	GetArticles(ctx context.Context, ids ...entity.ArticleID) ([]*entity.Article, error)
+	CreateArticle(ctx context.Context, articleID entity.ArticleID) (*entity.Article, error)
 }

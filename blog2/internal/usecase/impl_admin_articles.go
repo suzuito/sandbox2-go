@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
@@ -29,5 +30,22 @@ func (t *Impl) GetAdminArticles(
 	}
 	return &DTOGetAdminArticles{
 		Articles: articles,
+	}, nil
+}
+
+type DTOPostAdminArticles struct {
+	Article *entity.Article
+}
+
+func (t *Impl) PostAdminArticles(
+	ctx context.Context,
+) (*DTOPostAdminArticles, error) {
+	articleID := entity.ArticleID(uuid.New().String())
+	article, err := t.RepositoryArticle.CreateArticle(ctx, articleID)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return &DTOPostAdminArticles{
+		Article: article,
 	}, nil
 }

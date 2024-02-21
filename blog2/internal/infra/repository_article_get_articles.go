@@ -8,6 +8,7 @@ import (
 )
 
 func (t *RepositoryArticle) GetArticles(ctx context.Context, ids ...entity.ArticleID) ([]*entity.Article, error) {
+	now := time.Now()
 	// TODO impl
 	return []*entity.Article{
 		{
@@ -15,7 +16,7 @@ func (t *RepositoryArticle) GetArticles(ctx context.Context, ids ...entity.Artic
 			Title:       "title01",
 			Summary:     "summary01",
 			Published:   true,
-			PublishedAt: time.Now(),
+			PublishedAt: &now,
 			Tags: []entity.Tag{
 				{ID: "tag01", Name: "tag01name"},
 			},
@@ -25,7 +26,7 @@ func (t *RepositoryArticle) GetArticles(ctx context.Context, ids ...entity.Artic
 			Title:       "title02",
 			Summary:     "summary02",
 			Published:   false,
-			PublishedAt: time.Now(),
+			PublishedAt: &now,
 			Tags: []entity.Tag{
 				{ID: "tag01", Name: "tag01name"},
 			},
@@ -35,7 +36,7 @@ func (t *RepositoryArticle) GetArticles(ctx context.Context, ids ...entity.Artic
 			Title:       "title03",
 			Summary:     "summary03",
 			Published:   true,
-			PublishedAt: time.Now(),
+			PublishedAt: &now,
 			Tags: []entity.Tag{
 				{ID: "tag01", Name: "tag01name"},
 			},

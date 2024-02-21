@@ -15,5 +15,15 @@ func (t *Impl) GetAdminArticle(
 	ctx context.Context,
 	articleID entity.ArticleID,
 ) (*DTOGetAdminArticle, error) {
-	return nil, terrors.Wrapf("not impl")
+	articles, err := t.RepositoryArticle.GetArticles(ctx, articleID)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	if len(articles) <= 0 {
+		// TODO 404 error
+		return nil, terrors.Wrapf("Not found")
+	}
+	return &DTOGetAdminArticle{
+		Article: articles[0],
+	}, nil
 }

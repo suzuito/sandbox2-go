@@ -14,4 +14,9 @@ type Presenter interface {
 		name string,
 		obj any,
 	)
+	Redirect(
+		ctx *gin.Context,
+		code int,
+		url string,
+	)
 }

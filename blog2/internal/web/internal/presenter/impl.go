@@ -20,3 +20,11 @@ func (t *Impl) RenderHTML(
 ) {
 	ctx.HTML(code, name, obj)
 }
+
+func (t *Impl) Redirect(
+	ctx *gin.Context,
+	code int,
+	url string,
+) {
+	ctx.Redirect(code, url)
+}

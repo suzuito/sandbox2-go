@@ -9,6 +9,6 @@ type Article struct {
 	Title       string
 	Summary     string
 	Published   bool
-	PublishedAt time.Time
+	PublishedAt *time.Time
 	Tags        []Tag
 }

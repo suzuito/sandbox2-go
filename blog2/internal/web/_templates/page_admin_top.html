@@ -2,14 +2,19 @@
 <html lang="ja">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-{{template "component_common_head" .ComponentCommonHead}}
+{{template "component_common_head" .}}
 <link rel="stylesheet" href="/css/page_admin_top.css">
+
 <body>
     <header>
         {{template "component_header"}}
     </header>
     <main>
-        Admin top
+        <div class="page_admin_top-nav">
+            <li>
+                <a href="/admin/articles">記事一覧</a>
+            </li>
+        </div>
     </main>
     <footer>
         {{template "component_footer"}}

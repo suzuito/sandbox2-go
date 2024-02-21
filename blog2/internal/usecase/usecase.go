@@ -11,8 +11,15 @@ type Usecase interface {
 		ctx context.Context,
 		query *entity.ArticleSearchQuery,
 	) (*DTOGetAdminArticles, error)
+	PostAdminArticles(
+		ctx context.Context,
+	) (*DTOPostAdminArticles, error)
 	GetAdminArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,
 	) (*DTOGetAdminArticle, error)
+	MiddlewareGetArticle(
+		ctx context.Context,
+		articleID entity.ArticleID,
+	) (*DTOMiddlewareGetArticle, error)
 }

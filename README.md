@@ -122,6 +122,14 @@ curl http://localhost:8080/ping
 NAME=init make blog2-migrate-create
 ```
 
+#### DB
+
+Local
+
+```bash
+mysql -u root -h 127.0.0.1 -P 3307
+```
+
 ### crawler
 
 Make develop environment

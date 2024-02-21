@@ -8,9 +8,9 @@ import (
 	"github.com/suzuito/sandbox2-go/blog2/internal/web/viewmodel"
 )
 
-func (t *Impl) GetAdminArticle(ctx *gin.Context) {
+func (t *Impl) MiddlewareGetArticle(ctx *gin.Context) {
 	articleID := entity.ArticleID(ctx.Param("articleID"))
-	dto, err := t.U.GetAdminArticle(ctx, articleID)
+	dto, err := t.U.MiddlewareGetArticle(ctx, articleID)
 	if err != nil {
 		t.P.RenderHTML(
 			ctx,
@@ -18,15 +18,8 @@ func (t *Impl) GetAdminArticle(ctx *gin.Context) {
 			"page_error.html",
 			viewmodel.NewPageErrorUnknownError(),
 		)
+		ctx.Abort()
 		return
 	}
-	t.P.RenderHTML(
-		ctx,
-		http.StatusOK,
-		"page_admin_article.html",
-		viewmodel.PageAdminArticle{
-			ComponentCommonHead: viewmodel.ComponentCommonHead{},
-			Article:             dto.Article,
-		},
-	)
+	ctxSetArticle(ctx, dto.Article)
 }
