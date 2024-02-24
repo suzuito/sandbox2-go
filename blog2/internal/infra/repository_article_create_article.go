@@ -13,9 +13,8 @@ func (t *RepositoryArticle) CreateArticle(
 ) (*entity.Article, error) {
 	_, err := t.Pool.ExecContext(
 		ctx,
-		"INSERT INTO `articles`(`id`, `title`, `summary`, `published`, `published_at`, `created_at`, `updated_at`) VALUES (?, ?, ?, false, NULL, NOW(), NOW())",
+		"INSERT INTO `articles`(`id`, `title`, `published`, `published_at`, `created_at`, `updated_at`) VALUES (?, ?, false, NULL, NOW(), NOW())",
 		articleID,
-		"",
 		"",
 	)
 	if err != nil {

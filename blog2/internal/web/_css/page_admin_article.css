@@ -1,0 +1,84 @@
+.page_admin_article-main {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    /* border: 3px solid red; */
+}
+
+.page_admin_article-header {
+    position: absolute;
+    top: 0px;
+    height: 72px;
+    left: 0px;
+    right: 0px;
+    /* border: 3px solid green; */
+}
+
+.page_admin_article-header-title {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 36px;
+}
+
+.page_admin_article-header-title-input {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 63px;
+    /*
+    border: 3px solid blueviolet;
+    box-sizing: border-box;
+    */
+}
+
+.page_admin_article-header-title-input-input {
+    width: 100%;
+}
+
+.page_admin_article-header-title-button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    /*
+    border: 3px solid red;
+    box-sizing: border-box;
+    */
+}
+
+.page_admin_article-header-edit-menu {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 36px;
+}
+
+
+.page_admin_article-header-edit-menu-preview-toggle {
+    position: absolute;
+    left: 6px;
+}
+
+.page_admin_article-body {
+    position: absolute;
+    top: 72px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    /* border: 3px solid green; */
+}
+
+.page_admin_article-body-textarea {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+}
+
+.page_admin_article-padding {
+    padding: 6px;
+    /* border: 3px solid red; */
+}

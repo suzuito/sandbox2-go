@@ -14,7 +14,6 @@ func (t *RepositoryArticle) GetArticles(ctx context.Context, ids ...entity.Artic
 		{
 			ID:          "id01",
 			Title:       "title01",
-			Summary:     "summary01",
 			Published:   true,
 			PublishedAt: &now,
 			Tags: []entity.Tag{
@@ -24,7 +23,6 @@ func (t *RepositoryArticle) GetArticles(ctx context.Context, ids ...entity.Artic
 		{
 			ID:          "id02",
 			Title:       "title02",
-			Summary:     "summary02",
 			Published:   false,
 			PublishedAt: &now,
 			Tags: []entity.Tag{
@@ -34,7 +32,6 @@ func (t *RepositoryArticle) GetArticles(ctx context.Context, ids ...entity.Artic
 		{
 			ID:          "id03",
 			Title:       "title03",
-			Summary:     "summary03",
 			Published:   true,
 			PublishedAt: &now,
 			Tags: []entity.Tag{

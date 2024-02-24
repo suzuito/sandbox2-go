@@ -1,7 +1,6 @@
 CREATE TABLE articles (
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `title` VARCHAR(128) NOT NULL, -- TODO: Rethink MAX length
-    `summary` TEXT NOT NULL,
     `published` BOOLEAN NOT NULL DEFAULT FALSE,
     `published_at` TIMESTAMP DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

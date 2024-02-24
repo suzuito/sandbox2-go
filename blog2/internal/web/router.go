@@ -13,6 +13,7 @@ func SetRouter(
 	e.LoadHTMLGlob(path.Join("blog2/internal/web/_templates", "*"))
 	e.Static("css", "blog2/internal/web/_css")
 	e.Static("images", "blog2/internal/web/_images")
+	e.Static("wasm", "blog2/internal/web/_wasm")
 	e.GET("health", w.GetHealth)
 	e.Use(w.MiddlewareAdminAuthe)
 	e.NoRoute(w.NoRoute)

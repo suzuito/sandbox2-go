@@ -1,7 +1,12 @@
-tmp_dir = "./.tmp-air"
 [build]
-cmd = "go build -o ./.tmp-air/blog2/server.out blog2/cmd/server/*.go"
-bin = "./.tmp-air/blog2/server.out"
+cmd = "make blog2-build-server"
+bin = "./blog2-server.out"
 include_dir = [
     "blog2"
+]
+exclude_dir = [
+    "blog2/internal/web/_css",
+    "blog2/internal/web/_images",
+    "blog2/internal/web/_templates",
+    "blog2/internal/web/_wasm"
 ]

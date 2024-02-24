@@ -62,6 +62,10 @@ blog2-init-rdb:
 blog2-migrate-create:
 	# Example: make blog2-migrate-create NAME=create_article
 	.bin/migrate create -ext sql -dir ./.service/blog2/.schema/ $(NAME)
+blog2-build-server:
+	go build -o blog2-server.out blog2/cmd/server/*.go
+	GOOS=js GOARCH=wasm go build -o blog2/internal/web/_wasm/page_admin_article.wasm blog2/wasm/page_admin_article/*.go
+	cp $(shell go env GOROOT)/misc/wasm/wasm_exec.js blog2/internal/web/_wasm/wasm_exec.js
 
 #
 # crawler

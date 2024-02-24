@@ -3,13 +3,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 {{template "component_common_head" .}}
+{{template "component_wasm" .}}
 <link rel="stylesheet" href="/css/page_admin_article.css">
+
 <body>
     <header>
         {{template "component_header"}}
     </header>
     <main>
-        article
+        <div class="page_admin_article-main">
+            <div class="page_admin_article-header">
+                <div class="page_admin_article-header-title">
+                    <div class="page_admin_article-header-title-input">
+                        <input class="page_admin_article-header-title-input-input" type="text" placeholder="タイトル" value="{{.Article.Title}}" />
+                    </div>
+                    <div class="page_admin_article-header-title-button">
+                        <button>編集</button>
+                    </div>
+                </div>
+                <div class="page_admin_article-header-edit-menu">
+                    <div class="page_admin_article-header-edit-menu-preview-toggle">
+                        <button>プレビュー</button>
+                    </div>
+                </div>
+            </div>
+            <div class="page_admin_article-body">
+                <textarea class="page_admin_article-body-textarea" placeholder="本文"></textarea>
+            </div>
+        </div>
     </main>
     <footer>
         {{template "component_footer"}}

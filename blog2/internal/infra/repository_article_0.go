@@ -19,7 +19,6 @@ func (t *RepositoryArticle) selectArticleByID(
 ) ([]*entity.Article, error) {
 	articleID := ""
 	title := ""
-	summary := ""
 	published := false
 	publishedAt := sql.NullTime{}
 	whereStatement := "WHERE `id` IN (?" + strings.Repeat(",?", len(articleIDs)-1) + ")"
@@ -29,7 +28,7 @@ func (t *RepositoryArticle) selectArticleByID(
 	}
 	rows, err := t.Pool.QueryContext(
 		ctx,
-		"SELECT `id`,`title`,`summary`,`published`,`published_at` FROM `articles` "+whereStatement,
+		"SELECT `id`,`title`,`published`,`published_at` FROM `articles` "+whereStatement,
 		anyArticleIDs...,
 	)
 	if err != nil {
@@ -38,12 +37,11 @@ func (t *RepositoryArticle) selectArticleByID(
 	articles := []*entity.Article{}
 	for rows.Next() {
 		article := entity.Article{}
-		if err := rows.Scan(&articleID, &title, &summary, &published, &publishedAt); err != nil {
+		if err := rows.Scan(&articleID, &title, &published, &publishedAt); err != nil {
 			return nil, terrors.Wrap(err)
 		}
 		article.ID = entity.ArticleID(articleID)
 		article.Title = title
-		article.Summary = summary
 		article.Published = published
 		if publishedAt.Valid {
 			article.PublishedAt = &publishedAt.Time
