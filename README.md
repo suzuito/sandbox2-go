@@ -104,7 +104,6 @@ make blog2-init-rdb
 #### Run
 
 ```bash
-make blog2-run-local
 # Environment variables
 cp ./.service/blog2/local.env.sh.sample ./.service/blog2/local.env.sh
 ## Modification of environment variables
@@ -114,9 +113,6 @@ source ./.service/blog2/local.env.sh
 # server
 $(go env GOPATH)/bin/air -c ./.service/blog2/.air.server.toml
 curl http://localhost:8080/ping
-
-# wasm
-$(go env GOPATH)/bin/air -c ./.service/blog2/.air.wasm.toml
 ```
 
 #### Migration
