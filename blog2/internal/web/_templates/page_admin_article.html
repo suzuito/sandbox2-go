@@ -23,12 +23,13 @@
                 </div>
                 <div class="page_admin_article-header-edit-menu">
                     <div class="page_admin_article-header-edit-menu-preview-toggle">
-                        <button>プレビュー</button>
+                        <input type="checkbox" id="preview-button"/>プレビュー
                     </div>
                 </div>
             </div>
             <div class="page_admin_article-body">
-                <textarea class="page_admin_article-body-textarea" placeholder="本文"></textarea>
+                <textarea id="markdown-editor" class="page_admin_article-body-textarea" placeholder="本文"></textarea>
+                <div id="markdown-viewer" class="page_admin_article-body-preview-area">preview</div>
             </div>
         </div>
     </main>
@@ -36,5 +37,11 @@
         {{template "component_footer"}}
     </footer>
 </body>
+
+<script>
+    document.getElementById("preview-button").addEventListener("input", (ev) => {
+        console.log(ev.target.checked);
+    });
+</script>
 
 </html>
