@@ -11,6 +11,7 @@ func SetRouter(
 	w *Impl,
 ) {
 	e.LoadHTMLGlob(path.Join("blog2/internal/web/_templates", "*"))
+	e.Static("js", "blog2/internal/web/_js")
 	e.Static("css", "blog2/internal/web/_css")
 	e.Static("images", "blog2/internal/web/_images")
 	e.Static("wasm", "blog2/internal/web/_wasm")
@@ -49,6 +50,15 @@ func SetRouter(
 				gAdminArticle := gAdminArticles.Group(":articleID")
 				gAdminArticle.Use(w.MiddlewareGetArticle)
 				gAdminArticle.GET("", w.GetAdminArticle)
+				gAdminArticle.PUT("", w.PutAdminArticle)
+				gAdminArticle.PUT("markdown", w.PutAdminArticleMarkdown)
+				gAdminArticle.POST("publish", w.PostAdminArticlePublish)
+				gAdminArticle.DELETE("publish", w.DeleteAdminArticlePublish)
+				gAdminArticle.POST("edit-tags", w.PostAdminArticleEditTags)
+				{
+					gAdminArticleTags := gAdminArticle.Group("tags")
+					gAdminArticleTags.GET("", w.GetAdminArticleTags)
+				}
 			}
 		}
 	}

@@ -19,11 +19,13 @@ func (t *Impl) MiddlewareGetArticle(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	var article *entity.Article
-	if len(articles) > 0 {
-		article = articles[0]
+	if len(articles) <= 0 {
+		return nil, &NotFoundEntityError{
+			EntityType: "Article",
+			EntityID:   string(articleID),
+		}
 	}
 	return &DTOMiddlewareGetArticle{
-		Article: article,
+		Article: articles[0],
 	}, nil
 }

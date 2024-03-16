@@ -9,6 +9,9 @@
         {{template "component_header"}}
     </header>
     <main>
+        <form method="POST" name="new_articles" action="/admin/articles">
+          <a href="javascript:new_articles.submit()">記事を新規作成</a>
+        </form>
         {{template "component_admin_article_list" .}}
     </main>
     <footer>

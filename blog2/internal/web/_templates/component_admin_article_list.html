@@ -1,8 +1,5 @@
 {{define "component_admin_article_list"}}
 <link rel="stylesheet" href="/css/component_admin_article_list.css">
-<form method="POST" name="new_articles" action="/admin/articles">
-  <a href="javascript:new_articles.submit()">記事を新規作成</a>
-</form>
 <div class="component_admin_article_list">
   {{range .Articles}}
   <div class="component_admin_article_list_article">

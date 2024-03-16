@@ -113,6 +113,9 @@ source ./.service/blog2/local.env.sh
 # server
 $(go env GOPATH)/bin/air -c ./.service/blog2/.air.server.toml
 curl http://localhost:8080/ping
+
+# js
+cd blog2/_ts && npm run serve
 ```
 
 #### Migration

@@ -8,5 +8,6 @@ exclude_dir = [
     "blog2/internal/web/_css",
     "blog2/internal/web/_images",
     "blog2/internal/web/_templates",
-    "blog2/internal/web/_wasm"
+    "blog2/internal/web/_wasm",
+    "blog2/_ts"
 ]

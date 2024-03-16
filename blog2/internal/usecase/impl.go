@@ -9,5 +9,6 @@ import (
 type Impl struct {
 	RepositoryArticleIndex repository.RepositoryArticleIndex
 	RepositoryArticle      repository.RepositoryArticle
+	StorageArticle         repository.StorageArticle
 	L                      *slog.Logger
 }

@@ -1,35 +1,56 @@
 <!DOCTYPE html>
 <html lang="ja">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-{{template "component_common_head" .}}
-{{template "component_wasm" .}}
-<link rel="stylesheet" href="/css/page_admin_article.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {{template "component_common_head" .}}
+    {{template "component_wasm" .}}
+    <link rel="stylesheet" href="/css/page_admin_article.css">
+    <script type="text/javascript" src="/js/page_admin_article.js"></script>
+</head>
 
 <body>
+    {{template "component_info_snackbar"}}
     <header>
         {{template "component_header"}}
     </header>
     <main>
+        <script>window.env = {{.JsEnv }}</script>
         <div class="page_admin_article-main">
             <div class="page_admin_article-header">
+                <div class="page_admin_article-header-article-state-label">
+                    <button id="publish-toggle">{{.Article.StateString}}</button>
+                </div>
                 <div class="page_admin_article-header-title">
                     <div class="page_admin_article-header-title-input">
-                        <input class="page_admin_article-header-title-input-input" type="text" placeholder="タイトル" value="{{.Article.Title}}" />
+                        <input id="article-title" class="page_admin_article-header-title-input-input" type="text"
+                            placeholder="タイトル" value="{{.Article.Title}}" />
                     </div>
                     <div class="page_admin_article-header-title-button">
-                        <button>編集</button>
+                        <button id="save-title">保存</button>
                     </div>
+                </div>
+                <div class="page_admin_article-header-tags">
+                    {{range .Article.Tags}}
+                    <span>{{.Name}}</span>
+                    {{end}}
+                    <a href="/admin/articles/{{.Article.ID}}/tags">編集</a>
                 </div>
                 <div class="page_admin_article-header-edit-menu">
                     <div class="page_admin_article-header-edit-menu-preview-toggle">
-                        <input type="checkbox" id="preview-button"/>プレビュー
+                        <input type="checkbox" id="preview-toggle" />プレビュー
+                    </div>
+                    <div class="page_admin_article-header-edit-menu-save-button">
+                        <button type="checkbox" id="save-markdown">保存する</button>
                     </div>
                 </div>
             </div>
             <div class="page_admin_article-body">
-                <textarea id="markdown-editor" class="page_admin_article-body-textarea" placeholder="本文"></textarea>
-                <div id="markdown-viewer" class="page_admin_article-body-preview-area">preview</div>
+                <div id="markdown-editor" class="page_admin_article-body-textarea" contenteditable="plaintext-only">
+                    {{.MarkdownBody}}</div>
+                <div class="page_admin_article-body-padding"></div>
+                <div id="markdown-viewer" class="page_admin_article-body-preview-area"></div>
             </div>
         </div>
     </main>
@@ -38,10 +59,5 @@
     </footer>
 </body>
 
-<script>
-    document.getElementById("preview-button").addEventListener("input", (ev) => {
-        console.log(ev.target.checked);
-    });
-</script>
 
 </html>

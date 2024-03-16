@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 
+	"cloud.google.com/go/storage"
 	"github.com/go-sql-driver/mysql"
 
 	"github.com/kelseyhightower/envconfig"
@@ -45,12 +46,12 @@ func NewImpl(ctx context.Context) (
 	}
 	pool, err := sql.Open(
 		"mysql",
-		// fmt.Sprintf(
-		// 	"%s@tcp(127.0.0.1:3307)/blog2?charset=utf8mb4&parseTime=True",
-		// 	env.DBUser,
-		// ),
 		mysqlConfig.FormatDSN(),
 	)
+	if err != nil {
+		return nil, nil, terrors.Wrap(err)
+	}
+	storageClient, err := storage.NewClient(ctx)
 	if err != nil {
 		return nil, nil, terrors.Wrap(err)
 	}
@@ -59,7 +60,11 @@ func NewImpl(ctx context.Context) (
 			Pool: pool,
 		},
 		RepositoryArticleIndex: &infra.RepositoryArticleIndex{},
-		L:                      logger,
+		StorageArticle: &infra.StorageArticle{
+			Cli:    storageClient,
+			Bucket: env.ArticleMarkdownBucket,
+		},
+		L: logger,
 	}
 	w := web.Impl{
 		U:          &u,

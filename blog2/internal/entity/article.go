@@ -1,6 +1,8 @@
 package entity
 
-import "time"
+import (
+	"time"
+)
 
 type ArticleID string
 
@@ -10,4 +12,20 @@ type Article struct {
 	Published   bool
 	PublishedAt *time.Time
 	Tags        []Tag
+}
+
+func (t *Article) StateString() string {
+	if t.Published {
+		return "公開中"
+	}
+	return "ドラフト"
+}
+
+func (t *Article) HasTag(tagID TagID) bool {
+	for _, t := range t.Tags {
+		if t.ID == tagID {
+			return true
+		}
+	}
+	return false
 }

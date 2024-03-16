@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {{template "component_common_head" .}}
+    <link rel="stylesheet" href="/css/page_admin_article_tags.css">
+    <script type="text/javascript" src="/js/page_admin_article_tags.js"></script>
+</head>
+
+<body>
+    {{template "component_info_snackbar"}}
+    <header>
+        {{template "component_header"}}
+    </header>
+    <main>
+        <script>window.env = {{.JsEnv }}</script>
+        <form id="form1" method="POST" action="/admin/articles/{{.Article.ID}}/edit-tags">
+        </form>
+        <div class="container-main">
+            <div>
+                <div>
+                    <a href="/admin/articles/{{.Article.ID}}">記事へ戻る</a>
+                </div>
+                <div>
+                    <input form="form1" type="submit" value="保存" />
+                </div>
+            </div>
+            <div class="container-left">
+                <div>
+                    {{range .Article.Tags}}
+                    <div>
+                        <input form="form1" type="checkbox" name="delete" value="{{.ID}}" />
+                        <label>{{.Name}}</label>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            <div class="container-right">
+                <div>
+                    {{range .Tags}}
+                    <div>
+                        <input form="form1" type="checkbox" name="add" value="{{.ID}}" />
+                        <label>{{.Name}}</label>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        {{template "component_footer"}}
+    </footer>
+</body>
+
+
+</html>

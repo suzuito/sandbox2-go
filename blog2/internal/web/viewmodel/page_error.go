@@ -11,3 +11,10 @@ func NewPageErrorUnknownError() *PageError {
 		Message:             "謎のエラーが発生した！",
 	}
 }
+
+func NewPageErrorNotFound() *PageError {
+	return &PageError{
+		ComponentCommonHead: ComponentCommonHead{},
+		Message:             "not found",
+	}
+}

@@ -3,7 +3,7 @@ package markdown2html
 import (
 	"bytes"
 	"context"
-	"fmt"
+	"strconv"
 
 	"github.com/alecthomas/chroma/v2"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
@@ -17,8 +17,13 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
-	"go.abhg.dev/goldmark/toc"
 )
+
+// Goldmarkの内部処理の概要
+// https://github.com/yuin/goldmark?tab=readme-ov-file#goldmark-internalfor-extension-developers
+
+// GoldmarkのTransformer
+// Transformerは、ASTを走査し、Nodeを変換するためのインターフェース
 
 type astTransformerAddLinkBlank struct {
 }
@@ -46,12 +51,71 @@ func (a *astTransformerHeading) Transform(node *ast.Document, reader text.Reader
 	})
 }
 
+type astTransformerAddMarkdownLines struct {
+}
+
+func (a *astTransformerAddMarkdownLines) Transform(
+	node *ast.Document,
+	reader text.Reader,
+	pc parser.Context,
+) {
+	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		if n.Type() != ast.TypeBlock {
+			return ast.WalkContinue, nil
+		}
+		if entering {
+			if n.Kind() != ast.KindListItem && n.HasChildren() {
+				for child := n.FirstChild(); ; child = child.NextSibling() {
+					if child == n.LastChild() {
+						break
+					}
+				}
+			}
+			lines := getLinesInMarkdown(n, reader)
+			if lines >= 0 {
+				n.SetAttributeString("data-source-line", []byte(strconv.Itoa(lines)))
+			}
+			return ast.WalkContinue, nil
+		}
+		if n.Kind() == ast.KindListItem && n.HasChildren() {
+			// 後で解説が必要
+			// ulタグにdata-source-line属性がつかないので
+			v, ok := n.FirstChild().Attribute([]byte("data-source-line"))
+			if ok {
+				n.SetAttribute([]byte("data-source-line"), v)
+			}
+		}
+		return ast.WalkContinue, nil
+	})
+}
+
+func getLinesInMarkdown(node ast.Node, reader text.Reader) int {
+	if node.Lines().Len() <= 0 {
+		return -1
+	}
+	segment := node.Lines().At(node.Lines().Len() - 1)
+	segment.Start = 0
+	lines := 1
+	for _, b := range string(reader.Value(segment)) {
+		if b == '\n' {
+			// fmt.Println(b)
+			lines++
+		}
+	}
+	// fmt.Println("====")
+	// fmt.Println(string(reader.Value(segment)))
+	// fmt.Println("=========>", lines, strings.Count(string(reader.Value(segment)), "\n"))
+	// fmt.Println(strings.ReplaceAll(string(reader.Value(segment)), "\n", "<???>"))
+	// fmt.Println("++++++++++")
+	return lines
+}
+
 func convertMarkdownToHTML(
 	ctx context.Context,
 	src string,
 	dst *string,
 ) error {
-	fmt.Println(src)
+	// fmt.Println(src)
 	buffer := bytes.NewBufferString("")
 	parserContext := parser.NewContext()
 	md := goldmark.New(
@@ -59,16 +123,17 @@ func convertMarkdownToHTML(
 			meta.Meta,         // Parse yaml meta
 			extension.Linkify, // Convert a link in markdown to a <a> tag in html
 			highlighting.NewHighlighting(
-				highlighting.WithStyle("github"),
+				highlighting.WithStyle("vim"),
 				highlighting.WithFormatOptions(
 					chromahtml.WithLineNumbers(true),
+					chromahtml.WithLinkableLineNumbers(true, "L"),
 					chromahtml.WithCustomCSS(map[chroma.TokenType]string{
-						chroma.PreWrapper: "overflow: scroll;",
+						chroma.PreWrapper: "overflow: scroll; padding: 10px;",
 					}),
 				),
 			), // Syntax highlight
 			emoji.Emoji,
-			&toc.Extender{},
+			// &toc.Extender{}, // Generate TOC
 		),
 		goldmark.WithRendererOptions(
 			html.WithUnsafe(), // Can write raw HTML in Markdown
@@ -77,6 +142,7 @@ func convertMarkdownToHTML(
 			parser.WithASTTransformers(
 				util.Prioritized(&astTransformerAddLinkBlank{}, 1), // Add target="_blank" to <a> tag in html
 				util.Prioritized(&astTransformerHeading{}, 1),
+				util.Prioritized(&astTransformerAddMarkdownLines{}, 1),
 			),
 			parser.WithAutoHeadingID(), // For TOC
 		),

@@ -1,0 +1,27 @@
+#info-snackbar {
+    position: absolute;
+    background-color: #fff;
+    left: 100px;
+    right: 100px;
+    top: 100px;
+    z-index: 99;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    display: none;
+    border: 1px solid red;
+}
+
+#info-snackbar-title {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+#info-snackbar-description {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+#info-snackbar-buttons {
+    padding-left: 6px;
+    padding-right: 6px;
+}

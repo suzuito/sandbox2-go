@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"bytes"
 	"context"
 
 	"github.com/google/uuid"
@@ -41,10 +42,14 @@ func (t *Impl) PostAdminArticles(
 	ctx context.Context,
 ) (*DTOPostAdminArticles, error) {
 	articleID := entity.ArticleID(uuid.New().String())
+	if err := t.StorageArticle.PutArticle(ctx, articleID, bytes.NewBuffer([]byte{})); err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	article, err := t.RepositoryArticle.CreateArticle(ctx, articleID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	t.L.DebugContext(ctx, "Created article", "article", article)
 	return &DTOPostAdminArticles{
 		Article: article,
 	}, nil

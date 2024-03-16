@@ -13,6 +13,7 @@ func (t *Impl) GetAdminArticles(ctx *gin.Context) {
 	query := entity.ArticleSearchQuery{}
 	dto, err := t.U.GetAdminArticles(ctx, &query)
 	if err != nil {
+		t.L.Error("", "err", err)
 		t.P.RenderHTML(
 			ctx,
 			http.StatusInternalServerError,
