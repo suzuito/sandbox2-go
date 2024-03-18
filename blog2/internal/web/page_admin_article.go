@@ -2,14 +2,32 @@ package web
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
-	"github.com/suzuito/sandbox2-go/blog2/internal/web/viewmodel"
 )
 
-func (t *Impl) GetAdminArticle(ctx *gin.Context) {
+type ComponentWasm struct {
+	WasmBinaryURL string
+}
+
+type PageAdminArticle struct {
+	ComponentCommonHead ComponentCommonHead
+	ComponentWasm       ComponentWasm
+	Article             *entity.Article
+	MarkdownBody        string
+	HTMLBody            template.HTML
+	JsEnv               PageAdminArticleJsEnv
+}
+
+type PageAdminArticleJsEnv struct {
+	ArticleID entity.ArticleID `json:"articleId"`
+	Published bool             `json:"published"`
+}
+
+func (t *Impl) PageAdminArticle(ctx *gin.Context) {
 	article := ctxGetArticle(ctx)
 	dto, err := t.U.GetAdminArticle(ctx, article.ID)
 	if err != nil {
@@ -18,7 +36,7 @@ func (t *Impl) GetAdminArticle(ctx *gin.Context) {
 			ctx,
 			http.StatusInternalServerError,
 			"page_error.html",
-			viewmodel.NewPageErrorUnknownError(),
+			NewPageErrorUnknownError(),
 		)
 		return
 	}
@@ -26,17 +44,18 @@ func (t *Impl) GetAdminArticle(ctx *gin.Context) {
 		ctx,
 		http.StatusOK,
 		"page_admin_article.html",
-		viewmodel.PageAdminArticle{
-			ComponentCommonHead: viewmodel.ComponentCommonHead{},
-			ComponentWasm: viewmodel.ComponentWasm{
+		PageAdminArticle{
+			ComponentCommonHead: ComponentCommonHead{},
+			ComponentWasm: ComponentWasm{
 				WasmBinaryURL: "/wasm/page_admin_article.wasm",
 			},
-			JsEnv: viewmodel.PageAdminArticleJsEnv{
+			JsEnv: PageAdminArticleJsEnv{
 				ArticleID: article.ID,
 				Published: article.Published,
 			},
 			Article:      article,
 			MarkdownBody: dto.MarkdownBody,
+			HTMLBody:     template.HTML(dto.HTMLBody),
 		},
 	)
 }
@@ -53,7 +72,7 @@ func (t *Impl) PostAdminArticleEditTags(ctx *gin.Context) {
 			ctx,
 			http.StatusInternalServerError,
 			"page_error.html",
-			viewmodel.NewPageErrorUnknownError(),
+			NewPageErrorUnknownError(),
 		)
 		return
 	}

@@ -12,6 +12,7 @@ import (
 
 type DTOGetAdminArticle struct {
 	MarkdownBody string
+	HTMLBody     string
 }
 
 func (t *Impl) GetAdminArticle(
@@ -22,8 +23,13 @@ func (t *Impl) GetAdminArticle(
 	if err := t.StorageArticle.GetArticle(ctx, articleID, markdownBodyBuffer); err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	htmlBody := ""
+	if err := t.Markdown2HTML.Generate(ctx, markdownBodyBuffer.String(), &htmlBody); err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	return &DTOGetAdminArticle{
 		MarkdownBody: markdownBodyBuffer.String(),
+		HTMLBody:     htmlBody,
 	}, nil
 }
 

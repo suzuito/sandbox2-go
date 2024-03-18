@@ -6,10 +6,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
-	"github.com/suzuito/sandbox2-go/blog2/internal/web/viewmodel"
 )
 
-func (t *Impl) GetAdminArticles(ctx *gin.Context) {
+type PageAdminArticles struct {
+	ComponentCommonHead ComponentCommonHead
+	Articles            []*entity.Article
+}
+
+func (t *Impl) PageAdminArticles(ctx *gin.Context) {
 	query := entity.ArticleSearchQuery{}
 	dto, err := t.U.GetAdminArticles(ctx, &query)
 	if err != nil {
@@ -18,7 +22,7 @@ func (t *Impl) GetAdminArticles(ctx *gin.Context) {
 			ctx,
 			http.StatusInternalServerError,
 			"page_error.html",
-			viewmodel.NewPageErrorUnknownError(),
+			NewPageErrorUnknownError(),
 		)
 		return
 	}
@@ -26,8 +30,8 @@ func (t *Impl) GetAdminArticles(ctx *gin.Context) {
 		ctx,
 		http.StatusOK,
 		"page_admin_articles.html",
-		viewmodel.PageAdminArticles{
-			ComponentCommonHead: viewmodel.ComponentCommonHead{},
+		PageAdminArticles{
+			ComponentCommonHead: ComponentCommonHead{},
 			Articles:            dto.Articles,
 		},
 	)
@@ -42,7 +46,7 @@ func (t *Impl) PostAdminArticles(ctx *gin.Context) {
 			ctx,
 			http.StatusInternalServerError,
 			"page_error.html",
-			viewmodel.NewPageErrorUnknownError(),
+			NewPageErrorUnknownError(),
 		)
 		return
 	}

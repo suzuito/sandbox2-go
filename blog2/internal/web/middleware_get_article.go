@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
-	"github.com/suzuito/sandbox2-go/blog2/internal/web/viewmodel"
 )
 
 func (t *Impl) MiddlewareGetArticle(ctx *gin.Context) {
@@ -19,7 +18,7 @@ func (t *Impl) MiddlewareGetArticle(ctx *gin.Context) {
 				ctx,
 				http.StatusInternalServerError,
 				"page_error.html",
-				viewmodel.NewPageErrorNotFound(),
+				NewPageErrorNotFound(),
 			)
 			ctx.Abort()
 			return
@@ -29,7 +28,7 @@ func (t *Impl) MiddlewareGetArticle(ctx *gin.Context) {
 			ctx,
 			http.StatusInternalServerError,
 			"page_error.html",
-			viewmodel.NewPageErrorUnknownError(),
+			NewPageErrorUnknownError(),
 		)
 		ctx.Abort()
 		return

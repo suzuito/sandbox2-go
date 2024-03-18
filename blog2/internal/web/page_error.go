@@ -1,4 +1,4 @@
-package viewmodel
+package web
 
 type PageError struct {
 	ComponentCommonHead ComponentCommonHead

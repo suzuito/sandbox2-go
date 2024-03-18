@@ -12,6 +12,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
+	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
 	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
 	"github.com/suzuito/sandbox2-go/blog2/internal/web"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
@@ -64,7 +65,8 @@ func NewImpl(ctx context.Context) (
 			Cli:    storageClient,
 			Bucket: env.ArticleMarkdownBucket,
 		},
-		L: logger,
+		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
+		L:             logger,
 	}
 	w := web.Impl{
 		U:          &u,

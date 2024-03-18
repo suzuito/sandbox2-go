@@ -1,24 +1,38 @@
 package web
 
 import (
+	"log/slog"
 	"path"
 
 	"github.com/gin-gonic/gin"
+	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
+	"github.com/suzuito/sandbox2-go/blog2/internal/web/internal/presenter"
 )
+
+type Impl struct {
+	U          usecase.Usecase
+	P          presenter.Presenter
+	L          *slog.Logger
+	AdminToken string
+}
+
+func NewPresenter() presenter.Presenter {
+	return &presenter.Impl{}
+}
 
 func SetRouter(
 	e *gin.Engine,
 	w *Impl,
 ) {
-	e.LoadHTMLGlob(path.Join("blog2/internal/web/_templates", "*"))
+	e.LoadHTMLGlob(path.Join("blog2/internal/web", "*.html"))
 	e.Static("js", "blog2/internal/web/_js")
 	e.Static("css", "blog2/internal/web/_css")
 	e.Static("images", "blog2/internal/web/_images")
 	e.Static("wasm", "blog2/internal/web/_wasm")
-	e.GET("health", w.GetHealth)
+	e.GET("health", w.PageHealth)
 	e.Use(w.MiddlewareAdminAuthe)
-	e.NoRoute(w.NoRoute)
-	e.GET("", w.GetTop)
+	e.NoRoute(w.PageNoRoute)
+	e.GET("", w.PageTop)
 	{
 		gArticles := e.Group("articles")
 		gArticles.GET("", func(ctx *gin.Context) {})
@@ -41,15 +55,15 @@ func SetRouter(
 	{
 		gAdmin := e.Group("admin")
 		gAdmin.Use(w.MiddlewareAdminAutho)
-		gAdmin.GET("", w.GetAdminTop)
+		gAdmin.GET("", w.PageAdminTop)
 		{
 			gAdminArticles := gAdmin.Group("articles")
-			gAdminArticles.GET("", w.GetAdminArticles)
+			gAdminArticles.GET("", w.PageAdminArticles)
 			gAdminArticles.POST("", w.PostAdminArticles)
 			{
 				gAdminArticle := gAdminArticles.Group(":articleID")
 				gAdminArticle.Use(w.MiddlewareGetArticle)
-				gAdminArticle.GET("", w.GetAdminArticle)
+				gAdminArticle.GET("", w.PageAdminArticle)
 				gAdminArticle.PUT("", w.PutAdminArticle)
 				gAdminArticle.PUT("markdown", w.PutAdminArticleMarkdown)
 				gAdminArticle.POST("publish", w.PostAdminArticlePublish)
@@ -57,7 +71,7 @@ func SetRouter(
 				gAdminArticle.POST("edit-tags", w.PostAdminArticleEditTags)
 				{
 					gAdminArticleTags := gAdminArticle.Group("tags")
-					gAdminArticleTags.GET("", w.GetAdminArticleTags)
+					gAdminArticleTags.GET("", w.PageAdminArticleTags)
 				}
 			}
 		}

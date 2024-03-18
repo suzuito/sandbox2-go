@@ -6,6 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (t *Impl) GetHealth(ctx *gin.Context) {
+func (t *Impl) PageHealth(ctx *gin.Context) {
 	t.P.RenderJSON(ctx, http.StatusOK, gin.H{"status": "ok"})
 }

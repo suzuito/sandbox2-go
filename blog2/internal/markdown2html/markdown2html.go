@@ -2,8 +2,6 @@ package markdown2html
 
 import (
 	"context"
-
-	"github.com/suzuito/sandbox2-go/blog/entity"
 )
 
 type Markdown2HTML interface {
@@ -11,7 +9,6 @@ type Markdown2HTML interface {
 		ctx context.Context,
 		src string,
 		dst *string,
-		article *entity.Article,
 	) error
 }
 

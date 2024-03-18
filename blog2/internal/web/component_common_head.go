@@ -1,4 +1,4 @@
-package viewmodel
+package web
 
 import (
 	"net/url"
