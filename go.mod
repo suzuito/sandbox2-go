@@ -30,8 +30,8 @@ require (
 	google.golang.org/api v0.154.0
 	google.golang.org/grpc v1.61.0
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/mysql v1.5.2
-	gorm.io/gorm v1.25.5
+	gorm.io/driver/mysql v1.5.5
+	gorm.io/gorm v1.25.7
 )
 
 require (
