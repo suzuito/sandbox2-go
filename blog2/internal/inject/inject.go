@@ -65,6 +65,10 @@ func NewImpl(ctx context.Context) (
 			Cli:    storageClient,
 			Bucket: env.ArticleMarkdownBucket,
 		},
+		StorageArticleFileDirectlyUploaded: &infra.StorageArticleFileDirectlyUploaded{
+			Cli:    storageClient,
+			Bucket: env.ArticleFileDirectlyUploadedBucket,
+		},
 		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
 		L:             logger,
 	}

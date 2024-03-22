@@ -12,6 +12,7 @@ type Article struct {
 	Published   bool
 	PublishedAt *time.Time
 	Tags        []Tag
+	Images      []ArticleImage
 }
 
 func (t *Article) StateString() string {

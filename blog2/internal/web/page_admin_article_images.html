@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {{template "component_common_head" .}}
+    <style>
+        main {
+            padding: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    {{template "component_info_snackbar"}}
+    <header>
+        {{template "component_header"}}
+    </header>
+    <main>
+        <script>window.env = {{.JsEnv }}</script>
+        <div>
+            <form method="POST" enctype="multipart/form-data" action="/admin/articles/{{.Article.ID}}/images">
+                <input type="file" accept="image/jpeg" name="inputImage" />
+                <input type="submit" value="画像をアップロードする(jpgのみ)" />
+            </form>
+        </div>
+    </main>
+    <footer>
+        {{template "component_footer"}}
+    </footer>
+</body>
+
+
+</html>

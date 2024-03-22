@@ -8,9 +8,10 @@ import (
 )
 
 type Impl struct {
-	RepositoryArticleIndex repository.RepositoryArticleIndex
-	RepositoryArticle      repository.RepositoryArticle
-	StorageArticle         repository.StorageArticle
-	Markdown2HTML          markdown2html.Markdown2HTML
-	L                      *slog.Logger
+	RepositoryArticleIndex             repository.RepositoryArticleIndex
+	RepositoryArticle                  repository.RepositoryArticle
+	StorageArticle                     repository.StorageArticle
+	StorageArticleFileDirectlyUploaded repository.StorageArticleFileDirectlyUploaded
+	Markdown2HTML                      markdown2html.Markdown2HTML
+	L                                  *slog.Logger
 }

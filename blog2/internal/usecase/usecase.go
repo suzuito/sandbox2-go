@@ -47,6 +47,11 @@ type Usecase interface {
 		ctx context.Context,
 		article *entity.Article,
 	) (*DTOGetAdminArticleTags, error)
+	PostAdminArticleImages(
+		ctx context.Context,
+		article *entity.Article,
+		input io.Reader,
+	) (*DTOPostAdminArticleImages, error)
 	MiddlewareGetArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,

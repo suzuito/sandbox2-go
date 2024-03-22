@@ -1,0 +1,38 @@
+{{define "component_image_modal"}}
+<style>
+    #image-modal {
+        position: absolute;
+        background-color: #fff;
+        left: 100px;
+        right: 100px;
+        top: 100px;
+        z-index: 99;
+        padding: 6px;
+        /* display: none; */
+        display: block;
+        border: 1px solid red;
+    }
+
+    .image-modal-padding {
+        padding-bottom: 6px;
+    }
+</style>
+<script type="text/javascript" src="/js/component_image_modal.js"></script>
+<div id="image-modal">
+    <div class="image-modal-title">a</div>
+    <div class="image-modal-padding"></div>
+    <div class="image-modal-inupt">
+        <input id="image-modal-input" type="file" accept=".jpg"/>
+        <button id="image-modal-upload-button">画像をアップロードする(jpgのみ)</button>
+    </div>
+    <div class="image-modal-padding"></div>
+    <div class="image-modal-images">
+        <li>aaa</li>
+        <li>bbb</li>
+    </div>
+    <div class="image-modal-padding"></div>
+    <div class="image-modal-buttons">
+        <button id="image-modal-close-button">閉じる</button>
+    </div>
+</div>
+{{end}}

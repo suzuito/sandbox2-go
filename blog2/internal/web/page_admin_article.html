@@ -173,6 +173,7 @@
 
 <body>
     {{template "component_info_snackbar"}}
+    {{template "component_image_modal"}}
     <header>
         {{template "component_header"}}
     </header>
@@ -203,7 +204,9 @@
                         <input type="checkbox" id="preview-toggle" />プレビュー
                     </div>
                     <div class="page_admin_article-header-edit-menu-save-button">
-                        <button type="checkbox" id="save-markdown">保存する</button>
+                        <button id="save-markdown">Markdownを保存する</button>
+                        <button id="open-image-modal">画像</button>
+                        <a href="/admin/articles/{{.Article.ID}}/images">画像をアップロードする</a>
                     </div>
                 </div>
             </div>

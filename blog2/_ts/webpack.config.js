@@ -6,6 +6,7 @@ module.exports = {
     entry: {
         'page_admin_article': './src/page_admin_article/main.ts',
         'component_info_snackbar': './src/component_info_snackbar/main.ts',
+        'component_image_modal': './src/component_image_modal/main.ts',
     },
     module: {
         rules: [

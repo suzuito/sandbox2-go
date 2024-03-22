@@ -73,6 +73,12 @@ func SetRouter(
 					gAdminArticleTags := gAdminArticle.Group("tags")
 					gAdminArticleTags.GET("", w.PageAdminArticleTags)
 				}
+
+				{
+					gAdminArticleImages := gAdminArticle.Group("images")
+					gAdminArticleImages.GET("", w.PageAdminArticleImages)
+					gAdminArticleImages.POST("", w.PostAdminArticleImages)
+				}
 			}
 		}
 	}

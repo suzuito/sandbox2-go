@@ -1,3 +1,4 @@
+import { ImageModal } from "../component_image_modal/main";
 import { Snackbar, SnackbarType } from "../component_info_snackbar/main";
 import { getElementByIdWithException } from "../lib/dom";
 
@@ -78,5 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         snackbar.open(SnackbarType.ERROR, "更新エラー", "タイトルの更新に失敗しました");
+    });
+
+    const imageModal = new ImageModal();
+    const docOpenImageModal = getElementByIdWithException("open-image-modal");
+    docOpenImageModal.addEventListener("click", async () => {
+        imageModal.open(window.env.articleId);
     });
 });
