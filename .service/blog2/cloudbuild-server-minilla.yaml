@@ -14,3 +14,5 @@ steps:
   args: ['push', 'gcr.io/$PROJECT_ID/blog2/server:${BRANCH_NAME}']
 images:
   - 'gcr.io/$PROJECT_ID/blog2/server:${BRANCH_NAME}'
+options:
+  logging: CLOUD_LOGGING_ONLY
