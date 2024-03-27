@@ -1,0 +1,16 @@
+steps:
+- name: gcr.io/cloud-builders/docker
+  args: [
+    'build',
+    '-t',
+    'gcr.io/$PROJECT_ID/blog2/server:${BRANCH_NAME}',
+    '-f',
+    '.service/blog2/Dockerfile.server',
+    '.',
+    '--build-arg',
+    'NODE_ENV=development'
+  ]
+- name: gcr.io/cloud-builders/docker
+  args: ['push', 'gcr.io/$PROJECT_ID/blog2/server:${BRANCH_NAME}']
+images:
+  - 'gcr.io/$PROJECT_ID/blog2/server:${BRANCH_NAME}'
