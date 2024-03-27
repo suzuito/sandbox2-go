@@ -8,7 +8,7 @@ RUN apk add --no-cache make
 
 WORKDIR /app
 COPY . ./
-RUN cd blog2/_ts/ && npm run build
+RUN cd blog2/_ts/ && npm ci && npm run build
 
 # Build server
 FROM golang:1.22-alpine AS build2
