@@ -33,12 +33,13 @@ func newImpl(
 		return nil, nil, terrors.Wrapf("metadata.ProjectID is failed: %w", err)
 	}
 	mysqlConfig := mysql.Config{
-		DBName:    "blog2",
-		User:      arg.Env.DBUser,
-		Passwd:    arg.Env.DBPassword,
-		Net:       "unix",
-		Addr:      fmt.Sprintf("/cloudsql/%s:asia-northeast1:sandbox-instance", gcpProjectID),
-		ParseTime: true,
+		DBName:               "blog2",
+		User:                 arg.Env.DBUser,
+		Passwd:               arg.Env.DBPassword,
+		Net:                  "unix",
+		Addr:                 fmt.Sprintf("/cloudsql/%s:asia-northeast1:sandbox-instance", gcpProjectID),
+		ParseTime:            true,
+		AllowNativePasswords: true,
 	}
 	pool, err := sql.Open(
 		"mysql",
