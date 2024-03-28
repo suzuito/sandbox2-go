@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	fmt.Println("TODO")
 	ctx := context.Background()
 	_, w, err := inject.NewImpl(ctx)
 	if err != nil {

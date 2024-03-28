@@ -29,5 +29,6 @@ COPY --from=build2 /app/blog2-server.out .
 COPY --from=build2 /app/blog2/internal/web/_js/ blog2/internal/web/_js/
 COPY --from=build2 /app/blog2/internal/web/_css/ blog2/internal/web/_css/
 COPY --from=build2 /app/blog2/internal/web/_images/ blog2/internal/web/_images/
+COPY --from=build2 /app/blog2/internal/web/*.html blog2/internal/web/
 
-ENTRYPOINT ["/app/blog2-server.out"]
+# ENTRYPOINT ["/app/blog2-server.out"]
