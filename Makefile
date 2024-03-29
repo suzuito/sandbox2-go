@@ -59,6 +59,8 @@ blog2-init-rdb:
 	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3307)/$(BLOG2_DB_NAME)" up
 	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3307)/$(BLOG2_DB_NAME_FOR_UNIT_TEST)" drop -f
 	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3307)/$(BLOG2_DB_NAME_FOR_UNIT_TEST)" up
+blog2-init-rdb-test-data:
+	go run blog2/cmd/create-test-data/main.go
 blog2-migrate-create:
 	# Example: make blog2-migrate-create NAME=create_article
 	.bin/migrate create -ext sql -dir ./.service/blog2/.schema/ $(NAME)

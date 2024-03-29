@@ -8,6 +8,7 @@ import (
 
 type PageTop struct {
 	ComponentCommonHead ComponentCommonHead
+	ComponentHeader     ComponentHeader
 }
 
 func (t *Impl) PageTop(ctx *gin.Context) {
@@ -16,6 +17,9 @@ func (t *Impl) PageTop(ctx *gin.Context) {
 		http.StatusOK,
 		"page_top.html",
 		PageTop{
+			ComponentHeader: ComponentHeader{
+				IsAdmin: ctxGetAdmin(ctx),
+			},
 			ComponentCommonHead: ComponentCommonHead{
 				Title: "Login",
 				Meta:  nil,

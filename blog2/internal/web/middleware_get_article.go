@@ -14,22 +14,12 @@ func (t *Impl) MiddlewareGetArticle(ctx *gin.Context) {
 	dto, err := t.U.MiddlewareGetArticle(ctx, articleID)
 	if err != nil {
 		if errors.As(err, &usecase.PtrNotFoundEntityError) {
-			t.P.RenderHTML(
-				ctx,
-				http.StatusInternalServerError,
-				"page_error.html",
-				NewPageErrorNotFound(),
-			)
+			t.Render4XXError(ctx, http.StatusNotFound, "not found")
 			ctx.Abort()
 			return
 		}
 		t.L.Error("", "err", err)
-		t.P.RenderHTML(
-			ctx,
-			http.StatusInternalServerError,
-			"page_error.html",
-			NewPageErrorUnknownError(),
-		)
+		t.RenderUnknownError(ctx)
 		ctx.Abort()
 		return
 	}

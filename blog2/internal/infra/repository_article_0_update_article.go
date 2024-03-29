@@ -44,7 +44,9 @@ func (t *RepositoryArticle) UpdateArticle(
 		if err != nil {
 			return terrors.Wrap(err)
 		}
-
+		if err := updateSearchIndex(ctx, tx, articleID); err != nil {
+			return terrors.Wrap(err)
+		}
 		articles, err := getArticles(ctx, tx, articleID)
 		if err != nil {
 			return terrors.Wrap(err)

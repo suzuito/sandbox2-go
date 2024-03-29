@@ -6,20 +6,21 @@ import (
 	"log/slog"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
 	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
 	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
-	"github.com/suzuito/sandbox2-go/blog2/internal/web"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-func newImplLocal(
+func newUsecaseImplLocal(
 	ctx context.Context,
-	arg *argNewImpl,
+	env *environment.Environment,
+	arg *argNewUsecaseImpl,
 ) (
 	usecase.Usecase,
-	*web.Impl,
+	*slog.Logger,
 	error,
 ) {
 	slogHandler := clog.CustomHandler{
@@ -28,7 +29,7 @@ func newImplLocal(
 	logger := slog.New(&slogHandler)
 	mysqlConfig := mysql.Config{
 		DBName:    "blog2",
-		User:      arg.Env.DBUser,
+		User:      env.DBUser,
 		Net:       "tcp",
 		Addr:      "127.0.0.1:3307",
 		ParseTime: true,
@@ -45,23 +46,16 @@ func newImplLocal(
 		RepositoryArticle: &infra.RepositoryArticle{
 			Pool: pool,
 		},
-		RepositoryArticleIndex: &infra.RepositoryArticleIndex{},
 		StorageArticle: &infra.StorageArticle{
 			Cli:    arg.StorageClient,
-			Bucket: arg.Env.ArticleMarkdownBucket,
+			Bucket: env.ArticleMarkdownBucket,
 		},
 		StorageArticleFileDirectlyUploaded: &infra.StorageArticleFileDirectlyUploaded{
 			Cli:    arg.StorageClient,
-			Bucket: arg.Env.ArticleFileDirectlyUploadedBucket,
+			Bucket: env.ArticleFileDirectlyUploadedBucket,
 		},
 		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
 		L:             logger,
 	}
-	w := web.Impl{
-		U:          &u,
-		P:          web.NewPresenter(),
-		L:          logger,
-		AdminToken: arg.Env.AdminToken,
-	}
-	return &u, &w, nil
+	return &u, logger, nil
 }

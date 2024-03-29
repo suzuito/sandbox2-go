@@ -15,6 +15,7 @@ type ComponentWasm struct {
 
 type PageAdminArticle struct {
 	ComponentCommonHead ComponentCommonHead
+	ComponentHeader     ComponentHeader
 	ComponentWasm       ComponentWasm
 	Article             *entity.Article
 	MarkdownBody        string
@@ -32,12 +33,7 @@ func (t *Impl) PageAdminArticle(ctx *gin.Context) {
 	dto, err := t.U.GetAdminArticle(ctx, article.ID)
 	if err != nil {
 		t.L.Error("", "err", err)
-		t.P.RenderHTML(
-			ctx,
-			http.StatusInternalServerError,
-			"page_error.html",
-			NewPageErrorUnknownError(),
-		)
+		t.RenderUnknownError(ctx)
 		return
 	}
 	t.P.RenderHTML(
@@ -45,6 +41,9 @@ func (t *Impl) PageAdminArticle(ctx *gin.Context) {
 		http.StatusOK,
 		"page_admin_article.html",
 		PageAdminArticle{
+			ComponentHeader: ComponentHeader{
+				IsAdmin: ctxGetAdmin(ctx),
+			},
 			ComponentCommonHead: ComponentCommonHead{},
 			ComponentWasm: ComponentWasm{
 				WasmBinaryURL: "/wasm/page_admin_article.wasm",
@@ -68,12 +67,7 @@ func (t *Impl) PostAdminArticleEditTags(ctx *gin.Context) {
 	tagIDsDelete := entity.NewTagIDs(tagIDsDeleteString)
 	if err := t.U.PostAdminArticleEditTags(ctx, article.ID, tagIDsAdd, tagIDsDelete); err != nil {
 		t.L.Error("", "err", err)
-		t.P.RenderHTML(
-			ctx,
-			http.StatusInternalServerError,
-			"page_error.html",
-			NewPageErrorUnknownError(),
-		)
+		t.RenderUnknownError(ctx)
 		return
 	}
 	t.P.Redirect(ctx, http.StatusFound, fmt.Sprintf("/admin/articles/%s/tags", article.ID))

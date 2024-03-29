@@ -51,7 +51,7 @@ func getArticles(ctx context.Context, txOrDB TxOrDB, ids ...entity.ArticleID) ([
 		ctx,
 		txOrDB,
 		fmt.Sprintf(
-			"SELECT `id`, `title`, `published`, `published_at` FROM `articles` WHERE %s",
+			"SELECT `id`, `title`, `published`, `published_at`, `created_at`, `updated_at` FROM `articles` WHERE %s",
 			sqlIn(`id`, ids),
 		),
 		idsAsAny...,
@@ -63,7 +63,14 @@ func getArticles(ctx context.Context, txOrDB TxOrDB, ids ...entity.ArticleID) ([
 	articles := []*entity.Article{}
 	for rowsArticle.Next() {
 		article := entity.Article{}
-		if err := rowsArticle.Scan(&article.ID, &article.Title, &article.Published, &article.PublishedAt); err != nil {
+		if err := rowsArticle.Scan(
+			&article.ID,
+			&article.Title,
+			&article.Published,
+			&article.PublishedAt,
+			&article.CreatedAt,
+			&article.UpdatedAt,
+		); err != nil {
 			return nil, terrors.Wrap(err)
 		}
 		tagsPerArticle, exists := tags[article.ID]

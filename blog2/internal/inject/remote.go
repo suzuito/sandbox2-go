@@ -8,20 +8,21 @@ import (
 
 	"cloud.google.com/go/compute/metadata"
 	"github.com/go-sql-driver/mysql"
+	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
 	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
 	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
-	"github.com/suzuito/sandbox2-go/blog2/internal/web"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-func newImpl(
+func newUsecaseImpl(
 	ctx context.Context,
-	arg *argNewImpl,
+	env *environment.Environment,
+	arg *argNewUsecaseImpl,
 ) (
 	usecase.Usecase,
-	*web.Impl,
+	*slog.Logger,
 	error,
 ) {
 	slogHandler := clog.CustomHandler{
@@ -34,8 +35,8 @@ func newImpl(
 	}
 	mysqlConfig := mysql.Config{
 		DBName:               "blog2",
-		User:                 arg.Env.DBUser,
-		Passwd:               arg.Env.DBPassword,
+		User:                 env.DBUser,
+		Passwd:               env.DBPassword,
 		Net:                  "unix",
 		Addr:                 fmt.Sprintf("/cloudsql/%s:asia-northeast1:sandbox-instance", gcpProjectID),
 		ParseTime:            true,
@@ -53,23 +54,16 @@ func newImpl(
 		RepositoryArticle: &infra.RepositoryArticle{
 			Pool: pool,
 		},
-		RepositoryArticleIndex: &infra.RepositoryArticleIndex{},
 		StorageArticle: &infra.StorageArticle{
 			Cli:    arg.StorageClient,
-			Bucket: arg.Env.ArticleMarkdownBucket,
+			Bucket: env.ArticleMarkdownBucket,
 		},
 		StorageArticleFileDirectlyUploaded: &infra.StorageArticleFileDirectlyUploaded{
 			Cli:    arg.StorageClient,
-			Bucket: arg.Env.ArticleFileDirectlyUploadedBucket,
+			Bucket: env.ArticleFileDirectlyUploadedBucket,
 		},
 		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
 		L:             logger,
 	}
-	w := web.Impl{
-		U:          &u,
-		P:          web.NewPresenter(),
-		L:          logger,
-		AdminToken: arg.Env.AdminToken,
-	}
-	return &u, &w, nil
+	return &u, logger, nil
 }

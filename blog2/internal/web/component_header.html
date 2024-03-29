@@ -18,6 +18,9 @@
         <a href="/">otiuzu</a>
     </div>
     <nav class="component_header-nav">
+        {{ if .ComponentHeader.IsAdmin }}
+        <a href="/admin">管理画面</a>
+        {{ end }}
         <a href="/articles">日記</a>
         <a href="/about">About</a>
     </nav>

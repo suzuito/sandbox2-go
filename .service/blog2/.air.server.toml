@@ -11,3 +11,4 @@ exclude_dir = [
     "blog2/internal/web/_wasm",
     "blog2/_ts"
 ]
+stop_on_error = true

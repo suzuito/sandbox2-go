@@ -12,6 +12,9 @@ func (t *Impl) PageNoRoute(ctx *gin.Context) {
 		http.StatusNotFound,
 		"page_error.html",
 		PageError{
+			ComponentHeader: ComponentHeader{
+				IsAdmin: ctxGetAdmin(ctx),
+			},
 			ComponentCommonHead: ComponentCommonHead{},
 			Message:             "Not found",
 		},

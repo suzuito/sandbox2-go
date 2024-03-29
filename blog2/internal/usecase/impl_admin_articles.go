@@ -3,6 +3,7 @@ package usecase
 import (
 	"bytes"
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
@@ -10,27 +11,23 @@ import (
 )
 
 type DTOGetAdminArticles struct {
-	Articles []*entity.Article
+	Articles   []*entity.Article
+	NextOffset *int
+	PrevOffset *int
 }
 
 func (t *Impl) GetAdminArticles(
 	ctx context.Context,
 	query *entity.ArticleSearchQuery,
 ) (*DTOGetAdminArticles, error) {
-	indices, err := t.RepositoryArticleIndex.Search(ctx, query)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	articleIDs := []entity.ArticleID{}
-	for _, index := range indices {
-		articleIDs = append(articleIDs, index.ArticleID)
-	}
-	articles, err := t.RepositoryArticle.GetArticles(ctx, articleIDs...)
+	articles, prevOffset, nextOffset, err := t.RepositoryArticle.SearchArticles(ctx, query)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOGetAdminArticles{
-		Articles: articles,
+		Articles:   articles,
+		PrevOffset: prevOffset,
+		NextOffset: nextOffset,
 	}, nil
 }
 
@@ -45,7 +42,7 @@ func (t *Impl) PostAdminArticles(
 	if err := t.StorageArticle.PutArticle(ctx, articleID, bytes.NewBuffer([]byte{})); err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	article, err := t.RepositoryArticle.CreateArticle(ctx, articleID)
+	article, err := t.RepositoryArticle.CreateArticle(ctx, articleID, time.Now())
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

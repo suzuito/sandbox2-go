@@ -15,10 +15,13 @@
 <body>
     {{template "component_info_snackbar"}}
     <header>
-        {{template "component_header"}}
+        {{template "component_header" .}}
     </header>
     <main>
         <script>window.env = {{.JsEnv }}</script>
+        <div>
+            <a href=".">記事へ</a>
+        </div>
         <div>
             <form method="POST" enctype="multipart/form-data" action="/admin/articles/{{.Article.ID}}/images">
                 <input type="file" accept="image/jpeg" name="inputImage" />

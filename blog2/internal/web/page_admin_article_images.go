@@ -10,6 +10,7 @@ import (
 
 type PageAdminArticleImages struct {
 	ComponentCommonHead ComponentCommonHead
+	ComponentHeader     ComponentHeader
 	JsEnv               PageAdminArticleImagesJsEnv
 	Article             *entity.Article
 }
@@ -25,8 +26,11 @@ func (t *Impl) PageAdminArticleImages(ctx *gin.Context) {
 		"page_admin_article_images.html",
 		PageAdminArticleImages{
 			ComponentCommonHead: ComponentCommonHead{},
-			JsEnv:               PageAdminArticleImagesJsEnv{},
-			Article:             article,
+			ComponentHeader: ComponentHeader{
+				IsAdmin: ctxGetAdmin(ctx),
+			},
+			JsEnv:   PageAdminArticleImagesJsEnv{},
+			Article: article,
 		},
 	)
 }
@@ -63,12 +67,7 @@ func (t *Impl) PostAdminArticleImages(ctx *gin.Context) {
 	dto, err := t.U.PostAdminArticleImages(ctx, article, f)
 	if err != nil {
 		t.L.Error("", "err", err)
-		t.P.RenderHTML(
-			ctx,
-			http.StatusInternalServerError,
-			"page_error.html",
-			NewPageErrorNotFound(),
-		)
+		t.RenderUnknownError(ctx)
 		return
 	}
 	fmt.Printf("%+v\n", dto)

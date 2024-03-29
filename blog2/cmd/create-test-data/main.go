@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/inject"
-	"github.com/suzuito/sandbox2-go/blog2/internal/web"
 )
 
 func main() {
@@ -24,9 +22,8 @@ func main() {
 		fmt.Printf("%+v\n", err)
 		os.Exit(2)
 	}
-	w := inject.NewWebImpl(ctx, &env, u, logger)
-	e := gin.New()
-	e.Use(gin.Recovery())
-	web.SetRouter(e, w)
-	e.Run()
+	if err := u.CreateTestData001(ctx); err != nil {
+		logger.Error("", "err", err)
+		os.Exit(3)
+	}
 }

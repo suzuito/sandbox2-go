@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"github.com/suzuito/sandbox2-go/blog/entity"
 )
 
 type ArticleID string
@@ -11,6 +13,8 @@ type Article struct {
 	Title       string
 	Published   bool
 	PublishedAt *time.Time
+	CreatedAt   time.Time
+	UpdatedAt   *time.Time
 	Tags        []Tag
 	Images      []ArticleImage
 }
@@ -29,4 +33,12 @@ func (t *Article) HasTag(tagID TagID) bool {
 		}
 	}
 	return false
+}
+
+func (t *Article) GetTagIDs() []entity.TagID {
+	tagIDs := make([]entity.TagID, len(t.Tags))
+	for i, tag := range t.Tags {
+		tagIDs[i] = entity.TagID(tag.ID)
+	}
+	return tagIDs
 }

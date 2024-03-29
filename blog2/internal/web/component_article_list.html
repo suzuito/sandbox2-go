@@ -38,9 +38,10 @@
       </a>
     </div>
     <div class="component_article_list_article-date">
+      {{if .PublishedAt}}
       {{.PublishedAt.Format "2006-01-02"}}
+      {{end}}
     </div>
-    <div class="component_article_list_article-summary">{{.Summary}}</div>
     <div class="component_article_list_article-tags">
       {{range .Tags}}
       <div class="component_article_list_article-tag">

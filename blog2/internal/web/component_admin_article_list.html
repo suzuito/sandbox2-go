@@ -1,5 +1,8 @@
 {{define "component_admin_article_list"}}
 <style>
+  .component_admin_article_search {
+    padding: 6px;
+  }
   .component_admin_article_list {
     padding: 6px;
   }
@@ -26,6 +29,9 @@
     padding-right: 6px;
   }
 </style>
+<div class="component_admin_article_search">
+  {{template "component_article_list_search" .}}
+</div>
 <div class="component_admin_article_list">
   {{range .Articles}}
   <div class="component_admin_article_list_article">
@@ -37,22 +43,25 @@
         {{end}}
       </a>
     </div>
-    {{if eq .Published true}}
     <div class="component_admin_article_list_article-date">
-      {{.PublishedAt.Format "2006-01-02"}}
+      作成日:{{.CreatedAt.Format "2006-01-02"}}
+    </div>
+    {{if .PublishedAt}}
+    <div class="component_admin_article_list_article-date">
+      公開日:{{.PublishedAt.Format "2006-01-02"}}
     </div>
     {{end}}
-    <div class="component_admin_article_list_article-summary">{{.Summary}}</div>
     <div class="component_admin_article_list_article-tags">
       {{range .Tags}}
       <div class="component_admin_article_list_article-tag">
         <a href="/admin/articles?tags={{.ID}}">
-          {{.ID}}
+          {{.Name}}
         </a>
       </div>
       {{end}}
     </div>
   </div>
   {{end}}
+  {{template "component_article_list_pager" .}}
 </div>
 {{end}}

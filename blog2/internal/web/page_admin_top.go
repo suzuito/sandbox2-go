@@ -8,6 +8,7 @@ import (
 
 type PageAdminTop struct {
 	ComponentCommonHead ComponentCommonHead
+	ComponentHeader     ComponentHeader
 }
 
 func (t *Impl) PageAdminTop(ctx *gin.Context) {
@@ -17,6 +18,9 @@ func (t *Impl) PageAdminTop(ctx *gin.Context) {
 		"page_admin_top.html",
 		PageAdminTop{
 			ComponentCommonHead: ComponentCommonHead{},
+			ComponentHeader: ComponentHeader{
+				IsAdmin: ctxGetAdmin(ctx),
+			},
 		},
 	)
 }

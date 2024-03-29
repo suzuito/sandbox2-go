@@ -2,36 +2,54 @@ package inject
 
 import (
 	"context"
+	"log/slog"
 
 	"cloud.google.com/go/storage"
-	"github.com/kelseyhightower/envconfig"
 	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
 	"github.com/suzuito/sandbox2-go/blog2/internal/web"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-func NewImpl(ctx context.Context) (
+func NewUsecaseImpl(ctx context.Context, env *environment.Environment) (
 	usecase.Usecase,
-	*web.Impl,
+	*slog.Logger,
 	error,
 ) {
 	var err error
-	arg := argNewImpl{}
-	if err := envconfig.Process("", &arg.Env); err != nil {
-		return nil, nil, terrors.Wrap(err)
-	}
+	arg := argNewUsecaseImpl{}
 	arg.StorageClient, err = storage.NewClient(ctx)
 	if err != nil {
 		return nil, nil, terrors.Wrap(err)
 	}
-	if arg.Env.Env == "dev" {
-		return newImplLocal(ctx, &arg)
+	var u usecase.Usecase
+	var logger *slog.Logger
+	if env.Env == "dev" {
+		u, logger, err = newUsecaseImplLocal(ctx, env, &arg)
+	} else {
+		u, logger, err = newUsecaseImpl(ctx, env, &arg)
 	}
-	return newImpl(ctx, &arg)
+	if err != nil {
+		return nil, nil, terrors.Wrap(err)
+	}
+	return u, logger, nil
 }
 
-type argNewImpl struct {
-	Env           environment.Environment
+type argNewUsecaseImpl struct {
 	StorageClient *storage.Client
+}
+
+func NewWebImpl(
+	ctx context.Context,
+	env *environment.Environment,
+	u usecase.Usecase,
+	logger *slog.Logger,
+) *web.Impl {
+	w := web.Impl{
+		U:          u,
+		P:          web.NewPresenter(),
+		L:          logger,
+		AdminToken: env.AdminToken,
+	}
+	return &w
 }

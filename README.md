@@ -99,6 +99,7 @@ make blog-test
 ```bash
 make blog2-init
 make blog2-init-rdb
+make blog2-init-rdb-test-data
 ```
 
 #### Run

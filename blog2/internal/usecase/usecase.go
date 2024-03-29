@@ -56,4 +56,9 @@ type Usecase interface {
 		ctx context.Context,
 		articleID entity.ArticleID,
 	) (*DTOMiddlewareGetArticle, error)
+
+	// Not production codes
+	CreateTestData001(
+		ctx context.Context,
+	) error
 }

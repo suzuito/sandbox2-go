@@ -8,7 +8,6 @@ import (
 )
 
 type Impl struct {
-	RepositoryArticleIndex             repository.RepositoryArticleIndex
 	RepositoryArticle                  repository.RepositoryArticle
 	StorageArticle                     repository.StorageArticle
 	StorageArticleFileDirectlyUploaded repository.StorageArticleFileDirectlyUploaded

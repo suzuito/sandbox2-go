@@ -21,3 +21,17 @@ CREATE TABLE mapping_articles_tags (
     FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     PRIMARY KEY (`article_id`, `tag_id`)
 );
+
+
+CREATE TABLE `articles_search_index` (
+    `article_id` VARCHAR(128) NOT NULL,
+    `tags` TEXT,
+    `published` BOOLEAN NOT NULL,
+    `created_at` TIMESTAMP NOT NULL,
+    `published_at` TIMESTAMP DEFAULT NULL,
+    FULLTEXT (`tags`) WITH PARSER ngram,
+    FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+    PRIMARY KEY (
+        `article_id`
+    )
+);

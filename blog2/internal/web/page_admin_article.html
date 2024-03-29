@@ -26,7 +26,7 @@
             /* border: 3px solid green; */
         }
 
-        .page_admin_article-header-article-state-label {
+        .page_admin_article-header-row {
             position: relative;
             padding-top: 6px;
             padding-right: 6px;
@@ -69,7 +69,10 @@
             position: relative;
             padding-left: 6px;
             padding-right: 6px;
-            padding-bottom: 6px;
+            padding-bottom: 12px;
+            height: 16px;
+            overflow: scroll;
+            /* border: 1px solid red; */
         }
 
         .page_admin_article-header-edit-menu {
@@ -175,13 +178,14 @@
     {{template "component_info_snackbar"}}
     {{template "component_image_modal"}}
     <header>
-        {{template "component_header"}}
+        {{template "component_header" .}}
     </header>
     <main>
         <script>window.env = {{.JsEnv }}</script>
         <div class="page_admin_article-main">
             <div class="page_admin_article-header">
-                <div class="page_admin_article-header-article-state-label">
+                <div class="page_admin_article-header-row">
+                    <a href=".">記事一覧へ</a>
                     <button id="publish-toggle">{{.Article.StateString}}</button>
                 </div>
                 <div class="page_admin_article-header-title">
@@ -194,10 +198,10 @@
                     </div>
                 </div>
                 <div class="page_admin_article-header-tags">
+                    <a href="/admin/articles/{{.Article.ID}}/tags">編集</a>
                     {{range .Article.Tags}}
                     <span>{{.Name}}</span>
                     {{end}}
-                    <a href="/admin/articles/{{.Article.ID}}/tags">編集</a>
                 </div>
                 <div class="page_admin_article-header-edit-menu">
                     <div class="page_admin_article-header-edit-menu-preview-toggle">

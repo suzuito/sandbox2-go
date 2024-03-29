@@ -9,6 +9,7 @@ import (
 
 type PageAdminArticleTags struct {
 	ComponentCommonHead ComponentCommonHead
+	ComponentHeader     ComponentHeader
 	Article             *entity.Article
 	Tags                []*entity.Tag
 	JsEnv               PageAdminArticleTagsJsEnv
@@ -20,12 +21,8 @@ func (t *Impl) PageAdminArticleTags(ctx *gin.Context) {
 	article := ctxGetArticle(ctx)
 	dto, err := t.U.GetAdminArticleTags(ctx, article)
 	if err != nil {
-		t.P.RenderHTML(
-			ctx,
-			http.StatusInternalServerError,
-			"page_error.html",
-			NewPageErrorUnknownError(),
-		)
+		t.L.Error("Failed to get admin article tags", "err", err)
+		t.RenderUnknownError(ctx)
 		return
 	}
 	t.P.RenderHTML(
@@ -34,9 +31,12 @@ func (t *Impl) PageAdminArticleTags(ctx *gin.Context) {
 		"page_admin_article_tags.html",
 		PageAdminArticleTags{
 			ComponentCommonHead: ComponentCommonHead{},
-			JsEnv:               PageAdminArticleTagsJsEnv{},
-			Article:             article,
-			Tags:                dto.Tags,
+			ComponentHeader: ComponentHeader{
+				IsAdmin: ctxGetAdmin(ctx),
+			},
+			JsEnv:   PageAdminArticleTagsJsEnv{},
+			Article: article,
+			Tags:    dto.Tags,
 		},
 	)
 }
