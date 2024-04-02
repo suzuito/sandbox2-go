@@ -5,25 +5,26 @@ import (
 	"io"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	internal_usecase "github.com/suzuito/sandbox2-go/blog2/internal/usecase"
 )
 
 type Usecase interface {
 	GetAdminArticles(
 		ctx context.Context,
 		query *entity.ArticleSearchQuery,
-	) (*DTOGetAdminArticles, error)
+	) (*internal_usecase.DTOGetAdminArticles, error)
 	PostAdminArticles(
 		ctx context.Context,
-	) (*DTOPostAdminArticles, error)
+	) (*internal_usecase.DTOPostAdminArticles, error)
 	GetAdminArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,
-	) (*DTOGetAdminArticle, error)
+	) (*internal_usecase.DTOGetAdminArticle, error)
 	PutAdminArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,
 		title *string,
-	) (*DTOPutAdminArticle, error)
+	) (*internal_usecase.DTOPutAdminArticle, error)
 	PutAdminArticleMarkdown(
 		ctx context.Context,
 		articleID entity.ArticleID,
@@ -46,16 +47,16 @@ type Usecase interface {
 	GetAdminArticleTags(
 		ctx context.Context,
 		article *entity.Article,
-	) (*DTOGetAdminArticleTags, error)
+	) (*internal_usecase.DTOGetAdminArticleTags, error)
 	PostAdminArticleImages(
 		ctx context.Context,
 		article *entity.Article,
 		input io.Reader,
-	) (*DTOPostAdminArticleImages, error)
+	) (*internal_usecase.DTOPostAdminArticleImages, error)
 	MiddlewareGetArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,
-	) (*DTOMiddlewareGetArticle, error)
+	) (*internal_usecase.DTOMiddlewareGetArticle, error)
 
 	// Not production codes
 	CreateTestData001(

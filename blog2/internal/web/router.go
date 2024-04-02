@@ -5,8 +5,8 @@ import (
 	"path"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
 	"github.com/suzuito/sandbox2-go/blog2/internal/web/internal/presenter"
+	"github.com/suzuito/sandbox2-go/blog2/pkg/usecase"
 )
 
 type Impl struct {

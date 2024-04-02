@@ -12,8 +12,9 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
 	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
-	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
+	internal_usecase "github.com/suzuito/sandbox2-go/blog2/internal/usecase"
 	"github.com/suzuito/sandbox2-go/blog2/pkg/environment"
+	"github.com/suzuito/sandbox2-go/blog2/pkg/usecase"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
@@ -60,7 +61,7 @@ func newUsecaseImpl(
 		return nil, nil, terrors.Wrap(err)
 	}
 
-	u := usecase.Impl{
+	u := internal_usecase.Impl{
 		RepositoryArticle: &infra.RepositoryArticle{
 			Pool: pool,
 		},
