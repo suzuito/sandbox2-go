@@ -10,5 +10,5 @@ type Environment struct {
 	FunctionTriggerTopicIDStartImageProcess string `required:"false" envconfig:"FUNCTION_TRIGGER_TOPIC_ID_START_IMAGE_PROCESS"`
 	SiteOrigin                              string `required:"false" split_words:"true"`
 	Env                                     string `required:"true" split_words:"true"`
-	AdminToken                              string `required:"true" split_words:"true"`
+	AdminToken                              string `required:"false" split_words:"true"`
 }
