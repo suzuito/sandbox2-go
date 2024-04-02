@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
-	"github.com/suzuito/sandbox2-go/blog2/internal/inject"
 	"github.com/suzuito/sandbox2-go/blog2/internal/web"
+	"github.com/suzuito/sandbox2-go/blog2/pkg/environment"
+	"github.com/suzuito/sandbox2-go/blog2/pkg/inject"
 )
 
 func main() {

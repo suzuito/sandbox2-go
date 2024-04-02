@@ -10,10 +10,10 @@ import (
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/pubsub"
 	"github.com/go-sql-driver/mysql"
-	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
 	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
 	"github.com/suzuito/sandbox2-go/blog2/internal/usecase"
+	"github.com/suzuito/sandbox2-go/blog2/pkg/environment"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
