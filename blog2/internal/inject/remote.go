@@ -7,6 +7,8 @@ import (
 	"log/slog"
 
 	"cloud.google.com/go/compute/metadata"
+	"cloud.google.com/go/firestore"
+	"cloud.google.com/go/pubsub"
 	"github.com/go-sql-driver/mysql"
 	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
@@ -33,6 +35,14 @@ func newUsecaseImpl(
 	if err != nil {
 		return nil, nil, terrors.Wrapf("metadata.ProjectID is failed: %w", err)
 	}
+	firestoreClient, err := firestore.NewClient(ctx, gcpProjectID)
+	if err != nil {
+		return nil, nil, terrors.Wrap(err)
+	}
+	pubsubClient, err := pubsub.NewClient(ctx, gcpProjectID)
+	if err != nil {
+		return nil, nil, terrors.Wrap(err)
+	}
 	mysqlConfig := mysql.Config{
 		DBName:               "blog2",
 		User:                 env.DBUser,
@@ -58,9 +68,16 @@ func newUsecaseImpl(
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleMarkdownBucket,
 		},
-		StorageArticleFileDirectlyUploaded: &infra.StorageArticleFileDirectlyUploaded{
+		StorageArticleFileUploaded: &infra.StorageArticleFileUploaded{
 			Cli:    arg.StorageClient,
-			Bucket: env.ArticleFileDirectlyUploadedBucket,
+			Bucket: env.ArticleFileUploadedBucket,
+		},
+		RepositoryArticleFileUploaded: &infra.RepositoryArticleFileUploaded{
+			Cli: firestoreClient,
+		},
+		FunctionTriggerStartImageProcess: &infra.FunctionTrigger{
+			Cli:     pubsubClient,
+			TopicID: env.FunctionTriggerTopicIDStartImageProcess,
 		},
 		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
 		L:             logger,

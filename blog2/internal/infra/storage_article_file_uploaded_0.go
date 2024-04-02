@@ -7,11 +7,11 @@ import (
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 )
 
-type StorageArticleFileDirectlyUploaded struct {
+type StorageArticleFileUploaded struct {
 	Cli    *storage.Client
 	Bucket string
 }
 
-func (t *StorageArticleFileDirectlyUploaded) filePath(articleID entity.ArticleID, fileID entity.ArticleFileDirectlyUploadedID) string {
+func (t *StorageArticleFileUploaded) filePath(articleID entity.ArticleID, fileID entity.ArticleFileUploadedID) string {
 	return fmt.Sprintf("%s/%s", articleID, fileID)
 }

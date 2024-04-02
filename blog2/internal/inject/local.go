@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"log/slog"
 
+	"cloud.google.com/go/firestore"
+	"cloud.google.com/go/pubsub"
 	"github.com/go-sql-driver/mysql"
 	"github.com/suzuito/sandbox2-go/blog2/internal/environment"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
@@ -27,6 +29,10 @@ func newUsecaseImplLocal(
 		Handler: newSlogHandlerText(slog.LevelDebug),
 	}
 	logger := slog.New(&slogHandler)
+	firestoreClient, err := firestore.NewClient(ctx, "suzuito-minilla") // CloudFunctionとの連携の必要性から、ローカルではなくminillaを使う
+	if err != nil {
+		return nil, nil, terrors.Wrap(err)
+	}
 	mysqlConfig := mysql.Config{
 		DBName:    "blog2",
 		User:      env.DBUser,
@@ -42,6 +48,11 @@ func newUsecaseImplLocal(
 		return nil, nil, terrors.Wrap(err)
 	}
 
+	pubsubClient, err := pubsub.NewClient(ctx, "suzuito-minilla") // CloudFunctionとの連携の必要性から、ローカルではなくminillaを使う
+	if err != nil {
+		return nil, nil, terrors.Wrap(err)
+	}
+
 	u := usecase.Impl{
 		RepositoryArticle: &infra.RepositoryArticle{
 			Pool: pool,
@@ -50,9 +61,16 @@ func newUsecaseImplLocal(
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleMarkdownBucket,
 		},
-		StorageArticleFileDirectlyUploaded: &infra.StorageArticleFileDirectlyUploaded{
+		StorageArticleFileUploaded: &infra.StorageArticleFileUploaded{
 			Cli:    arg.StorageClient,
-			Bucket: env.ArticleFileDirectlyUploadedBucket,
+			Bucket: env.ArticleFileUploadedBucket,
+		},
+		RepositoryArticleFileUploaded: &infra.RepositoryArticleFileUploaded{
+			Cli: firestoreClient,
+		},
+		FunctionTriggerStartImageProcess: &infra.FunctionTrigger{
+			Cli:     pubsubClient,
+			TopicID: env.FunctionTriggerTopicIDStartImageProcess,
 		},
 		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
 		L:             logger,

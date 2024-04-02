@@ -5,11 +5,11 @@
     <style>
         .page_admin_article-main {
             position: absolute;
+            /* border: 3px solid red; */
             top: 0px;
             bottom: 0px;
             left: 0px;
             right: 0px;
-            /* border: 3px solid red; */
         }
 
         /**
@@ -19,73 +19,27 @@
          */
         .page_admin_article-header {
             position: absolute;
-            top: 0px;
-            height: 132px;
-            left: 0px;
-            right: 0px;
-            /* border: 3px solid green; */
-        }
-
-        .page_admin_article-header-row {
-            position: relative;
-            padding-top: 6px;
-            padding-right: 6px;
-            padding-left: 6px;
-        }
-
-        .page_admin_article-header-title {
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            height: 36px;
-        }
-
-        .page_admin_article-header-title-input {
-            position: absolute;
             top: 6px;
+            height: 150px;
             left: 6px;
-            right: 63px;
-            /*
-             border: 3px solid blueviolet;
-             box-sizing: border-box;
-             */
-        }
-
-        .page_admin_article-header-title-input-input {
-            width: 100%;
-        }
-
-        .page_admin_article-header-title-button {
-            position: absolute;
-            top: 6px;
             right: 6px;
-            /*
             border: 3px solid red;
-            box-sizing: border-box;
-            */
-        }
-
-        .page_admin_article-header-tags {
-            position: relative;
-            padding-left: 6px;
-            padding-right: 6px;
-            padding-bottom: 12px;
-            height: 16px;
             overflow: scroll;
-            /* border: 1px solid red; */
         }
 
-        .page_admin_article-header-edit-menu {
+        .page_admin_article-row {
             position: relative;
+            border: 1px solid red;
+        }
+
+        .page_admin_article-row-flex {
             display: flex;
             flex-direction: row;
-            height: 36px;
-            padding-left: 6px;
-            padding-right: 6px;
         }
 
-
-        .page_admin_article-header-edit-menu-save-button {}
+        .page_admin_article-row-input {
+            width: 80%;
+        }
 
         /**
          * -------------
@@ -93,73 +47,34 @@
          * -------------
          */
         .page_admin_article-body {
-            display: flex;
             position: absolute;
-            top: 132px;
+            top: 156px;
+            bottom: 6px;
             left: 6px;
             right: 6px;
-            bottom: 6px;
+            display: flex;
+            flex-direction: row;
+            overflow: scroll;
+            border: 3px solid red;
         }
 
-
-        .page_admin_article-padding {
-            padding: 6px;
-            /* border: 3px solid red; */
+        .page_admin_article-body-textarea {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            width: 49%;
+            overflow: scroll;
+            border: 3px solid blueviolet;
         }
 
-        @media screen and (max-width:480px) {
-
-            .page_admin_article-header-edit-menu-preview-toggle {}
-
-            .page_admin_article-body-textarea {
-                position: absolute;
-                top: 0px;
-                bottom: 0px;
-                left: 0px;
-                right: 0px;
-                overflow-y: scroll;
-                border: 1px solid red;
-            }
-
-            .page_admin_article-body-padding {
-                padding-right: 0px;
-            }
-
-            .page_admin_article-body-preview-area {
-                position: absolute;
-                top: 0px;
-                bottom: 0px;
-                left: 0px;
-                right: 0px;
-                display: none;
-            }
-        }
-
-        @media screen and (min-width:480px) {
-
-            .page_admin_article-header-edit-menu-preview-toggle {
-                display: none;
-            }
-
-            .page_admin_article-body-textarea {
-                position: relative;
-                width: 50%;
-                padding: 6px;
-                overflow-y: scroll;
-                border: 1px solid red;
-            }
-
-            .page_admin_article-body-padding {
-                padding-right: 6px;
-            }
-
-            .page_admin_article-body-preview-area {
-                position: relative;
-                width: 50%;
-                padding: 6px;
-                overflow: scroll;
-                border: 1px solid green;
-            }
+        .page_admin_article-body-preview-area {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 51%;
+            right: 0px;
+            overflow: scroll;
+            border: 3px solid blueviolet;
         }
 
         #markdown-editor {
@@ -184,34 +99,25 @@
         <script>window.env = {{.JsEnv }}</script>
         <div class="page_admin_article-main">
             <div class="page_admin_article-header">
-                <div class="page_admin_article-header-row">
+                <div class="page_admin_article-row">
                     <a href=".">記事一覧へ</a>
                     <button id="publish-toggle">{{.Article.StateString}}</button>
                 </div>
-                <div class="page_admin_article-header-title">
-                    <div class="page_admin_article-header-title-input">
-                        <input id="article-title" class="page_admin_article-header-title-input-input" type="text"
-                            placeholder="タイトル" value="{{.Article.Title}}" />
-                    </div>
-                    <div class="page_admin_article-header-title-button">
-                        <button id="save-title">保存する</button>
-                    </div>
+                <div class="page_admin_article-row page_admin_article-row-flex">
+                    <input id="article-title" class="page_admin_article-row-input" type="text"
+                        placeholder="タイトル" value="{{.Article.Title}}" />
+                    <button id="save-title">保存</button>
                 </div>
-                <div class="page_admin_article-header-tags">
+                <div class="page_admin_article-row">
                     <a href="/admin/articles/{{.Article.ID}}/tags">編集</a>
                     {{range .Article.Tags}}
                     <span>{{.Name}}</span>
                     {{end}}
                 </div>
-                <div class="page_admin_article-header-edit-menu">
-                    <div class="page_admin_article-header-edit-menu-preview-toggle">
-                        <input type="checkbox" id="preview-toggle" />プレビュー
-                    </div>
-                    <div class="page_admin_article-header-edit-menu-save-button">
-                        <button id="save-markdown">Markdownを保存する</button>
-                        <button id="open-image-modal">画像</button>
-                        <a href="/admin/articles/{{.Article.ID}}/images">画像をアップロードする</a>
-                    </div>
+                <div class="page_admin_article-row page_admin_article-row-flex">
+                    <button id="save-markdown">Markdownを保存する</button>
+                    <button id="open-image-modal">画像</button>
+                    <a href="/admin/articles/{{.Article.ID}}/images">画像をアップロードする</a>
                 </div>
             </div>
             <div class="page_admin_article-body">

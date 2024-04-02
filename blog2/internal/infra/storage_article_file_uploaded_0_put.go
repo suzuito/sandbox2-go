@@ -8,7 +8,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-func (t *StorageArticleFileDirectlyUploaded) Put(ctx context.Context, articleID entity.ArticleID, fileID entity.ArticleFileDirectlyUploadedID, r io.Reader) error {
+func (t *StorageArticleFileUploaded) Put(ctx context.Context, articleID entity.ArticleID, fileID entity.ArticleFileUploadedID, r io.Reader) error {
 	w := t.Cli.Bucket(t.Bucket).Object(t.filePath(articleID, fileID)).NewWriter(ctx)
 	_, err := io.Copy(w, r)
 	if err != nil {

@@ -1,7 +1,8 @@
 package entity
 
-type ArticleFileDirectlyUploadedID string
+type ArticleFileUploadedID string
 
-type ArticleFileDirectlyUploaded struct {
-	ID ArticleFileDirectlyUploadedID
+type ArticleFileUploaded struct {
+	ID        ArticleFileUploadedID
+	ArticleID ArticleID
 }

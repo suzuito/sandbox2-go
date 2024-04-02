@@ -22,10 +22,18 @@ func (t *Impl) PostAdminArticleImages(
 	article *entity.Article,
 	input io.Reader,
 ) (*DTOPostAdminArticleImages, error) {
-	file := entity.ArticleFileDirectlyUploaded{
-		ID: entity.ArticleFileDirectlyUploadedID(uuid.New().String()),
+	file := entity.ArticleFileUploaded{
+		ArticleID: article.ID,
+		ID:        entity.ArticleFileUploadedID(uuid.New().String()),
 	}
-	if err := t.StorageArticleFileDirectlyUploaded.Put(ctx, article.ID, file.ID, input); err != nil {
+	// TODO Impl transaction
+	if err := t.RepositoryArticleFileUploaded.Create(ctx, &file); err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	if err := t.StorageArticleFileUploaded.Put(ctx, article.ID, file.ID, input); err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	if err := t.FunctionTriggerStartImageProcess.Put(ctx, &file); err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOPostAdminArticleImages{}, nil

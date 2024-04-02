@@ -64,12 +64,11 @@ func (t *Impl) PostAdminArticleImages(ctx *gin.Context) {
 		return
 	}
 	defer f.Close()
-	dto, err := t.U.PostAdminArticleImages(ctx, article, f)
+	_, err = t.U.PostAdminArticleImages(ctx, article, f)
 	if err != nil {
 		t.L.Error("", "err", err)
 		t.RenderUnknownError(ctx)
 		return
 	}
-	fmt.Printf("%+v\n", dto)
 	ctx.Redirect(http.StatusFound, fmt.Sprintf("/admin/articles/%s/images", article.ID))
 }
