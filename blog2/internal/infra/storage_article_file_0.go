@@ -15,24 +15,20 @@ type StorageArticleFile struct {
 	Bucket string
 }
 
-func (t *StorageArticleFile) filePath(articleID entity.ArticleID, fileID entity.ArticleFileUploadedID) string {
-	return fmt.Sprintf("%s/%s", articleID, fileID)
+func (t *StorageArticleFile) filePath(articleID entity.ArticleID, file *entity.ArticleFile) string {
+	return fmt.Sprintf("%s/%s%s", articleID, file.ID, file.ExtIncludingDot())
 }
 
-func (t *StorageArticleFile) Get(ctx context.Context, articleID entity.ArticleID, fileID entity.ArticleFileUploadedID, w io.Writer) error {
-	reader, err := t.Cli.Bucket(t.Bucket).Object(t.filePath(articleID, fileID)).NewReader(ctx)
-	if err != nil {
-		return terrors.Wrap(err)
+func (t *StorageArticleFile) Put(
+	ctx context.Context,
+	articleID entity.ArticleID,
+	file *entity.ArticleFile,
+	r io.Reader,
+) error {
+	w := t.Cli.Bucket(t.Bucket).Object(t.filePath(articleID, file)).NewWriter(ctx)
+	if file.MediaType != "" {
+		w.ContentType = file.MediaType
 	}
-	defer reader.Close()
-	if _, err := io.Copy(w, reader); err != nil {
-		return terrors.Wrap(err)
-	}
-	return nil
-}
-
-func (t *StorageArticleFile) Put(ctx context.Context, articleID entity.ArticleID, fileID entity.ArticleFileUploadedID, r io.Reader) error {
-	w := t.Cli.Bucket(t.Bucket).Object(t.filePath(articleID, fileID)).NewWriter(ctx)
 	_, err := io.Copy(w, r)
 	if err != nil {
 		return terrors.Wrap(err)

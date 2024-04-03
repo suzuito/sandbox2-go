@@ -19,3 +19,12 @@ func (t *StorageArticleFileUploaded) Get(ctx context.Context, articleID entity.A
 	}
 	return nil
 }
+
+func (t *StorageArticleFileUploaded) GetReader(ctx context.Context, articleID entity.ArticleID, fileID entity.ArticleFileUploadedID, f func(r io.Reader) error) error {
+	reader, err := t.Cli.Bucket(t.Bucket).Object(t.filePath(articleID, fileID)).NewReader(ctx)
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	defer reader.Close()
+	return f(reader)
+}

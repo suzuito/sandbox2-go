@@ -8,6 +8,10 @@ import (
 )
 
 type StorageArticleFile interface {
-	Put(ctx context.Context, articleID entity.ArticleID, fileID entity.ArticleFileUploadedID, r io.Reader) error
-	Get(ctx context.Context, articleID entity.ArticleID, fileID entity.ArticleFileUploadedID, w io.Writer) error
+	Put(
+		ctx context.Context,
+		articleID entity.ArticleID,
+		file *entity.ArticleFile,
+		r io.Reader,
+	) error
 }
