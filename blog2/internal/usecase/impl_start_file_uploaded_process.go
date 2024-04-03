@@ -5,6 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
