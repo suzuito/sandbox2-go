@@ -24,3 +24,20 @@ func (t *RepositoryArticleFileUploaded) Create(
 		return nil
 	})
 }
+
+func (t *RepositoryArticleFileUploaded) Get(
+	ctx context.Context,
+	articleID entity.ArticleID,
+	fileID entity.ArticleFileUploadedID,
+) (*entity.ArticleFileUploaded, error) {
+	dr := t.Cli.Collection("Blog2Articles").Doc(string(articleID)).Collection("FilesUploaded").Doc(string(fileID))
+	snp, err := dr.Get(ctx)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	file := entity.ArticleFileUploaded{}
+	if err := snp.DataTo(&file); err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return &file, nil
+}

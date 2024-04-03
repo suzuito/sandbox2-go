@@ -8,4 +8,9 @@ import (
 
 type RepositoryArticleFileUploaded interface {
 	Create(ctx context.Context, f *entity.ArticleFileUploaded) error
+	Get(
+		ctx context.Context,
+		articleID entity.ArticleID,
+		fileID entity.ArticleFileUploadedID,
+	) (*entity.ArticleFileUploaded, error)
 }
