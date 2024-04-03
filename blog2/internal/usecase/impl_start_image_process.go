@@ -9,15 +9,18 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-func (t *Impl) StartImageProcessFromGCF(ctx context.Context, data []byte) error {
+func (t *Impl) StartFileUploadedProcessFromGCF(ctx context.Context, data []byte) error {
 	file := entity.ArticleFileUploaded{}
 	if err := json.Unmarshal(data, &file); err != nil {
 		return terrors.Wrap(err)
 	}
 	t.L.Info("Hello world!", "file", file)
-	imageBytes := []byte{}
-	imageBytesBuffer := bytes.NewBuffer(imageBytes)
-	if err := t.StorageArticleFileUploaded.Get(ctx, file.ArticleID, file.ID, imageBytesBuffer); err != nil {
+	fileData := []byte{}
+	fileDataBuffer := bytes.NewBuffer(fileData)
+	if err := t.StorageArticleFileUploaded.Get(ctx, file.ArticleID, file.ID, fileDataBuffer); err != nil {
+		return terrors.Wrap(err)
+	}
+	if err := t.StorageArticleFile.Put(ctx, file.ArticleID, file.ID, fileDataBuffer); err != nil {
 		return terrors.Wrap(err)
 	}
 	return nil

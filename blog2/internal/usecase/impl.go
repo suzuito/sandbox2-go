@@ -9,11 +9,12 @@ import (
 )
 
 type Impl struct {
-	RepositoryArticle                repository.RepositoryArticle
-	StorageArticle                   repository.StorageArticle
-	StorageArticleFileUploaded       repository.StorageArticleFileUploaded
-	RepositoryArticleFileUploaded    repository.RepositoryArticleFileUploaded
-	FunctionTriggerStartImageProcess queue.FunctionTrigger
-	Markdown2HTML                    markdown2html.Markdown2HTML
-	L                                *slog.Logger
+	RepositoryArticle                       repository.RepositoryArticle
+	StorageArticle                          repository.StorageArticle
+	StorageArticleFileUploaded              repository.StorageArticleFileUploaded
+	StorageArticleFile                      repository.StorageArticleFile
+	RepositoryArticleFileUploaded           repository.RepositoryArticleFileUploaded
+	FunctionTriggerStartFileUploadedProcess queue.FunctionTrigger
+	Markdown2HTML                           markdown2html.Markdown2HTML
+	L                                       *slog.Logger
 }

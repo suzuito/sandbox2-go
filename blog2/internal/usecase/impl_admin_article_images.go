@@ -25,6 +25,7 @@ func (t *Impl) PostAdminArticleImages(
 	file := entity.ArticleFileUploaded{
 		ArticleID: article.ID,
 		ID:        entity.ArticleFileUploadedID(uuid.New().String()),
+		Type:      entity.ArticleFileTypeImage,
 	}
 	// TODO Impl transaction
 	if err := t.RepositoryArticleFileUploaded.Create(ctx, &file); err != nil {
@@ -33,7 +34,7 @@ func (t *Impl) PostAdminArticleImages(
 	if err := t.StorageArticleFileUploaded.Put(ctx, article.ID, file.ID, input); err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	if err := t.FunctionTriggerStartImageProcess.Publish(ctx, &file); err != nil {
+	if err := t.FunctionTriggerStartFileUploadedProcess.Publish(ctx, &file); err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOPostAdminArticleImages{}, nil

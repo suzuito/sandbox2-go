@@ -69,9 +69,9 @@ func newUsecaseImplLocal(
 		RepositoryArticleFileUploaded: &infra.RepositoryArticleFileUploaded{
 			Cli: firestoreClient,
 		},
-		FunctionTriggerStartImageProcess: &infra.FunctionTrigger{
+		FunctionTriggerStartFileUploadedProcess: &infra.FunctionTrigger{
 			Cli:     pubsubClient,
-			TopicID: env.FunctionTriggerTopicIDStartImageProcess,
+			TopicID: env.FunctionTriggerTopicIDStartFileUploadedProcess,
 		},
 		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
 		L:             logger,

@@ -58,7 +58,7 @@ type Usecase interface {
 		articleID entity.ArticleID,
 	) (*internal_usecase.DTOMiddlewareGetArticle, error)
 
-	StartImageProcessFromGCF(ctx context.Context, data []byte) error
+	StartFileUploadedProcessFromGCF(ctx context.Context, data []byte) error
 
 	// Not production codes
 	CreateTestData001(
