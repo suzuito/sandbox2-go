@@ -3,7 +3,7 @@ package queue
 import "context"
 
 type FunctionTrigger interface {
-	Put(
+	Publish(
 		ctx context.Context,
 		msg any,
 	) error

@@ -13,7 +13,7 @@ type FunctionTrigger struct {
 	TopicID string
 }
 
-func (t *FunctionTrigger) Put(
+func (t *FunctionTrigger) Publish(
 	ctx context.Context,
 	msg any,
 ) error {

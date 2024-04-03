@@ -33,7 +33,7 @@ func (t *Impl) PostAdminArticleImages(
 	if err := t.StorageArticleFileUploaded.Put(ctx, article.ID, file.ID, input); err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	if err := t.FunctionTriggerStartImageProcess.Put(ctx, &file); err != nil {
+	if err := t.FunctionTriggerStartImageProcess.Publish(ctx, &file); err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOPostAdminArticleImages{}, nil
