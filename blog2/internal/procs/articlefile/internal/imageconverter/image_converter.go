@@ -44,6 +44,8 @@ func (t *ImageConverter) Decode(r io.Reader) (image.Image, encoder.Encoder, enco
 		encoder = &internal_encoder.EncoderPNG{}
 	case "gif":
 		encoder = &internal_encoder.EncoderGIF{}
+	default:
+		return nil, nil, nil, terrors.Wrapf("unknown format %s", imageFormat)
 	}
 	return src, encoder, &encoderThumbnail, nil
 }

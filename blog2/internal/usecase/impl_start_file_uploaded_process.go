@@ -56,7 +56,7 @@ func (t *Impl) StartFileUploadedImageProcess(ctx context.Context, file *entity.A
 	}
 	dstImageThumbnail := t.ArticleFileImageConverter.CreateThumbnail(dstImage)
 	dstImageThumbnailBytes := bytes.NewBuffer([]byte{})
-	if err := thumbnailEncoder.Encode(dstImageBytes, dstImageThumbnail); err != nil {
+	if err := thumbnailEncoder.Encode(dstImageThumbnailBytes, dstImageThumbnail); err != nil {
 		return terrors.Wrap(err)
 	}
 	articleFileThumbnail := entity.ArticleFileThumbnail{
