@@ -65,11 +65,11 @@ func newUsecaseImplLocal(
 		},
 		StorageFileUploaded: &infra.StorageFileUploaded{
 			Cli:    arg.StorageClient,
-			Bucket: env.ArticleFileUploadedBucket,
+			Bucket: env.FileUploadedBucket,
 		},
 		StorageFile: &infra.StorageFile{
 			Cli:    arg.StorageClient,
-			Bucket: env.ArticleFileBucket,
+			Bucket: env.FileBucket,
 		},
 		RepositoryFileUploaded: &infra.RepositoryFileUploaded{
 			Cli: firestoreClient,
