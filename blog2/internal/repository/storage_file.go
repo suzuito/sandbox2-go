@@ -7,17 +7,15 @@ import (
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 )
 
-type StorageArticleFile interface {
+type StorageFile interface {
 	Put(
 		ctx context.Context,
-		articleID entity.ArticleID,
-		file *entity.ArticleFile,
+		file *entity.File,
 		r io.Reader,
 	) error
 	PutThumbnail(
 		ctx context.Context,
-		articleID entity.ArticleID,
-		file *entity.ArticleFileThumbnail,
+		file *entity.FileThumbnail,
 		r io.Reader,
 	) error
 }

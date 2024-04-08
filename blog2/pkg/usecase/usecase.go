@@ -48,11 +48,11 @@ type Usecase interface {
 		ctx context.Context,
 		article *entity.Article,
 	) (*internal_usecase.DTOGetAdminArticleTags, error)
-	PostAdminArticleImages(
+	PostAdminFiles(
 		ctx context.Context,
-		article *entity.Article,
+		fileType entity.FileType,
 		input io.Reader,
-	) (*internal_usecase.DTOPostAdminArticleImages, error)
+	) (*internal_usecase.DTOPostAdminFiles, error)
 	MiddlewareGetArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,

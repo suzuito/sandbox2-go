@@ -1,42 +1,27 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 )
 
-type PageAdminArticleImages struct {
+type PageAdminFilesImage struct {
 	ComponentCommonHead ComponentCommonHead
 	ComponentHeader     ComponentHeader
-	JsEnv               PageAdminArticleImagesJsEnv
-	Article             *entity.Article
 }
 
-type PageAdminArticleImagesJsEnv struct {
-}
-
-func (t *Impl) PageAdminArticleImages(ctx *gin.Context) {
-	article := ctxGetArticle(ctx)
+func (t *Impl) GetAdminFilesImage(ctx *gin.Context) {
 	t.P.RenderHTML(
 		ctx,
 		http.StatusOK,
-		"page_admin_article_images.html",
-		PageAdminArticleImages{
-			ComponentCommonHead: ComponentCommonHead{},
-			ComponentHeader: ComponentHeader{
-				IsAdmin: ctxGetAdmin(ctx),
-			},
-			JsEnv:   PageAdminArticleImagesJsEnv{},
-			Article: article,
-		},
+		"page_admin_files_image.html",
+		PageAdminFilesImage{},
 	)
 }
 
-func (t *Impl) PostAdminArticleImages(ctx *gin.Context) {
-	article := ctxGetArticle(ctx)
+func (t *Impl) PostAdminFilesImage(ctx *gin.Context) {
 	fileHeader, err := ctx.FormFile("inputImage")
 	if err != nil {
 		t.P.RenderHTML(
@@ -64,11 +49,11 @@ func (t *Impl) PostAdminArticleImages(ctx *gin.Context) {
 		return
 	}
 	defer f.Close()
-	_, err = t.U.PostAdminArticleImages(ctx, article, f)
+	_, err = t.U.PostAdminFiles(ctx, entity.FileTypeImage, f)
 	if err != nil {
 		t.L.Error("", "err", err)
 		t.RenderUnknownError(ctx)
 		return
 	}
-	ctx.Redirect(http.StatusFound, fmt.Sprintf("/admin/articles/%s/images", article.ID))
+	ctx.Redirect(http.StatusFound, "/admin/files/image")
 }

@@ -73,12 +73,16 @@ func SetRouter(
 					gAdminArticleTags := gAdminArticle.Group("tags")
 					gAdminArticleTags.GET("", w.PageAdminArticleTags)
 				}
+			}
+		}
 
-				{
-					gAdminArticleImages := gAdminArticle.Group("images")
-					gAdminArticleImages.GET("", w.PageAdminArticleImages)
-					gAdminArticleImages.POST("", w.PostAdminArticleImages)
-				}
+		{
+			gAdminFiles := gAdmin.Group("files")
+			gAdminFiles.GET("", w.GetAdminFiles)
+			{
+				gAdminFilesImage := gAdminFiles.Group("image")
+				gAdminFilesImage.GET("", w.GetAdminFilesImage)
+				gAdminFilesImage.POST("", w.PostAdminFilesImage)
 			}
 		}
 	}

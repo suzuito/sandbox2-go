@@ -16,7 +16,6 @@ type Article struct {
 	CreatedAt   time.Time
 	UpdatedAt   *time.Time
 	Tags        []Tag
-	Images      []ArticleImage
 }
 
 func (t *Article) StateString() string {

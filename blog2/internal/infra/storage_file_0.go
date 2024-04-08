@@ -10,20 +10,20 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-type StorageArticleFile struct {
+type StorageFile struct {
 	Cli    *storage.Client
 	Bucket string
 }
 
-func (t *StorageArticleFile) filePath(articleID entity.ArticleID, file *entity.ArticleFile) string {
-	return fmt.Sprintf("%s/%s%s", articleID, file.ID, file.ExtIncludingDot())
+func (t *StorageFile) filePath(file *entity.File) string {
+	return fmt.Sprintf("%s%s", file.ID, file.ExtIncludingDot())
 }
 
-func (t *StorageArticleFile) filePathThumbnail(articleID entity.ArticleID, file *entity.ArticleFileThumbnail) string {
-	return fmt.Sprintf("%s/%s_thumbnail%s", articleID, file.ID, file.ExtIncludingDot())
+func (t *StorageFile) filePathThumbnail(file *entity.FileThumbnail) string {
+	return fmt.Sprintf("%s_thumbnail%s", file.ID, file.ExtIncludingDot())
 }
 
-func (t *StorageArticleFile) put(
+func (t *StorageFile) put(
 	ctx context.Context,
 	filePath string,
 	mediaType string,
@@ -43,29 +43,27 @@ func (t *StorageArticleFile) put(
 	return nil
 }
 
-func (t *StorageArticleFile) Put(
+func (t *StorageFile) Put(
 	ctx context.Context,
-	articleID entity.ArticleID,
-	file *entity.ArticleFile,
+	file *entity.File,
 	r io.Reader,
 ) error {
 	return terrors.Wrap(t.put(
 		ctx,
-		t.filePath(articleID, file),
+		t.filePath(file),
 		file.MediaType,
 		r,
 	))
 }
 
-func (t *StorageArticleFile) PutThumbnail(
+func (t *StorageFile) PutThumbnail(
 	ctx context.Context,
-	articleID entity.ArticleID,
-	file *entity.ArticleFileThumbnail,
+	file *entity.FileThumbnail,
 	r io.Reader,
 ) error {
 	return terrors.Wrap(t.put(
 		ctx,
-		t.filePathThumbnail(articleID, file),
+		t.filePathThumbnail(file),
 		file.MediaType,
 		r,
 	))

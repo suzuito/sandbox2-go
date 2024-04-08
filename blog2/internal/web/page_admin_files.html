@@ -13,20 +13,17 @@
 </head>
 
 <body>
-    {{template "component_info_snackbar"}}
     <header>
         {{template "component_header" .}}
     </header>
     <main>
-        <script>window.env = {{.JsEnv }}</script>
         <div>
-            <a href=".">記事へ</a>
+            <a href=".">管理画面トップへ</a>
         </div>
         <div>
-            <form method="POST" enctype="multipart/form-data" action="/admin/articles/{{.Article.ID}}/images">
-                <input type="file" accept="image/jpeg" name="inputImage" />
-                <input type="submit" value="画像をアップロードする(jpgのみ)" />
-            </form>
+            <li>
+                <a href="/admin/files/image">画像ファイルをアップロードする</a>
+            </li>
         </div>
     </main>
     <footer>

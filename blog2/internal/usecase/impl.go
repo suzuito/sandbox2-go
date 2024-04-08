@@ -12,10 +12,10 @@ import (
 type Impl struct {
 	RepositoryArticle                       repository.RepositoryArticle
 	StorageArticle                          repository.StorageArticle
-	StorageArticleFileUploaded              repository.StorageArticleFileUploaded
-	StorageArticleFile                      repository.StorageArticleFile
-	RepositoryArticleFileUploaded           repository.RepositoryArticleFileUploaded
-	ArticleFileImageConverter               imageconverter.ImageConverter
+	StorageFileUploaded                     repository.StorageFileUploaded
+	StorageFile                             repository.StorageFile
+	RepositoryFileUploaded                  repository.RepositoryFileUploaded
+	FileImageConverter                      imageconverter.ImageConverter
 	FunctionTriggerStartFileUploadedProcess queue.FunctionTrigger
 	Markdown2HTML                           markdown2html.Markdown2HTML
 	L                                       *slog.Logger

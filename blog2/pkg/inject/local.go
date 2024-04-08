@@ -63,24 +63,24 @@ func newUsecaseImplLocal(
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleMarkdownBucket,
 		},
-		StorageArticleFileUploaded: &infra.StorageArticleFileUploaded{
+		StorageFileUploaded: &infra.StorageFileUploaded{
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleFileUploadedBucket,
 		},
-		StorageArticleFile: &infra.StorageArticleFile{
+		StorageFile: &infra.StorageFile{
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleFileBucket,
 		},
-		RepositoryArticleFileUploaded: &infra.RepositoryArticleFileUploaded{
+		RepositoryFileUploaded: &infra.RepositoryFileUploaded{
 			Cli: firestoreClient,
 		},
 		FunctionTriggerStartFileUploadedProcess: &infra.FunctionTrigger{
 			Cli:     pubsubClient,
 			TopicID: env.FunctionTriggerTopicIDStartFileUploadedProcess,
 		},
-		ArticleFileImageConverter: articlefile.NewImageConverter(),
-		Markdown2HTML:             &markdown2html.Markdown2HTMLImpl{},
-		L:                         logger,
+		FileImageConverter: articlefile.NewImageConverter(),
+		Markdown2HTML:      &markdown2html.Markdown2HTMLImpl{},
+		L:                  logger,
 	}
 	return &u, logger, nil
 }
