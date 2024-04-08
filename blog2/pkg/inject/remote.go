@@ -12,6 +12,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
 	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
+	"github.com/suzuito/sandbox2-go/blog2/internal/procs/articlefile"
 	internal_usecase "github.com/suzuito/sandbox2-go/blog2/internal/usecase"
 	"github.com/suzuito/sandbox2-go/blog2/pkg/environment"
 	"github.com/suzuito/sandbox2-go/blog2/pkg/usecase"
@@ -73,6 +74,10 @@ func newUsecaseImpl(
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleFileUploadedBucket,
 		},
+		StorageArticleFile: &infra.StorageArticleFile{
+			Cli:    arg.StorageClient,
+			Bucket: env.ArticleFileBucket,
+		},
 		RepositoryArticleFileUploaded: &infra.RepositoryArticleFileUploaded{
 			Cli: firestoreClient,
 		},
@@ -80,8 +85,9 @@ func newUsecaseImpl(
 			Cli:     pubsubClient,
 			TopicID: env.FunctionTriggerTopicIDStartFileUploadedProcess,
 		},
-		Markdown2HTML: &markdown2html.Markdown2HTMLImpl{},
-		L:             logger,
+		ArticleFileImageConverter: articlefile.NewImageConverter(),
+		Markdown2HTML:             &markdown2html.Markdown2HTMLImpl{},
+		L:                         logger,
 	}
 	return &u, logger, nil
 }

@@ -4,11 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"image"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
-	"io"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 	"github.com/suzuito/sandbox2-go/common/terrors"
@@ -35,31 +30,40 @@ func (t *Impl) StartFileUploadedImageProcess(ctx context.Context, file *entity.A
 	if file.Type != entity.ArticleFileTypeImage {
 		return terrors.Wrapf("invalid file type %s", file.Type)
 	}
-	fileData := []byte{}
-	fileDataBuffer := bytes.NewBuffer(fileData)
-	var formatName string
-	if err := t.StorageArticleFileUploaded.GetReader(ctx, file.ArticleID, file.ID, func(r io.Reader) error {
-		var err error
-		_, formatName, err = image.Decode(fileDataBuffer)
-		if err != nil {
-			return terrors.Wrap(err)
-		}
-		return nil
-	}); err != nil {
+	srcImageBytes := bytes.NewBuffer([]byte{})
+	if err := t.StorageArticleFileUploaded.Get(ctx, file.ArticleID, file.ID, srcImageBytes); err != nil {
 		return terrors.Wrap(err)
 	}
-	// TODO 画像を加工する場合、ここでやる
-	mediaType := ""
-	switch formatName {
-	case "jpeg": // Format name https://github.com/golang/go/blob/db6097f8cbaceaed02051850d2411c88b763a0c3/src/image/jpeg/reader.go#L811
-		mediaType = "image/jpeg"
+	// ここの処理、どう書くのが良いか？いまいちよくわからん。
+	// なのでベタ書き。後でリファクタリングする。
+	dstImage, dstEncoder, thumbnailEncoder, err := t.ArticleFileImageConverter.Decode(srcImageBytes)
+	if err != nil {
+		return terrors.Wrap(err)
 	}
 	articleFile := entity.ArticleFile{
 		ID:        entity.ArticleFileID(file.ID),
 		Type:      file.Type,
-		MediaType: mediaType,
+		MediaType: dstEncoder.GetMediaType(),
 	}
-	if err := t.StorageArticleFile.Put(ctx, file.ArticleID, &articleFile, fileDataBuffer); err != nil {
+	// 画像変換
+	// Small画像の生成
+	dstImageBytes := bytes.NewBuffer([]byte{})
+	if err := dstEncoder.Encode(dstImageBytes, dstImage); err != nil {
+		return terrors.Wrap(err)
+	}
+	if err := t.StorageArticleFile.Put(ctx, file.ArticleID, &articleFile, dstImageBytes); err != nil {
+		return terrors.Wrap(err)
+	}
+	dstImageThumbnail := t.ArticleFileImageConverter.CreateThumbnail(dstImage)
+	dstImageThumbnailBytes := bytes.NewBuffer([]byte{})
+	if err := thumbnailEncoder.Encode(dstImageBytes, dstImageThumbnail); err != nil {
+		return terrors.Wrap(err)
+	}
+	articleFileThumbnail := entity.ArticleFileThumbnail{
+		ID:        articleFile.ID,
+		MediaType: thumbnailEncoder.GetMediaType(),
+	}
+	if err := t.StorageArticleFile.PutThumbnail(ctx, file.ArticleID, &articleFileThumbnail, dstImageThumbnailBytes); err != nil {
 		return terrors.Wrap(err)
 	}
 	return nil

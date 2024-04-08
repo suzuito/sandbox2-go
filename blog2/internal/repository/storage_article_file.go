@@ -14,4 +14,10 @@ type StorageArticleFile interface {
 		file *entity.ArticleFile,
 		r io.Reader,
 	) error
+	PutThumbnail(
+		ctx context.Context,
+		articleID entity.ArticleID,
+		file *entity.ArticleFileThumbnail,
+		r io.Reader,
+	) error
 }
