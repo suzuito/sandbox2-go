@@ -50,6 +50,7 @@ type Usecase interface {
 	) (*internal_usecase.DTOGetAdminArticleTags, error)
 	PostAdminFiles(
 		ctx context.Context,
+		fileName string,
 		fileType entity.FileType,
 		input io.Reader,
 	) (*internal_usecase.DTOPostAdminFiles, error)

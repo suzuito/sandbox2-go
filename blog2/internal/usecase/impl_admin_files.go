@@ -14,11 +14,17 @@ type DTOPostAdminFiles struct {
 
 func (t *Impl) PostAdminFiles(
 	ctx context.Context,
+	fileName string,
 	fileType entity.FileType,
 	input io.Reader,
 ) (*DTOPostAdminFiles, error) {
+	fileID := entity.FileUploadedID(uuid.New().String())
+	if fileName == "" {
+		fileName = string(fileID)
+	}
 	file := entity.FileUploaded{
-		ID:            entity.FileUploadedID(uuid.New().String()),
+		ID:            fileID,
+		Name:          fileName,
 		Type:          fileType,
 		ProcessStatus: entity.FileProcessStatusRegistered,
 	}

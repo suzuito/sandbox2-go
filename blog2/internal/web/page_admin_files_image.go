@@ -49,7 +49,7 @@ func (t *Impl) PostAdminFilesImage(ctx *gin.Context) {
 		return
 	}
 	defer f.Close()
-	_, err = t.U.PostAdminFiles(ctx, entity.FileTypeImage, f)
+	_, err = t.U.PostAdminFiles(ctx, "", entity.FileTypeImage, f)
 	if err != nil {
 		t.L.Error("", "err", err)
 		t.RenderUnknownError(ctx)
