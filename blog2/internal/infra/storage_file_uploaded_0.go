@@ -20,13 +20,14 @@ func (t *StorageFileUploaded) filePath(fileID entity.FileUploadedID) string {
 }
 
 func (t *StorageFileUploaded) Put(ctx context.Context, fileID entity.FileUploadedID, r io.Reader) error {
-	w := t.Cli.Bucket(t.Bucket).Object(t.filePath(fileID)).NewWriter(ctx)
+	filePath := t.filePath(fileID)
+	w := t.Cli.Bucket(t.Bucket).Object(filePath).NewWriter(ctx)
 	_, err := io.Copy(w, r)
 	if err != nil {
-		return terrors.Wrap(err)
+		return terrors.Wrapf("io.Copy is failed on %s/%s : %w", t.Bucket, filePath, err)
 	}
 	if err := w.Close(); err != nil {
-		return terrors.Wrap(err)
+		return terrors.Wrapf("w.Close is failed on %s/%s : %w", t.Bucket, filePath, err)
 	}
 	return nil
 }

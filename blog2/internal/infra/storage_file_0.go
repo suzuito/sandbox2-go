@@ -35,10 +35,10 @@ func (t *StorageFile) put(
 	}
 	_, err := io.Copy(w, r)
 	if err != nil {
-		return terrors.Wrap(err)
+		return terrors.Wrapf("io.Copy is failed on %s/%s : %w", t.Bucket, filePath, err)
 	}
 	if err := w.Close(); err != nil {
-		return terrors.Wrap(err)
+		return terrors.Wrapf("w.Close is failed on %s/%s : %w", t.Bucket, filePath, err)
 	}
 	return nil
 }
