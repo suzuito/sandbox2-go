@@ -8,7 +8,6 @@ import (
 
 	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/firestore"
-	"cloud.google.com/go/pubsub"
 	"github.com/go-sql-driver/mysql"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
 	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
@@ -41,10 +40,6 @@ func newUsecaseImpl(
 	if err != nil {
 		return nil, nil, terrors.Wrap(err)
 	}
-	pubsubClient, err := pubsub.NewClient(ctx, gcpProjectID)
-	if err != nil {
-		return nil, nil, terrors.Wrap(err)
-	}
 	mysqlConfig := mysql.Config{
 		DBName:               "blog2",
 		User:                 env.DBUser,
@@ -62,32 +57,28 @@ func newUsecaseImpl(
 		return nil, nil, terrors.Wrap(err)
 	}
 
-	u := internal_usecase.Impl{
-		RepositoryArticle: &infra.RepositoryArticle{
+	u := internal_usecase.NewImpl(
+		&infra.RepositoryArticle{
 			Pool: pool,
 		},
-		StorageArticle: &infra.StorageArticle{
+		&infra.StorageArticle{
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleMarkdownBucket,
 		},
-		StorageFileUploaded: &infra.StorageFileUploaded{
+		&infra.StorageFileUploaded{
 			Cli:    arg.StorageClient,
 			Bucket: env.FileUploadedBucket,
 		},
-		StorageFile: &infra.StorageFile{
+		&infra.StorageFile{
 			Cli:    arg.StorageClient,
 			Bucket: env.FileBucket,
 		},
-		RepositoryFileUploaded: &infra.RepositoryFileUploaded{
+		&infra.RepositoryFileUploaded{
 			Cli: firestoreClient,
 		},
-		FunctionTriggerStartFileUploadedProcess: &infra.FunctionTrigger{
-			Cli:     pubsubClient,
-			TopicID: env.FunctionTriggerTopicIDStartFileUploadedProcess,
-		},
-		FileImageConverter: articlefile.NewImageConverter(),
-		Markdown2HTML:      &markdown2html.Markdown2HTMLImpl{},
-		L:                  logger,
-	}
-	return &u, logger, nil
+		articlefile.NewImageConverter(),
+		&markdown2html.Markdown2HTMLImpl{},
+		logger,
+	)
+	return u, logger, nil
 }

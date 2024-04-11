@@ -3,26 +3,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 {{template "component_common_head" .}}
-<style>
-    .page_admin_top-nav {
-        padding: 6px;
-    }
-</style>
 
 <body>
     <header>
         {{template "component_header" .}}
     </header>
-    <main>
-        <div class="page_admin_top-nav">
-            <li>
-                <a href="/admin/articles">記事一覧</a>
-            </li>
-            <li>
-                <a href="/admin/files">ファイル一覧</a>
-            </li>
+    <div class="content">
+        <div>
+            管理画面
         </div>
-    </main>
+        <main>
+            <div>
+                <li>
+                    <a href="/admin/articles">記事一覧</a>
+                </li>
+                <li>
+                    <a href="/admin/files">ファイル一覧</a>
+                </li>
+            </div>
+        </main>
+    </div>
     <footer>
         {{template "component_footer"}}
     </footer>

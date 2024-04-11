@@ -15,17 +15,11 @@ func (t *Impl) MiddlewareGetArticle(
 	ctx context.Context,
 	articleID entity.ArticleID,
 ) (*DTOMiddlewareGetArticle, error) {
-	articles, err := t.RepositoryArticle.GetArticles(ctx, articleID)
+	article, err := t.S.GetArticle(ctx, articleID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	if len(articles) <= 0 {
-		return nil, &NotFoundEntityError{
-			EntityType: "Article",
-			EntityID:   string(articleID),
-		}
-	}
 	return &DTOMiddlewareGetArticle{
-		Article: articles[0],
+		Article: article,
 	}, nil
 }

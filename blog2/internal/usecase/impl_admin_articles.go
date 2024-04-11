@@ -1,11 +1,8 @@
 package usecase
 
 import (
-	"bytes"
 	"context"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
@@ -20,7 +17,7 @@ func (t *Impl) GetAdminArticles(
 	ctx context.Context,
 	query *entity.ArticleSearchQuery,
 ) (*DTOGetAdminArticles, error) {
-	articles, prevOffset, nextOffset, err := t.RepositoryArticle.SearchArticles(ctx, query)
+	articles, prevOffset, nextOffset, err := t.S.SearchArticles(ctx, query)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -38,15 +35,10 @@ type DTOPostAdminArticles struct {
 func (t *Impl) PostAdminArticles(
 	ctx context.Context,
 ) (*DTOPostAdminArticles, error) {
-	articleID := entity.ArticleID(uuid.New().String())
-	if err := t.StorageArticle.PutArticle(ctx, articleID, bytes.NewBuffer([]byte{})); err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	article, err := t.RepositoryArticle.CreateArticle(ctx, articleID, time.Now())
+	article, err := t.S.CreateArticle(ctx)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	t.L.DebugContext(ctx, "Created article", "article", article)
 	return &DTOPostAdminArticles{
 		Article: article,
 	}, nil

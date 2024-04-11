@@ -5,27 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     {{template "component_common_head" .}}
-    <style>
-        main {
-            padding: 6px;
-        }
-    </style>
 </head>
 
 <body>
     <header>
         {{template "component_header" .}}
     </header>
-    <main>
+    <div class="content">
         <div>
-            <a href=".">管理画面トップへ</a>
+            <a href=".">管理画面</a>＞ファイル一覧
         </div>
-        <div>
-            <li>
-                <a href="/admin/files/image">画像ファイルをアップロードする</a>
-            </li>
-        </div>
-    </main>
+        <main>
+            <div>
+                <li>
+                    <a href="/admin/files/image">画像ファイルをアップロードする</a>
+                </li>
+            </div>
+        </main>
+    </div>
     <footer>
         {{template "component_footer"}}
     </footer>

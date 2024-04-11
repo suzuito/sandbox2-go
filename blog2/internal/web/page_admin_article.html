@@ -95,38 +95,40 @@
     <header>
         {{template "component_header" .}}
     </header>
-    <main>
-        <script>window.env = {{.JsEnv }}</script>
-        <div class="page_admin_article-main">
-            <div class="page_admin_article-header">
-                <div class="page_admin_article-row">
-                    <a href=".">記事一覧へ</a>
-                    <button id="publish-toggle">{{.Article.StateString}}</button>
+    <script>window.env = {{.JsEnv }}</script>
+    <div class="content">
+        <main>
+            <div class="page_admin_article-main">
+                <div class="page_admin_article-header">
+                    <div class="page_admin_article-row">
+                        <a href=".">記事一覧へ</a>
+                        <button id="publish-toggle">{{.Article.StateString}}</button>
+                    </div>
+                    <div class="page_admin_article-row page_admin_article-row-flex">
+                        <input id="article-title" class="page_admin_article-row-input" type="text"
+                            placeholder="タイトル" value="{{.Article.Title}}" />
+                        <button id="save-title">保存</button>
+                    </div>
+                    <div class="page_admin_article-row">
+                        <a href="/admin/articles/{{.Article.ID}}/tags">編集</a>
+                        {{range .Article.Tags}}
+                        <span>{{.Name}}</span>
+                        {{end}}
+                    </div>
+                    <div class="page_admin_article-row page_admin_article-row-flex">
+                        <button id="save-markdown">Markdownを保存する</button>
+                        <button id="open-image-modal">画像</button>
+                        <a href="/admin/articles/{{.Article.ID}}/images">画像をアップロードする</a>
+                    </div>
                 </div>
-                <div class="page_admin_article-row page_admin_article-row-flex">
-                    <input id="article-title" class="page_admin_article-row-input" type="text"
-                        placeholder="タイトル" value="{{.Article.Title}}" />
-                    <button id="save-title">保存</button>
-                </div>
-                <div class="page_admin_article-row">
-                    <a href="/admin/articles/{{.Article.ID}}/tags">編集</a>
-                    {{range .Article.Tags}}
-                    <span>{{.Name}}</span>
-                    {{end}}
-                </div>
-                <div class="page_admin_article-row page_admin_article-row-flex">
-                    <button id="save-markdown">Markdownを保存する</button>
-                    <button id="open-image-modal">画像</button>
-                    <a href="/admin/articles/{{.Article.ID}}/images">画像をアップロードする</a>
+                <div class="page_admin_article-body">
+                    <div id="markdown-editor" class="page_admin_article-body-textarea" contenteditable="plaintext-only">{{.MarkdownBody}}</div>
+                    <div class="page_admin_article-body-padding"></div>
+                    <div id="markdown-viewer" class="page_admin_article-body-preview-area">{{.HTMLBody}}</div>
                 </div>
             </div>
-            <div class="page_admin_article-body">
-                <div id="markdown-editor" class="page_admin_article-body-textarea" contenteditable="plaintext-only">{{.MarkdownBody}}</div>
-                <div class="page_admin_article-body-padding"></div>
-                <div id="markdown-viewer" class="page_admin_article-body-preview-area">{{.HTMLBody}}</div>
-            </div>
-        </div>
-    </main>
+        </main>
+    </div>
     <footer>
         {{template "component_footer"}}
     </footer>

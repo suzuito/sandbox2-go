@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"bytes"
 	"context"
 	"io"
 	"time"
@@ -19,16 +18,12 @@ func (t *Impl) GetAdminArticle(
 	ctx context.Context,
 	articleID entity.ArticleID,
 ) (*DTOGetAdminArticle, error) {
-	markdownBodyBuffer := bytes.NewBufferString("")
-	if err := t.StorageArticle.GetArticle(ctx, articleID, markdownBodyBuffer); err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	htmlBody := ""
-	if err := t.Markdown2HTML.Generate(ctx, markdownBodyBuffer.String(), &htmlBody); err != nil {
+	markdownBody, htmlBody, err := t.S.GetArticleBody(ctx, articleID)
+	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOGetAdminArticle{
-		MarkdownBody: markdownBodyBuffer.String(),
+		MarkdownBody: markdownBody,
 		HTMLBody:     htmlBody,
 	}, nil
 }
@@ -42,7 +37,7 @@ func (t *Impl) PutAdminArticle(
 	articleID entity.ArticleID,
 	title *string,
 ) (*DTOPutAdminArticle, error) {
-	article, err := t.RepositoryArticle.UpdateArticle(ctx, articleID, title, nil, nil)
+	article, err := t.S.PutArticle(ctx, articleID, title, nil, nil)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -52,14 +47,7 @@ func (t *Impl) PutAdminArticle(
 }
 
 func (t *Impl) PutAdminArticleMarkdown(ctx context.Context, articleID entity.ArticleID, markdownBodyReader io.Reader) error {
-	articles, err := t.RepositoryArticle.GetArticles(ctx, articleID)
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	if len(articles) <= 0 {
-		return terrors.Wrapf("Document %s is not found", articleID)
-	}
-	if err := t.StorageArticle.PutArticle(ctx, articleID, markdownBodyReader); err != nil {
+	if err := t.S.PutArticleMarkdown(ctx, articleID, markdownBodyReader); err != nil {
 		return terrors.Wrap(err)
 	}
 	return nil
@@ -71,7 +59,7 @@ func (t *Impl) PostAdminArticlePublish(
 ) error {
 	valueTrue := true
 	valueNow := time.Now()
-	_, err := t.RepositoryArticle.UpdateArticle(
+	_, err := t.S.PutArticle(
 		ctx,
 		articleID,
 		nil,
@@ -89,7 +77,7 @@ func (t *Impl) DeleteAdminArticlePublish(
 	articleID entity.ArticleID,
 ) error {
 	valueFalse := false
-	_, err := t.RepositoryArticle.UpdateArticle(
+	_, err := t.S.PutArticle(
 		ctx,
 		articleID,
 		nil,
@@ -111,7 +99,7 @@ func (t *Impl) PostAdminArticleEditTags(
 	if len(add) <= 0 && len(delete) <= 0 {
 		return nil
 	}
-	_, err := t.RepositoryArticle.UpdateArticleTags(ctx, articleID, add, delete)
+	_, err := t.S.UpdateArticleTags(ctx, articleID, add, delete)
 	if err != nil {
 		return terrors.Wrap(err)
 	}

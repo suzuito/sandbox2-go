@@ -14,7 +14,7 @@ header {
     border-bottom: 1px solid grey;
 }
 
-main {
+.content {
     position: absolute;
     overflow: scroll;
     left: 0px;
@@ -35,14 +35,17 @@ footer {
 a {
     text-decoration: underline;
 }
+
 a:visited {
     text-decoration: underline;
     color: inherit;
 }
+
 a:link {
     text-decoration: underline;
     color: inherit;
 }
+
 a.disabled {
     opacity: 0.5;
     cursor: inherit;

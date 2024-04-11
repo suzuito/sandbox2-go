@@ -5,28 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     {{template "component_common_head" .}}
-    <style>
-        main {
-            padding: 6px;
-        }
-    </style>
 </head>
 
 <body>
     <header>
         {{template "component_header" .}}
     </header>
-    <main>
+    <div class="content">
         <div>
-            <a href=".">ファイル一覧へ</a>
+            <a href="..">管理画面</a>＞<a href=".">ファイル一覧</a>＞画像ファイルのアップロード
         </div>
-        <div>
-            <form method="POST" enctype="multipart/form-data" action="/admin/files/image">
-                <input type="file" accept="image/jpeg" name="inputImage" />
-                <input type="submit" value="画像をアップロードする(jpgのみ)" />
-            </form>
-        </div>
-    </main>
+        <main>
+            <div>
+                <form method="POST" enctype="multipart/form-data" action="/admin/files/image">
+                    <input type="file" accept="image/jpeg" name="inputImage" />
+                    <input type="submit" value="画像をアップロードする(jpgのみ)" />
+                </form>
+            </div>
+        </main>
+    </div>
     <footer>
         {{template "component_footer"}}
     </footer>
