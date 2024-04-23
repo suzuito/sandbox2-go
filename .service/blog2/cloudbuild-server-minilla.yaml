@@ -16,3 +16,5 @@ images:
   - 'gcr.io/$PROJECT_ID/blog2/server:${BRANCH_NAME}'
 options:
   logging: CLOUD_LOGGING_ONLY
+  pool:
+    name: projects/$PROJECT_ID/locations/asia-northeast1/workerPools/minimum'
