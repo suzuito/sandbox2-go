@@ -47,8 +47,8 @@ blog-mock:
 #
 # blog2
 #
-BLOG2_DB_NAME = blog2
-BLOG2_DB_NAME_FOR_UNIT_TEST = blog2_for_unit_test
+BLOG2_DB_NAME = blog2-dev
+BLOG2_DB_NAME_FOR_UNIT_TEST = blog2-dev_for_unit_test
 blog2-init:
 	docker compose up -d blog2-mysql
 	DB_HOST=127.0.0.1 DB_PORT=3307 sh wait-until-db-open.sh

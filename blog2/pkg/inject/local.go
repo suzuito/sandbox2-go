@@ -35,7 +35,7 @@ func newUsecaseImplLocal(
 		return nil, nil, terrors.Wrap(err)
 	}
 	mysqlConfig := mysql.Config{
-		DBName:    "blog2",
+		DBName:    env.DBName,
 		User:      env.DBUser,
 		Net:       "tcp",
 		Addr:      "127.0.0.1:3307",

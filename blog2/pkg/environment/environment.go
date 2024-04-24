@@ -2,6 +2,7 @@ package environment
 
 type Environment struct {
 	DirPathArticleHTML    string `required:"false" split_words:"true"`
+	DBName                string `required:"false" split_words:"true"`
 	DBUser                string `required:"false" split_words:"true"`
 	DBPassword            string `required:"false" split_words:"true"`
 	DBGCPRegion           string `required:"false" envconfig:"DB_GCP_REGION"`

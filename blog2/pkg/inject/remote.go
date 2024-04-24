@@ -40,7 +40,7 @@ func newUsecaseImpl(
 		return nil, nil, terrors.Wrap(err)
 	}
 	mysqlConfig := mysql.Config{
-		DBName: "blog2",
+		DBName: env.DBName,
 		User:   env.DBUser,
 		Passwd: env.DBPassword,
 		Net:    "unix",
