@@ -3,7 +3,6 @@ package inject
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"log/slog"
 
 	"cloud.google.com/go/compute/metadata"
@@ -41,11 +40,12 @@ func newUsecaseImpl(
 		return nil, nil, terrors.Wrap(err)
 	}
 	mysqlConfig := mysql.Config{
-		DBName:               "blog2",
-		User:                 env.DBUser,
-		Passwd:               env.DBPassword,
-		Net:                  "unix",
-		Addr:                 fmt.Sprintf("/cloudsql/%s:asia-northeast1:sandbox-instance", gcpProjectID),
+		DBName: "blog2",
+		User:   env.DBUser,
+		Passwd: env.DBPassword,
+		Net:    "unix",
+		Addr:   env.DBInstanceUnixSocket,
+		// Addr:                 fmt.Sprintf("/cloudsql/%s:asia-northeast1:sandbox-instance", gcpProjectID),
 		ParseTime:            true,
 		AllowNativePasswords: true,
 	}
