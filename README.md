@@ -99,7 +99,6 @@ make blog-test
 ```bash
 make blog2-init
 make blog2-init-rdb
-make blog2-init-rdb-test-data
 ```
 
 #### Run
@@ -110,6 +109,9 @@ cp ./.service/blog2/local.env.sh.sample ./.service/blog2/local.env.sh
 ## Modification of environment variables
 vim ./.service/blog2/local.env.sh
 source ./.service/blog2/local.env.sh
+
+# create test data
+make blog2-init-rdb-test-data
 
 # server
 $(go env GOPATH)/bin/air -c ./.service/blog2/.air.server.toml
