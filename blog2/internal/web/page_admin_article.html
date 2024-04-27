@@ -10,76 +10,8 @@
             bottom: 0px;
             left: 0px;
             right: 0px;
-        }
 
-        /**
-         * -------------
-         * Article header
-         * -------------
-         */
-        .page_admin_article-header {
-            position: absolute;
-            top: 6px;
-            height: 150px;
-            left: 6px;
-            right: 6px;
             border: 3px solid red;
-            overflow: scroll;
-        }
-
-        .page_admin_article-row {
-            position: relative;
-            border: 1px solid red;
-        }
-
-        .page_admin_article-row-flex {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .page_admin_article-row-input {
-            width: 80%;
-        }
-
-        /**
-         * -------------
-         * Article body
-         * -------------
-         */
-        .page_admin_article-body {
-            position: absolute;
-            top: 156px;
-            bottom: 6px;
-            left: 6px;
-            right: 6px;
-            display: flex;
-            flex-direction: row;
-            overflow: scroll;
-            border: 3px solid red;
-        }
-
-        .page_admin_article-body-textarea {
-            position: absolute;
-            top: 0px;
-            bottom: 0px;
-            width: 49%;
-            overflow: scroll;
-            border: 3px solid blueviolet;
-        }
-
-        .page_admin_article-body-preview-area {
-            position: absolute;
-            top: 0px;
-            bottom: 0px;
-            left: 51%;
-            right: 0px;
-            overflow: scroll;
-            border: 3px solid blueviolet;
-        }
-
-        #markdown-editor {
-            font-size: 20px;
-            line-height: 23px;
         }
     </style>
     <meta charset="UTF-8">
@@ -89,42 +21,13 @@
 </head>
 
 <body>
-    {{template "component_info_snackbar"}}
-    {{template "component_image_modal"}}
     <header>
         {{template "component_header" .}}
     </header>
     <script>window.env = {{.JsEnv }}</script>
     <div class="content">
         <main>
-            <div class="page_admin_article-main">
-                <div class="page_admin_article-header">
-                    <div class="page_admin_article-row">
-                        <a href=".">記事一覧へ</a>
-                        <button id="publish-toggle">{{.Article.StateString}}</button>
-                    </div>
-                    <div class="page_admin_article-row page_admin_article-row-flex">
-                        <input id="article-title" class="page_admin_article-row-input" type="text"
-                            placeholder="タイトル" value="{{.Article.Title}}" />
-                        <button id="save-title">保存</button>
-                    </div>
-                    <div class="page_admin_article-row">
-                        <a href="/admin/articles/{{.Article.ID}}/tags">編集</a>
-                        {{range .Article.Tags}}
-                        <span>{{.Name}}</span>
-                        {{end}}
-                    </div>
-                    <div class="page_admin_article-row page_admin_article-row-flex">
-                        <button id="save-markdown">Markdownを保存する</button>
-                        <button id="open-image-modal">画像</button>
-                        <a href="/admin/articles/{{.Article.ID}}/images">画像をアップロードする</a>
-                    </div>
-                </div>
-                <div class="page_admin_article-body">
-                    <div id="markdown-editor" class="page_admin_article-body-textarea" contenteditable="plaintext-only">{{.MarkdownBody}}</div>
-                    <div class="page_admin_article-body-padding"></div>
-                    <div id="markdown-viewer" class="page_admin_article-body-preview-area">{{.HTMLBody}}</div>
-                </div>
+            <div class="page_admin_article-main" id="react-app">
             </div>
         </main>
     </div>

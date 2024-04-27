@@ -4,12 +4,16 @@ const path = require('path');
 // https://ics.media/entry/16329/
 module.exports = {
     entry: {
-        'page_admin_article': './src/page_admin_article/main.ts',
-        'component_info_snackbar': './src/component_info_snackbar/main.ts',
-        'component_image_modal': './src/component_image_modal/main.ts',
+        'page_admin_article': './src/page_admin_article/main.tsx',
     },
     module: {
         rules: [
+            {
+                // 拡張子 .tsx の場合
+                test: /\.tsx$/,
+                // TypeScript をコンパイルする
+                use: 'ts-loader',
+            },
             {
                 // 拡張子 .ts の場合
                 test: /\.ts$/,
@@ -25,11 +29,10 @@ module.exports = {
     resolve: {
         // 拡張子を配列で指定
         extensions: [
-            '.ts', '.js',
+            '.ts', '.js', '.tsx', '.json'
         ],
     },
     output: {
         path: path.resolve(__dirname, '..', 'internal', 'web', '_js'),
-        // filename: 'bundle.js',
     },
 };
