@@ -9,14 +9,9 @@ import (
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 )
 
-type ComponentWasm struct {
-	WasmBinaryURL string
-}
-
 type PageAdminArticle struct {
 	ComponentCommonHead ComponentCommonHead
 	ComponentHeader     ComponentHeader
-	ComponentWasm       ComponentWasm
 	Article             *entity.Article
 	MarkdownBody        string
 	HTMLBody            template.HTML
@@ -45,9 +40,6 @@ func (t *Impl) PageAdminArticle(ctx *gin.Context) {
 				IsAdmin: ctxGetAdmin(ctx),
 			},
 			ComponentCommonHead: ComponentCommonHead{},
-			ComponentWasm: ComponentWasm{
-				WasmBinaryURL: "/wasm/page_admin_article.wasm",
-			},
 			JsEnv: PageAdminArticleJsEnv{
 				ArticleID: article.ID,
 				Published: article.Published,

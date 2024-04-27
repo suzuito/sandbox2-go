@@ -28,7 +28,6 @@ func SetRouter(
 	e.Static("js", "blog2/internal/web/_js")
 	e.Static("css", "blog2/internal/web/_css")
 	e.Static("images", "blog2/internal/web/_images")
-	e.Static("wasm", "blog2/internal/web/_wasm")
 	e.GET("health", w.PageHealth)
 	e.Use(w.MiddlewareAdminAuthe)
 	e.NoRoute(w.PageNoRoute)

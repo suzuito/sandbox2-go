@@ -1,9 +1,0 @@
-{{define "component_wasm"}}
-<script src="/wasm/wasm_exec.js"></script>
-<script>
-    const go = new Go();
-    WebAssembly.instantiateStreaming(fetch({{.ComponentWasm.WasmBinaryURL }}), go.importObject).then((result) => {
-        go.run(result.instance);
-    });
-</script>
-{{end}}
