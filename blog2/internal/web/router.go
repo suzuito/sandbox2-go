@@ -63,7 +63,6 @@ func SetRouter(
 				gAdminArticle := gAdminArticles.Group(":articleID")
 				gAdminArticle.Use(w.MiddlewareGetArticle)
 				gAdminArticle.GET("", w.PageAdminArticle)
-				gAdminArticle.PUT("", w.PutAdminArticle)
 				gAdminArticle.PUT("markdown", w.PutAdminArticleMarkdown)
 				gAdminArticle.POST("publish", w.PostAdminArticlePublish)
 				gAdminArticle.DELETE("publish", w.DeleteAdminArticlePublish)
@@ -82,6 +81,23 @@ func SetRouter(
 				gAdminFilesImage := gAdminFiles.Group("image")
 				gAdminFilesImage.GET("", w.GetAdminFilesImage)
 				gAdminFilesImage.POST("", w.PostAdminFilesImage)
+			}
+		}
+	}
+
+	gAPI := e.Group("api")
+	{
+		gAdmin := gAPI.Group("admin")
+		{
+			gAdminArticles := gAdmin.Group("articles")
+			{
+				gAdminArticle := gAdminArticles.Group(":articleID")
+				{
+					gAdminArticle.Use(w.MiddlewareGetArticle)
+					gAdminArticle.PUT("", w.APIPutAdminArticle)
+					gAdminArticle.POST("/edit-tags", w.APIPostAdminArticleEditTags)
+					gAdminArticle.PUT("/markdown", w.APIPutAdminArticleMarkdown)
+				}
 			}
 		}
 	}

@@ -11,6 +11,6 @@ func NewTagIDs(tagIDs []string) []TagID {
 }
 
 type Tag struct {
-	ID   TagID
-	Name string
+	ID   TagID  `json:"id"`
+	Name string `json:"name"`
 }

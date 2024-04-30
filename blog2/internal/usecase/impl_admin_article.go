@@ -10,21 +10,27 @@ import (
 )
 
 type DTOGetAdminArticle struct {
-	MarkdownBody string
-	HTMLBody     string
+	MarkdownBody    string
+	HTMLBody        string
+	NotAttachedTags []*entity.Tag
 }
 
 func (t *Impl) GetAdminArticle(
 	ctx context.Context,
-	articleID entity.ArticleID,
+	article *entity.Article,
 ) (*DTOGetAdminArticle, error) {
-	markdownBody, htmlBody, err := t.S.GetArticleBody(ctx, articleID)
+	markdownBody, htmlBody, err := t.S.GetArticleBody(ctx, article.ID)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	notAttachedTags, err := t.S.GetNotAttachedArticleTags(ctx, article)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOGetAdminArticle{
-		MarkdownBody: markdownBody,
-		HTMLBody:     htmlBody,
+		MarkdownBody:    markdownBody,
+		HTMLBody:        htmlBody,
+		NotAttachedTags: notAttachedTags,
 	}, nil
 }
 
@@ -36,8 +42,9 @@ func (t *Impl) PutAdminArticle(
 	ctx context.Context,
 	articleID entity.ArticleID,
 	title *string,
+	published *bool,
 ) (*DTOPutAdminArticle, error) {
-	article, err := t.S.PutArticle(ctx, articleID, title, nil, nil)
+	article, err := t.S.PutArticle(ctx, articleID, title, published, nil)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -47,7 +54,11 @@ func (t *Impl) PutAdminArticle(
 }
 
 func (t *Impl) PutAdminArticleMarkdown(ctx context.Context, articleID entity.ArticleID, markdownBodyReader io.Reader) error {
-	if err := t.S.PutArticleMarkdown(ctx, articleID, markdownBodyReader); err != nil {
+	markdownBodyBuffer, err := io.ReadAll(markdownBodyReader)
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	if _, err := t.S.PutArticleMarkdown(ctx, articleID, string(markdownBodyBuffer)); err != nil {
 		return terrors.Wrap(err)
 	}
 	return nil

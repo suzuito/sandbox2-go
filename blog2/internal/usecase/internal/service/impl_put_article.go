@@ -14,5 +14,5 @@ func (t *Impl) PutArticle(
 	published *bool,
 	publishedAt *time.Time,
 ) (*entity.Article, error) {
-	return t.RepositoryArticle.UpdateArticle(ctx, articleID, title, nil, nil)
+	return t.RepositoryArticle.UpdateArticle(ctx, articleID, title, published, publishedAt)
 }

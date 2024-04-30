@@ -25,7 +25,11 @@ type Service interface {
 		published *bool,
 		publishedAt *time.Time,
 	) (*entity.Article, error)
-	PutArticleMarkdown(ctx context.Context, articleID entity.ArticleID, markdownBodyReader io.Reader) error
+	PutArticleMarkdown(
+		ctx context.Context,
+		articleID entity.ArticleID,
+		markdownBody string,
+	) (string, error)
 	UpdateArticleTags(
 		ctx context.Context,
 		articleID entity.ArticleID,

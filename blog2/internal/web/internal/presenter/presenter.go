@@ -14,6 +14,11 @@ type Presenter interface {
 		name string,
 		obj any,
 	)
+	RenderString(
+		ctx *gin.Context,
+		code int,
+		message string,
+	)
 	Redirect(
 		ctx *gin.Context,
 		code int,

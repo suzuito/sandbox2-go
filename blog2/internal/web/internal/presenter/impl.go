@@ -21,6 +21,14 @@ func (t *Impl) RenderHTML(
 	ctx.HTML(code, name, obj)
 }
 
+func (t *Impl) RenderString(
+	ctx *gin.Context,
+	code int,
+	message string,
+) {
+	ctx.String(code, message)
+}
+
 func (t *Impl) Redirect(
 	ctx *gin.Context,
 	code int,

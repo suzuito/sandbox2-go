@@ -9,13 +9,13 @@ import (
 type ArticleID string
 
 type Article struct {
-	ID          ArticleID
-	Title       string
-	Published   bool
-	PublishedAt *time.Time
-	CreatedAt   time.Time
-	UpdatedAt   *time.Time
-	Tags        []Tag
+	ID          ArticleID  `json:"id"`
+	Title       string     `json:"title"`
+	Published   bool       `json:"published"`
+	PublishedAt *time.Time `json:"publishedAt"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	UpdatedAt   *time.Time `json:"updatedAt"`
+	Tags        []Tag      `json:"tags"`
 }
 
 func (t *Article) StateString() string {

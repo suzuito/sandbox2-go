@@ -18,12 +18,13 @@ type Usecase interface {
 	) (*internal_usecase.DTOPostAdminArticles, error)
 	GetAdminArticle(
 		ctx context.Context,
-		articleID entity.ArticleID,
+		article *entity.Article,
 	) (*internal_usecase.DTOGetAdminArticle, error)
 	PutAdminArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,
 		title *string,
+		published *bool,
 	) (*internal_usecase.DTOPutAdminArticle, error)
 	PutAdminArticleMarkdown(
 		ctx context.Context,
@@ -60,6 +61,24 @@ type Usecase interface {
 	) (*internal_usecase.DTOMiddlewareGetArticle, error)
 
 	StartFileUploadedProcessFromGCF(ctx context.Context, data []byte) error
+
+	APIPutAdminArticle(
+		ctx context.Context,
+		articleID entity.ArticleID,
+		title *string,
+		published *bool,
+	) (*internal_usecase.DTOAPIPutAdminArticle, error)
+	APIPostAdminArticleEditTags(
+		ctx context.Context,
+		article *entity.Article,
+		add []entity.TagID,
+		delete []entity.TagID,
+	) (*internal_usecase.DTOAPIPostAdminArticleEditTags, error)
+	APIPutAdminArticleMarkdown(
+		ctx context.Context,
+		articleID entity.ArticleID,
+		markdown io.Reader,
+	) (*internal_usecase.DTOAPIPutAdminArticleMarkdown, error)
 
 	// Not production codes
 	CreateTestData001(
