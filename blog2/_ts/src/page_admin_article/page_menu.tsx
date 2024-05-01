@@ -20,7 +20,7 @@ export default function PageMenu({
     onClickSaveMarkdown: () => void,
 }) {
     let currentSelectedTagId: string = ""
-    let refInputTitle = useRef<HTMLInputElement>(null);
+    const refInputTitle = useRef<HTMLInputElement>(null);
     return (
         <div style={{
             position: "absolute",
