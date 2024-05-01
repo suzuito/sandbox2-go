@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
+      - run: cd blog2/_ts
       - run: npm ci
       - run: npx eslint src/
       - run: npm run build
