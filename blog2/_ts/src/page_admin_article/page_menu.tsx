@@ -35,7 +35,7 @@ export default function PageMenu({
                 // border: "1px solid red"
             }}>
                 <button
-                    onClick={(event) => {
+                    onClick={() => {
                         onClickPublishToggle()
                     }}
                 >{article.published ? "公開中" : "ドラフト"}</button>
@@ -51,7 +51,7 @@ export default function PageMenu({
                     defaultValue={article.title}
                     ref={refInputTitle}
                 />
-                <button onClick={(event: React.FormEvent<HTMLButtonElement>) => {
+                <button onClick={() => {
                     if (refInputTitle.current === null) {
                         return;
                     }
@@ -88,7 +88,11 @@ export default function PageMenu({
                 border: "1px solid red",
             }}>
                 <select onInput={(event) => {
-                    currentSelectedTagId = event.currentTarget.selectedOptions[0].value;
+                    const selectedOption = event.currentTarget.selectedOptions[0]
+                    if (selectedOption === undefined) {
+                        return;
+                    }
+                    currentSelectedTagId = selectedOption.value;
                 }}>
                     <option key="" value="">タグを選択する</option>
                     {selectableTags.map((tag) => {

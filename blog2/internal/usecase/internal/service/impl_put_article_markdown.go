@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"fmt"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 	"github.com/suzuito/sandbox2-go/common/terrors"
@@ -23,6 +24,9 @@ func (t *Impl) PutArticleMarkdown(
 	if err := t.StorageArticle.PutArticle(ctx, articleID, bytes.NewBufferString(markdownBody)); err != nil {
 		return "", terrors.Wrap(err)
 	}
+	fmt.Println("==== begin ====")
+	fmt.Println(markdownBody)
+	fmt.Println("====  end  ====")
 	htmlBody := ""
 	if err := t.Markdown2HTML.Generate(ctx, markdownBody, &htmlBody); err != nil {
 		return "", terrors.Wrap(err)
