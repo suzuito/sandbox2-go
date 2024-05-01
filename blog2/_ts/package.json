@@ -10,7 +10,7 @@
     },
     "scripts": {
         "serve": "webpack --mode=development -w",
-        "build": "webpack"
+        "build": "webpack --mode=production"
     },
     "devDependencies": {
         "@eslint/js": "^9.1.1",
