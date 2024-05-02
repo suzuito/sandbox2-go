@@ -1,5 +1,5 @@
 # Build js
-FROM node:20-alpine AS build1
+FROM node:22-alpine AS build1
 
 ARG NODE_ENV
 ENV NODE_ENV ${NODE_ENV}
