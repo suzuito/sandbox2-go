@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
+<meta name="robots" content="noindex">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 {{template "component_common_head" .}}
-<link rel="stylesheet" href="/css/page_admin_articles.css">
 <body>
     <header>
         {{template "component_header" .}}
@@ -17,6 +17,7 @@
               <a href="javascript:new_articles.submit()">記事を新規作成</a>
             </form>
             {{template "component_admin_article_list" .}}
+            {{template "component_article_list_pager" .}}
         </main>
     </div>
     <footer>

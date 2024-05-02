@@ -13,8 +13,10 @@ func (t *Impl) MiddlewareAdminAutho(ctx *gin.Context) {
 			http.StatusNotFound,
 			"page_error.html",
 			PageError{
-				ComponentCommonHead: ComponentCommonHead{},
-				Message:             "Not found",
+				ComponentCommonHead: ComponentCommonHead{
+					GoogleTagManagerID: t.GoogleTagManagerID,
+				},
+				Message: "Not found",
 			},
 		)
 		ctx.Abort()

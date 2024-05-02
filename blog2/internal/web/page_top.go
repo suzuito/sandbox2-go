@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,8 +22,9 @@ func (t *Impl) PageTop(ctx *gin.Context) {
 				IsAdmin: ctxGetAdmin(ctx),
 			},
 			ComponentCommonHead: ComponentCommonHead{
-				Title: "Login",
-				Meta:  nil,
+				Title:              fmt.Sprintf("%s - トップ", SiteName),
+				Meta:               nil,
+				GoogleTagManagerID: t.GoogleTagManagerID,
 			},
 		},
 	)

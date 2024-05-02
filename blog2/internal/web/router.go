@@ -17,6 +17,8 @@ type Impl struct {
 	AdminToken           string
 	BaseURLFile          string
 	BaseURLFileThumbnail string
+	SiteOrigin           string
+	GoogleTagManagerID   string
 }
 
 func NewPresenter() presenter.Presenter {
@@ -43,10 +45,11 @@ func SetRouter(
 	e.GET("", w.PageTop)
 	{
 		gArticles := e.Group("articles")
-		gArticles.GET("", func(ctx *gin.Context) {})
+		gArticles.GET("", w.PageArticles)
 		{
 			gArticle := gArticles.Group(":articleID")
-			gArticle.GET("", func(ctx *gin.Context) {})
+			gArticle.Use(w.GetMiddlewareGetArticle(true))
+			gArticle.GET("", w.PageArticle)
 		}
 	}
 	{
@@ -67,7 +70,7 @@ func SetRouter(
 			gAdminArticles.POST("", w.PostAdminArticles)
 			{
 				gAdminArticle := gAdminArticles.Group(":articleID")
-				gAdminArticle.Use(w.MiddlewareGetArticle)
+				gAdminArticle.Use(w.GetMiddlewareGetArticle(false))
 				gAdminArticle.GET("", w.PageAdminArticle)
 			}
 		}
@@ -82,7 +85,7 @@ func SetRouter(
 			{
 				gAdminArticle := gAdminArticles.Group(":articleID")
 				{
-					gAdminArticle.Use(w.MiddlewareGetArticle)
+					gAdminArticle.Use(w.GetMiddlewareGetArticle(false))
 					gAdminArticle.PUT("", w.APIPutAdminArticle)
 					gAdminArticle.POST("/edit-tags", w.APIPostAdminArticleEditTags)
 					gAdminArticle.PUT("/markdown", w.APIPutAdminArticleMarkdown)

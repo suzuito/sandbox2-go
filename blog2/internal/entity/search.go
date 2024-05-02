@@ -2,8 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"github.com/suzuito/sandbox2-go/blog/entity"
 )
 
 type ListQuery struct {
@@ -13,7 +11,7 @@ type ListQuery struct {
 
 type ArticleSearchQuery struct {
 	ListQuery
-	TagID            *entity.TagID
+	TagID            *TagID
 	Published        *bool
 	PublishedAtStart *time.Time
 	PublishedAtEnd   *time.Time

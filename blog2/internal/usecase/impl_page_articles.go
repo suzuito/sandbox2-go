@@ -7,20 +7,20 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-type DTOGetAdminArticles struct {
+type DTOPageArticles struct {
 	Articles []*entity.Article
-	NextPage *int
 	PrevPage *int
+	NextPage *int
 }
 
-func (t *Impl) GetAdminArticles(
+func (t *Impl) PageArticles(
 	ctx context.Context,
 	tagID entity.TagID,
 	page int,
 	size int,
-	published *bool,
-) (*DTOGetAdminArticles, error) {
+) (*DTOPageArticles, error) {
 	offset := page * size
+	publishedValueTrue := true
 	var ptrTagID *entity.TagID
 	if tagID != "" {
 		ptrTagID = &tagID
@@ -30,7 +30,7 @@ func (t *Impl) GetAdminArticles(
 			Offset: &offset,
 			Limit:  &size,
 		},
-		Published: published,
+		Published: &publishedValueTrue,
 		TagID:     ptrTagID,
 	}
 	articles, _, _, err := t.S.SearchArticles(ctx, &q)
@@ -47,25 +47,9 @@ func (t *Impl) GetAdminArticles(
 		nextPage := page + 1
 		ptrNextPage = &nextPage
 	}
-	return &DTOGetAdminArticles{
+	return &DTOPageArticles{
 		Articles: articles,
 		PrevPage: ptrPrevPage,
 		NextPage: ptrNextPage,
-	}, nil
-}
-
-type DTOPostAdminArticles struct {
-	Article *entity.Article
-}
-
-func (t *Impl) PostAdminArticles(
-	ctx context.Context,
-) (*DTOPostAdminArticles, error) {
-	article, err := t.S.CreateArticle(ctx)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	return &DTOPostAdminArticles{
-		Article: article,
 	}, nil
 }

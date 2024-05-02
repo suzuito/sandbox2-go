@@ -17,7 +17,9 @@ func (t *Impl) PageAdminTop(ctx *gin.Context) {
 		http.StatusOK,
 		"page_admin_top.html",
 		PageAdminTop{
-			ComponentCommonHead: ComponentCommonHead{},
+			ComponentCommonHead: ComponentCommonHead{
+				GoogleTagManagerID: t.GoogleTagManagerID,
+			},
 			ComponentHeader: ComponentHeader{
 				IsAdmin: ctxGetAdmin(ctx),
 			},

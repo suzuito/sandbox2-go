@@ -45,8 +45,8 @@
     <div class="component_article_list_article-tags">
       {{range .Tags}}
       <div class="component_article_list_article-tag">
-        <a href="/articles?tags={{.ID}}">
-          {{.ID}}
+        <a href="/articles?tag={{.ID}}">
+          {{.Name}}
         </a>
       </div>
       {{end}}

@@ -25,13 +25,21 @@ type OGPData struct {
 }
 
 type LDJSONData struct {
-	Context          string           `json:"@context"`
-	Type             string           `json:"@type"`
-	Headline         string           `json:"headline,omitempty"`
-	Description      string           `json:"description,omitempty"`
-	MainEntityOfPage string           `json:"mainEntityOfPage,omitempty"`
-	DatePublished    string           `json:"datePublished,omitempty"`
-	Author           LDJSONDataAuthor `json:"author,omitempty"`
+	Context          string            `json:"@context"`
+	Type             string            `json:"@type"`
+	Headline         string            `json:"headline,omitempty"`
+	Description      string            `json:"description,omitempty"`
+	MainEntityOfPage string            `json:"mainEntityOfPage,omitempty"`
+	DatePublished    string            `json:"datePublished,omitempty"`
+	Author           *LDJSONDataAuthor `json:"author,omitempty"`
+	ItemListElement  []LDJSONItem      `json:"itemListElement,omitempty"`
+}
+
+type LDJSONItem struct {
+	Type     string `json:"@type"`
+	Position int    `json:"position"`
+	Name     string `json:"name"`
+	Item     string `json:"item,omitempty"`
 }
 
 type LDJSONDataAuthor struct {
@@ -70,7 +78,14 @@ func NewPageURLFromContext(ctx *gin.Context, siteOrigin string) string {
 	return u.String()
 }
 
+func NewPageURL(siteOrigin string, path string) string {
+	u, _ := url.Parse(siteOrigin)
+	u.Path = path
+	return u.String()
+}
+
 type ComponentCommonHead struct {
-	Title string
-	Meta  *SiteMetaData
+	Title              string
+	Meta               *SiteMetaData
+	GoogleTagManagerID string
 }

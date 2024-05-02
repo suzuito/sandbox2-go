@@ -15,8 +15,10 @@ func (t *Impl) PageNoRoute(ctx *gin.Context) {
 			ComponentHeader: ComponentHeader{
 				IsAdmin: ctxGetAdmin(ctx),
 			},
-			ComponentCommonHead: ComponentCommonHead{},
-			Message:             "Not found",
+			ComponentCommonHead: ComponentCommonHead{
+				GoogleTagManagerID: t.GoogleTagManagerID,
+			},
+			Message: "Not found",
 		},
 	)
 }

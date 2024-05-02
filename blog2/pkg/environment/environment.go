@@ -15,4 +15,5 @@ type Environment struct {
 	AdminToken            string `required:"false" split_words:"true"`
 	BaseURLFile           string `required:"true" envconfig:"BASE_URL_FILE"`
 	BaseURLFileThumbnail  string `required:"true" envconfig:"BASE_URL_FILE_THUMBNAIL"`
+	GoogleTagManagerID    string `envconfig:"GOOGLE_TAG_MANAGER_ID"`
 }

@@ -39,7 +39,9 @@ func (t *Impl) PageAdminArticle(ctx *gin.Context) {
 			ComponentHeader: ComponentHeader{
 				IsAdmin: ctxGetAdmin(ctx),
 			},
-			ComponentCommonHead: ComponentCommonHead{},
+			ComponentCommonHead: ComponentCommonHead{
+				GoogleTagManagerID: t.GoogleTagManagerID,
+			},
 			JsEnv: PageAdminArticleJsEnv{
 				Article:              *article,
 				NotAttachedTags:      dto.NotAttachedTags,

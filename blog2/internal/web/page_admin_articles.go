@@ -17,31 +17,16 @@ type PageAdminArticles struct {
 	ComponentArticleListPager  ComponentArticleListPager
 }
 
-func getPageFromOffset(offset *int, size int) *int {
-	if offset == nil {
-		return nil
-	}
-	page := *offset / size
-	return &page
-}
-
 func (t *Impl) PageAdminArticles(ctx *gin.Context) {
 	page := cweb.DefaultQueryAsInt(ctx, "page", 0)
 	size := cweb.DefaultQueryAsInt(ctx, "size", 10)
+	tagID := ctx.DefaultQuery("tag", "")
 	var published *bool
 	if _, exists := ctx.GetQuery("published"); exists {
 		publishedValue := cweb.DefaultQueryAsBool(ctx, "published", false)
 		published = &publishedValue
 	}
-	offset := page * size
-	query := entity.ArticleSearchQuery{
-		ListQuery: entity.ListQuery{
-			Offset: &offset,
-			Limit:  &size,
-		},
-		Published: published,
-	}
-	dto, err := t.U.GetAdminArticles(ctx, &query)
+	dto, err := t.U.GetAdminArticles(ctx, entity.TagID(tagID), page, size, published)
 	if err != nil {
 		t.L.Error("Failed to get admin articles", "err", err)
 		t.RenderUnknownError(ctx)
@@ -55,12 +40,14 @@ func (t *Impl) PageAdminArticles(ctx *gin.Context) {
 			ComponentHeader: ComponentHeader{
 				IsAdmin: ctxGetAdmin(ctx),
 			},
-			ComponentCommonHead:        ComponentCommonHead{},
+			ComponentCommonHead: ComponentCommonHead{
+				GoogleTagManagerID: t.GoogleTagManagerID,
+			},
 			Articles:                   dto.Articles,
 			ComponentArticleListSearch: ComponentArticleListSearch{},
 			ComponentArticleListPager: ComponentArticleListPager{
-				NextPage: getPageFromOffset(dto.NextOffset, size),
-				PrevPage: getPageFromOffset(dto.PrevOffset, size),
+				NextPage: dto.NextPage,
+				PrevPage: dto.PrevPage,
 			},
 		},
 	)

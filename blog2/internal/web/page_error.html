@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+<meta name="robots" content="noindex">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 {{template "component_common_head" .}}
@@ -9,7 +10,9 @@
         {{template "component_header" .}}
     </header>
     <main>
-        {{.Message}}
+        <div class="content">
+            {{.Message}}
+        </div>
     </main>
     <footer>
         {{template "component_footer"}}

@@ -11,7 +11,10 @@ import (
 type Usecase interface {
 	GetAdminArticles(
 		ctx context.Context,
-		query *entity.ArticleSearchQuery,
+		tagID entity.TagID,
+		page int,
+		size int,
+		published *bool,
 	) (*internal_usecase.DTOGetAdminArticles, error)
 	PostAdminArticles(
 		ctx context.Context,
@@ -21,9 +24,21 @@ type Usecase interface {
 		article *entity.Article,
 	) (*internal_usecase.DTOGetAdminArticle, error)
 
+	PageArticles(
+		ctx context.Context,
+		tagID entity.TagID,
+		page int,
+		size int,
+	) (*internal_usecase.DTOPageArticles, error)
+	PageArticle(
+		ctx context.Context,
+		article *entity.Article,
+	) (*internal_usecase.PageArticle, error)
+
 	MiddlewareGetArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,
+		publishedOnly bool,
 	) (*internal_usecase.DTOMiddlewareGetArticle, error)
 
 	APIPutAdminArticle(

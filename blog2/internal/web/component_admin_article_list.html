@@ -54,7 +54,7 @@
     <div class="component_admin_article_list_article-tags">
       {{range .Tags}}
       <div class="component_admin_article_list_article-tag">
-        <a href="/admin/articles?tags={{.ID}}">
+        <a href="/admin/articles?tag={{.ID}}">
           {{.Name}}
         </a>
       </div>
@@ -62,6 +62,5 @@
     </div>
   </div>
   {{end}}
-  {{template "component_article_list_pager" .}}
 </div>
 {{end}}

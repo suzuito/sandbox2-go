@@ -57,6 +57,8 @@ func NewWebImpl(
 		AdminToken:           env.AdminToken,
 		BaseURLFile:          env.BaseURLFile,
 		BaseURLFileThumbnail: env.BaseURLFileThumbnail,
+		SiteOrigin:           env.SiteOrigin,
+		GoogleTagManagerID:   env.GoogleTagManagerID,
 	}
 	return &w
 }

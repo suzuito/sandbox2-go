@@ -18,7 +18,9 @@ func (t *Impl) Render4XXError(ctx *gin.Context, code int, message string) {
 		code,
 		"page_error.html",
 		PageError{
-			ComponentCommonHead: ComponentCommonHead{},
+			ComponentCommonHead: ComponentCommonHead{
+				GoogleTagManagerID: t.GoogleTagManagerID,
+			},
 			ComponentHeader: ComponentHeader{
 				ctxGetAdmin(ctx),
 			},
@@ -33,7 +35,9 @@ func (t *Impl) RenderUnknownError(ctx *gin.Context) {
 		http.StatusInternalServerError,
 		"page_error.html",
 		PageError{
-			ComponentCommonHead: ComponentCommonHead{},
+			ComponentCommonHead: ComponentCommonHead{
+				GoogleTagManagerID: t.GoogleTagManagerID,
+			},
 			ComponentHeader: ComponentHeader{
 				ctxGetAdmin(ctx),
 			},
