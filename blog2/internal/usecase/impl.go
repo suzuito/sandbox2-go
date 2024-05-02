@@ -19,10 +19,8 @@ type Impl struct {
 func NewImpl(
 	repositoryArticle repository.RepositoryArticle,
 	storageArticle repository.StorageArticle,
-	storageFileUploaded repository.StorageFileUploaded,
 	storageFile repository.StorageFile,
 	storageFileThumbnail repository.StorageFileThumbnal,
-	repositoryFileUploaded repository.RepositoryFileUploaded,
 	fileImageConverter imageconverter.ImageConverter,
 	markdown2HTML markdown2html.Markdown2HTML,
 	fileTypeDetector filetypedetector.FileTypeDetector,
@@ -30,16 +28,14 @@ func NewImpl(
 ) *Impl {
 	return &Impl{
 		S: &internal_service.Impl{
-			RepositoryArticle:      repositoryArticle,
-			StorageArticle:         storageArticle,
-			StorageFileUploaded:    storageFileUploaded,
-			StorageFile:            storageFile,
-			StorageFileThumbnail:   storageFileThumbnail,
-			RepositoryFileUploaded: repositoryFileUploaded,
-			FileImageConverter:     fileImageConverter,
-			Markdown2HTML:          markdown2HTML,
-			FileTypeDetector:       fileTypeDetector,
-			L:                      logger,
+			RepositoryArticle:    repositoryArticle,
+			StorageArticle:       storageArticle,
+			StorageFile:          storageFile,
+			StorageFileThumbnail: storageFileThumbnail,
+			FileImageConverter:   fileImageConverter,
+			Markdown2HTML:        markdown2HTML,
+			FileTypeDetector:     fileTypeDetector,
+			L:                    logger,
 		},
 		L: logger,
 	}

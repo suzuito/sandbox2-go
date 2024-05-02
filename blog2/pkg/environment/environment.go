@@ -8,7 +8,6 @@ type Environment struct {
 	DBGCPRegion           string `required:"false" envconfig:"DB_GCP_REGION"`
 	DBInstanceUnixSocket  string `required:"false" split_words:"true"`
 	ArticleMarkdownBucket string `required:"false" envconfig:"ARTICLE_MARKDOWN_BUCKET"`
-	FileUploadedBucket    string `required:"false" envconfig:"FILE_UPLOADED_BUCKET"` // 変数名が微妙。ユーザーがアップロードした画像を置く場所
 	FileBucket            string `required:"false" envconfig:"FILE_BUCKET"`
 	FileThumbnailBucket   string `required:"false" envconfig:"FILE_THUMBNAIL_BUCKET"`
 	SiteOrigin            string `required:"false" split_words:"true"`

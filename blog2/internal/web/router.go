@@ -40,8 +40,6 @@ func SetRouter(
 		{
 			gArticle := gArticles.Group(":articleID")
 			gArticle.GET("", func(ctx *gin.Context) {})
-			gArticle.GET("edit", func(ctx *gin.Context) {})
-			gArticle.PUT("edit", func(ctx *gin.Context) {})
 		}
 	}
 	{
@@ -50,7 +48,6 @@ func SetRouter(
 		{
 			gTag := gTags.Group(":tagID")
 			gTag.GET("", func(ctx *gin.Context) {})
-			gTag.GET("edit", func(ctx *gin.Context) {})
 		}
 	}
 	{
@@ -65,24 +62,6 @@ func SetRouter(
 				gAdminArticle := gAdminArticles.Group(":articleID")
 				gAdminArticle.Use(w.MiddlewareGetArticle)
 				gAdminArticle.GET("", w.PageAdminArticle)
-				gAdminArticle.PUT("markdown", w.PutAdminArticleMarkdown)
-				gAdminArticle.POST("publish", w.PostAdminArticlePublish)
-				gAdminArticle.DELETE("publish", w.DeleteAdminArticlePublish)
-				gAdminArticle.POST("edit-tags", w.PostAdminArticleEditTags)
-				{
-					gAdminArticleTags := gAdminArticle.Group("tags")
-					gAdminArticleTags.GET("", w.PageAdminArticleTags)
-				}
-			}
-		}
-
-		{
-			gAdminFiles := gAdmin.Group("files")
-			gAdminFiles.GET("", w.GetAdminFiles)
-			{
-				gAdminFilesImage := gAdminFiles.Group("image")
-				gAdminFilesImage.GET("", w.GetAdminFilesImage)
-				// gAdminFilesImage.POST("", w.PostAdminFilesImage)
 			}
 		}
 	}

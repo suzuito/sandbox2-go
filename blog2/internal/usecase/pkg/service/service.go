@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"io"
 	"time"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
@@ -40,12 +39,6 @@ type Service interface {
 	CreateArticle(
 		ctx context.Context,
 	) (*entity.Article, error)
-	CreateFileUploaded(
-		ctx context.Context,
-		fileName string,
-		fileType entity.FileType,
-		input io.Reader,
-	) (*entity.FileUploaded, error)
 
 	DetectFileType(
 		ctx context.Context,

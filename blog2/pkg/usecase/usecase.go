@@ -20,41 +20,7 @@ type Usecase interface {
 		ctx context.Context,
 		article *entity.Article,
 	) (*internal_usecase.DTOGetAdminArticle, error)
-	PutAdminArticle(
-		ctx context.Context,
-		articleID entity.ArticleID,
-		title *string,
-		published *bool,
-	) (*internal_usecase.DTOPutAdminArticle, error)
-	PutAdminArticleMarkdown(
-		ctx context.Context,
-		articleID entity.ArticleID,
-		markdownBodyReader io.Reader,
-	) error
-	PostAdminArticlePublish(
-		ctx context.Context,
-		articleID entity.ArticleID,
-	) error
-	DeleteAdminArticlePublish(
-		ctx context.Context,
-		articleID entity.ArticleID,
-	) error
-	PostAdminArticleEditTags(
-		ctx context.Context,
-		articleID entity.ArticleID,
-		add []entity.TagID,
-		delete []entity.TagID,
-	) error
-	GetAdminArticleTags(
-		ctx context.Context,
-		article *entity.Article,
-	) (*internal_usecase.DTOGetAdminArticleTags, error)
-	// PostAdminFiles(
-	// 	ctx context.Context,
-	// 	fileName string,
-	// 	fileType entity.FileType,
-	// 	input io.Reader,
-	// ) (*internal_usecase.DTOPostAdminFiles, error)
+
 	MiddlewareGetArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,

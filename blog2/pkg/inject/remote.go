@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"log/slog"
 
-	"cloud.google.com/go/compute/metadata"
-	"cloud.google.com/go/firestore"
 	"github.com/go-sql-driver/mysql"
 	"github.com/suzuito/sandbox2-go/blog2/internal/infra"
 	"github.com/suzuito/sandbox2-go/blog2/internal/markdown2html"
@@ -31,14 +29,6 @@ func newUsecaseImpl(
 		Handler: newSlogHandlerJSON(slog.LevelDebug),
 	}
 	logger := slog.New(&slogHandler)
-	gcpProjectID, err := metadata.ProjectID()
-	if err != nil {
-		return nil, nil, terrors.Wrapf("metadata.ProjectID is failed: %w", err)
-	}
-	firestoreClient, err := firestore.NewClient(ctx, gcpProjectID)
-	if err != nil {
-		return nil, nil, terrors.Wrap(err)
-	}
 	mysqlConfig := mysql.Config{
 		DBName: env.DBName,
 		User:   env.DBUser,
@@ -65,10 +55,6 @@ func newUsecaseImpl(
 			Cli:    arg.StorageClient,
 			Bucket: env.ArticleMarkdownBucket,
 		},
-		&infra.StorageFileUploaded{
-			Cli:    arg.StorageClient,
-			Bucket: env.FileUploadedBucket,
-		},
 		&infra.StorageFile{
 			Cli:    arg.StorageClient,
 			Bucket: env.FileBucket,
@@ -76,9 +62,6 @@ func newUsecaseImpl(
 		&infra.StorageFileThumbnail{
 			Cli:    arg.StorageClient,
 			Bucket: env.FileThumbnailBucket,
-		},
-		&infra.RepositoryFileUploaded{
-			Cli: firestoreClient,
 		},
 		articlefile.NewImageConverter(),
 		&markdown2html.Markdown2HTMLImpl{},

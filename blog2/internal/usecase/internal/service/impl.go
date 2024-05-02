@@ -10,14 +10,12 @@ import (
 )
 
 type Impl struct {
-	RepositoryArticle      repository.RepositoryArticle
-	StorageArticle         repository.StorageArticle
-	StorageFileUploaded    repository.StorageFileUploaded
-	StorageFile            repository.StorageFile
-	StorageFileThumbnail   repository.StorageFileThumbnal
-	RepositoryFileUploaded repository.RepositoryFileUploaded
-	FileImageConverter     imageconverter.ImageConverter
-	Markdown2HTML          markdown2html.Markdown2HTML
-	FileTypeDetector       filetypedetector.FileTypeDetector
-	L                      *slog.Logger
+	RepositoryArticle    repository.RepositoryArticle
+	StorageArticle       repository.StorageArticle
+	StorageFile          repository.StorageFile
+	StorageFileThumbnail repository.StorageFileThumbnal
+	FileImageConverter   imageconverter.ImageConverter
+	Markdown2HTML        markdown2html.Markdown2HTML
+	FileTypeDetector     filetypedetector.FileTypeDetector
+	L                    *slog.Logger
 }
