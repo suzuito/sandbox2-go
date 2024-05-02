@@ -12,3 +12,14 @@ func (t *NotFoundEntityError) Error() string {
 }
 
 var PtrNotFoundEntityError *NotFoundEntityError
+
+type AlreadyExistsEntityError struct {
+	EntityType string
+	EntityID   string
+}
+
+func (t *AlreadyExistsEntityError) Error() string {
+	return fmt.Sprintf("already exists %s : %s", t.EntityType, t.EntityID)
+}
+
+var PtrAlreadyExistsEntityError *AlreadyExistsEntityError

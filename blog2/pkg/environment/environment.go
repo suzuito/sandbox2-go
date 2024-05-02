@@ -10,7 +10,10 @@ type Environment struct {
 	ArticleMarkdownBucket string `required:"false" envconfig:"ARTICLE_MARKDOWN_BUCKET"`
 	FileUploadedBucket    string `required:"false" envconfig:"FILE_UPLOADED_BUCKET"` // 変数名が微妙。ユーザーがアップロードした画像を置く場所
 	FileBucket            string `required:"false" envconfig:"FILE_BUCKET"`
+	FileThumbnailBucket   string `required:"false" envconfig:"FILE_THUMBNAIL_BUCKET"`
 	SiteOrigin            string `required:"false" split_words:"true"`
 	Env                   string `required:"true" split_words:"true"`
 	AdminToken            string `required:"false" split_words:"true"`
+	BaseURLFile           string `required:"true" envconfig:"BASE_URL_FILE"`
+	BaseURLFileThumbnail  string `required:"true" envconfig:"BASE_URL_FILE_THUMBNAIL"`
 }

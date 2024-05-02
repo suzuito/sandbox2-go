@@ -56,6 +56,7 @@ func (t *RepositoryArticle) SearchArticles(ctx context.Context, q *entity.Articl
 	if err != nil {
 		return nil, nil, nil, terrors.Wrap(err)
 	}
+	defer rows.Close()
 	articleIDs := []entity.ArticleID{}
 	for rows.Next() {
 		articleID := entity.ArticleID("")

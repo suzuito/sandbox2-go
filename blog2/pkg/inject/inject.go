@@ -46,10 +46,12 @@ func NewWebImpl(
 	logger *slog.Logger,
 ) *web.Impl {
 	w := web.Impl{
-		U:          u,
-		P:          web.NewPresenter(),
-		L:          logger,
-		AdminToken: env.AdminToken,
+		U:                    u,
+		P:                    web.NewPresenter(),
+		L:                    logger,
+		AdminToken:           env.AdminToken,
+		BaseURLFile:          env.BaseURLFile,
+		BaseURLFileThumbnail: env.BaseURLFileThumbnail,
 	}
 	return &w
 }

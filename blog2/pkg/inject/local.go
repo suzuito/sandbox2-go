@@ -65,11 +65,16 @@ func newUsecaseImplLocal(
 			Cli:    arg.StorageClient,
 			Bucket: env.FileBucket,
 		},
+		&infra.StorageFileThumbnail{
+			Cli:    arg.StorageClient,
+			Bucket: env.FileThumbnailBucket,
+		},
 		&infra.RepositoryFileUploaded{
 			Cli: firestoreClient,
 		},
 		articlefile.NewImageConverter(),
 		&markdown2html.Markdown2HTMLImpl{},
+		articlefile.NewFileTypeDetector(),
 		logger,
 	)
 	return u, logger, nil

@@ -3,18 +3,26 @@ package inject
 import (
 	"log/slog"
 	"os"
+
+	"github.com/golang-cz/devslog"
 )
 
 func newSlogHandlerText(
 	l slog.Leveler,
 ) slog.Handler {
-	return slog.NewTextHandler(
-		os.Stdout,
-		&slog.HandlerOptions{
+	return devslog.NewHandler(os.Stdout, &devslog.Options{
+		HandlerOptions: &slog.HandlerOptions{
 			Level:     l,
 			AddSource: true,
 		},
-	)
+	})
+	// return slog.NewTextHandler(
+	// 	os.Stdout,
+	// 	&slog.HandlerOptions{
+	// 		Level:     l,
+	// 		AddSource: true,
+	// 	},
+	// )
 }
 
 func newSlogHandlerJSON(

@@ -24,6 +24,7 @@ func (t *SQLError) Unwrap() error {
 
 type TxOrDB interface {
 	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
 	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
@@ -37,7 +38,7 @@ func sqlIn[T []E, E any](fieldName string, cols T) string {
 		}
 		s[j+1] = ','
 	}
-	return fmt.Sprintf("%s IN (%s)", fieldName, string(s))
+	return fmt.Sprintf("`%s` IN (%s)", fieldName, string(s))
 }
 
 func toAnySlice[T []E, E any](cols T) []any {
@@ -63,6 +64,16 @@ func queryContext(
 		}
 	}
 	return rows, nil
+}
+
+func queryRowContext(
+	ctx context.Context,
+	txOrDB TxOrDB,
+	query string,
+	args ...any,
+) *sql.Row {
+	row := txOrDB.QueryRowContext(ctx, query, args...)
+	return row
 }
 
 func execContext(

@@ -27,4 +27,36 @@ type RepositoryArticle interface {
 		add []entity.TagID,
 		delete []entity.TagID,
 	) (*entity.Article, error)
+
+	PutFile(
+		ctx context.Context,
+		file *entity.File,
+	) error
+	GetFile(
+		ctx context.Context,
+		fileID entity.FileID,
+	) (*entity.File, error)
+	DeleteFile(
+		ctx context.Context,
+		fileID entity.FileID,
+	) error
+	SearchFiles(
+		ctx context.Context,
+		queryString string,
+		offset int,
+		limit int,
+	) ([]*entity.FileAndThumbnail, error)
+
+	PutFileThumbnail(
+		ctx context.Context,
+		file *entity.FileThumbnail,
+	) error
+	GetFileThumbnail(
+		ctx context.Context,
+		fileID entity.FileID,
+	) (*entity.FileThumbnail, error)
+	DeleteFileThumbnail(
+		ctx context.Context,
+		fileID entity.FileID,
+	) error
 }

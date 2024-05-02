@@ -9,18 +9,18 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-type StorageFile struct {
+type StorageFileThumbnail struct {
 	Cli    *storage.Client
 	Bucket string
 }
 
-func (t *StorageFile) filePath(file *entity.File) string {
+func (t *StorageFileThumbnail) filePath(file *entity.FileThumbnail) string {
 	return string(file.ID)
 }
 
-func (t *StorageFile) Put(
+func (t *StorageFileThumbnail) Put(
 	ctx context.Context,
-	file *entity.File,
+	file *entity.FileThumbnail,
 	r io.Reader,
 ) error {
 	filePath := t.filePath(file)
@@ -36,9 +36,9 @@ func (t *StorageFile) Put(
 	return nil
 }
 
-func (t *StorageFile) Get(
+func (t *StorageFileThumbnail) Get(
 	ctx context.Context,
-	file *entity.File,
+	file *entity.FileThumbnail,
 	w io.Writer,
 ) error {
 	reader, err := t.Cli.Bucket(t.Bucket).Object(t.filePath(file)).NewReader(ctx)

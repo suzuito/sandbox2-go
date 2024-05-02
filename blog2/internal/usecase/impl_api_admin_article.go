@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"io"
+	"time"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 	"github.com/suzuito/sandbox2-go/common/terrors"
@@ -18,7 +19,12 @@ func (t *Impl) APIPutAdminArticle(
 	title *string,
 	published *bool,
 ) (*DTOAPIPutAdminArticle, error) {
-	article, err := t.S.PutArticle(ctx, articleID, title, published, nil)
+	var publishedAt *time.Time
+	if published != nil && *published {
+		publishedAtValue := time.Now()
+		publishedAt = &publishedAtValue
+	}
+	article, err := t.S.PutArticle(ctx, articleID, title, published, publishedAt)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

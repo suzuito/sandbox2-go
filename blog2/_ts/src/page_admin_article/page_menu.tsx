@@ -10,6 +10,7 @@ export default function PageMenu({
     onClickAddTag,
     onClickSaveTitle,
     onClickSaveMarkdown,
+    onClickFile,
 }: {
     article: Article,
     selectableTags: Tag[],
@@ -18,6 +19,7 @@ export default function PageMenu({
     onClickAddTag: (tagId: TagId) => void,
     onClickSaveTitle: (newTitle: string) => void,
     onClickSaveMarkdown: () => void,
+    onClickFile: () => void,
 }) {
     let currentSelectedTagId: string = ""
     const refInputTitle = useRef<HTMLInputElement>(null);
@@ -34,11 +36,21 @@ export default function PageMenu({
                 height: 24,
                 // border: "1px solid red"
             }}>
+                <a href="./">記事一覧へ</a>
+            </div>
+            <div style={{
+                position: "relative",
+                height: 24,
+                // border: "1px solid red"
+            }}>
                 <button
                     onClick={() => {
                         onClickPublishToggle()
                     }}
                 >{article.published ? "公開中" : "ドラフト"}</button>
+                {article.published ?
+                    (<span>公開日 {article.publishedAtAsDate?.toLocaleString()}</span>) : (<></>)
+                }
             </div>
             <div style={{
                 position: "relative",
@@ -121,13 +133,8 @@ export default function PageMenu({
                 // border: "1px solid red"
             }}>
                 <button onClick={() => {
+                    onClickFile()
                 }}>ファイルをアップロードする</button>
-            </div>
-            <div style={{
-                position: "relative",
-                height: 24,
-                // border: "1px solid red"
-            }}>
                 <button onClick={() => {
                     onClickSaveMarkdown()
                 }}>Markdownを保存する</button>

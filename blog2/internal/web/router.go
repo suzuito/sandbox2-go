@@ -10,10 +10,12 @@ import (
 )
 
 type Impl struct {
-	U          usecase.Usecase
-	P          presenter.Presenter
-	L          *slog.Logger
-	AdminToken string
+	U                    usecase.Usecase
+	P                    presenter.Presenter
+	L                    *slog.Logger
+	AdminToken           string
+	BaseURLFile          string
+	BaseURLFileThumbnail string
 }
 
 func NewPresenter() presenter.Presenter {
@@ -80,7 +82,7 @@ func SetRouter(
 			{
 				gAdminFilesImage := gAdminFiles.Group("image")
 				gAdminFilesImage.GET("", w.GetAdminFilesImage)
-				gAdminFilesImage.POST("", w.PostAdminFilesImage)
+				// gAdminFilesImage.POST("", w.PostAdminFilesImage)
 			}
 		}
 	}
@@ -88,6 +90,7 @@ func SetRouter(
 	gAPI := e.Group("api")
 	{
 		gAdmin := gAPI.Group("admin")
+		gAdmin.Use(w.MiddlewareAdminAutho)
 		{
 			gAdminArticles := gAdmin.Group("articles")
 			{
@@ -98,6 +101,11 @@ func SetRouter(
 					gAdminArticle.POST("/edit-tags", w.APIPostAdminArticleEditTags)
 					gAdminArticle.PUT("/markdown", w.APIPutAdminArticleMarkdown)
 				}
+			}
+			{
+				gAdminFiles := gAdmin.Group("files")
+				gAdminFiles.POST("", w.APIPostAdminFiles)
+				gAdminFiles.GET("", w.APIGetAdminFiles)
 			}
 		}
 	}

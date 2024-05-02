@@ -7,22 +7,20 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-func (t *RepositoryArticle) PutFile(
+func (t *RepositoryArticle) PutFileThumbnail(
 	ctx context.Context,
-	file *entity.File,
+	file *entity.FileThumbnail,
 ) error {
 	if err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
 		if _, err := execContext(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
-			"INSERT IGNORE INTO `files`(`id`, `name`, `type`, `media_type`, `exists_thumbnail`, `created_at`)"+
-				"VALUES (?, ?, ?, ?, ?, NOW())",
+			"INSERT IGNORE INTO `file_thumbnails`(`id`, `file_id`, `media_type`)"+
+				"VALUES (?, ?, ?)",
 			file.ID,
-			file.Name,
-			file.Type,
+			file.FileID,
 			file.MediaType,
-			file.ExistsThumbnail,
 		); err != nil {
 			return terrors.Wrap(err)
 		}
@@ -33,7 +31,7 @@ func (t *RepositoryArticle) PutFile(
 	return nil
 }
 
-func (t *RepositoryArticle) DeleteFile(
+func (t *RepositoryArticle) DeleteFileThumbnail(
 	ctx context.Context,
 	fileID entity.FileID,
 ) error {
@@ -42,7 +40,7 @@ func (t *RepositoryArticle) DeleteFile(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
-			"DELETE FROM `files` WHERE `id` = ?",
+			"DELETE FROM `file_thumbnails` WHERE `file_id` = ?",
 			fileID,
 		); err != nil {
 			return terrors.Wrap(err)
@@ -54,9 +52,27 @@ func (t *RepositoryArticle) DeleteFile(
 	return nil
 }
 
-func (t *RepositoryArticle) GetArticleFiles(
+func (t *RepositoryArticle) GetFileThumbnail(
 	ctx context.Context,
-	articleID entity.ArticleID,
-) error {
-	return terrors.Wrapf("not impl")
+	fileID entity.FileID,
+) (*entity.FileThumbnail, error) {
+	// Get tags
+	row := queryRowContext(
+		ctx,
+		t.Pool,
+		"SELECT `id`,`file_id`,`media_type` FROM `file_thumbnails` WHERE id = ?",
+		fileID,
+	)
+	file := entity.FileThumbnail{}
+	if err := row.Scan(
+		&file.ID,
+		&file.FileID,
+		&file.MediaType,
+	); err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	if err := row.Err(); err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return &file, nil
 }

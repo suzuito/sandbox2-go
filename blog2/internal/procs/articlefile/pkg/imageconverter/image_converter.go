@@ -8,6 +8,6 @@ import (
 )
 
 type ImageConverter interface {
-	Decode(r io.Reader) (image.Image, encoder.Encoder, encoder.Encoder, error)
+	Decode(r io.Reader) (img image.Image, imgEncoder encoder.Encoder, thumbnailEncoder encoder.Encoder, err error)
 	CreateThumbnail(src image.Image) image.Image
 }

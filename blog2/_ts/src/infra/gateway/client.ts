@@ -1,4 +1,5 @@
-import { Article, ArticleId } from "../../entity/article";
+import { Article, ArticleId, setupArticle } from "../../entity/article";
+import { File as ArticleFile, FileAndThumbnail, FileThumbnail } from "../../entity/file";
 import { Tag, TagId } from "../../entity/tag";
 import { APIClient } from "../../gateway/client";
 
@@ -9,7 +10,7 @@ class APIClientImpl implements APIClient {
         title: string | undefined,
         published: boolean | undefined,
     ): Promise<Article> {
-        return await (await fetch(
+        const article = await (await fetch(
             `/api/admin/articles/${articleId}`,
             {
                 method: "PUT",
@@ -21,7 +22,9 @@ class APIClientImpl implements APIClient {
                     "Content-Type": "application/json",
                 },
             },
-        )).json();
+        )).json() as Article;
+        setupArticle(article);
+        return article;
     }
     async putAdminArticleMarkdown(
         articleId: ArticleId,
@@ -43,7 +46,7 @@ class APIClientImpl implements APIClient {
         addTagId: TagId[],
         deleteTagId: TagId[],
     ): Promise<{ article: Article, notAttachedTags: Tag[] }> {
-        return await (await fetch(
+        const r = await (await fetch(
             `/api/admin/articles/${articleId}/edit-tags`,
             {
                 method: "POST",
@@ -55,7 +58,39 @@ class APIClientImpl implements APIClient {
                     "Content-Type": "application/json",
                 },
             },
+        )).json() as { article: Article, notAttachedTags: Tag[] };
+        setupArticle(r.article);
+        return r;
+    }
+    async postAdminFiles(
+        file: File,
+    ): Promise<{ file: ArticleFile, fileThumbnail: FileThumbnail | undefined }> {
+        const formData = new FormData();
+        formData.append("file", file);
+        const r = await (await fetch(
+            `/api/admin/files`,
+            {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-File-Type": file.type,
+                }
+            },
         )).json();
+        return r;
+    }
+    async getAdminFiles(
+        q: string,
+        page: number,
+        size: number,
+    ): Promise<{ page: number, size: number, files: FileAndThumbnail[] }> {
+        const r = await (await fetch(
+            `/api/admin/files?q=${q}&page=${page}&size=${size}`,
+            {
+                method: "GET",
+            },
+        )).json();
+        return r;
     }
 }
 

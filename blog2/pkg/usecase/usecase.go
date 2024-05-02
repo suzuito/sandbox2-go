@@ -49,18 +49,16 @@ type Usecase interface {
 		ctx context.Context,
 		article *entity.Article,
 	) (*internal_usecase.DTOGetAdminArticleTags, error)
-	PostAdminFiles(
-		ctx context.Context,
-		fileName string,
-		fileType entity.FileType,
-		input io.Reader,
-	) (*internal_usecase.DTOPostAdminFiles, error)
+	// PostAdminFiles(
+	// 	ctx context.Context,
+	// 	fileName string,
+	// 	fileType entity.FileType,
+	// 	input io.Reader,
+	// ) (*internal_usecase.DTOPostAdminFiles, error)
 	MiddlewareGetArticle(
 		ctx context.Context,
 		articleID entity.ArticleID,
 	) (*internal_usecase.DTOMiddlewareGetArticle, error)
-
-	StartFileUploadedProcessFromGCF(ctx context.Context, data []byte) error
 
 	APIPutAdminArticle(
 		ctx context.Context,
@@ -79,6 +77,17 @@ type Usecase interface {
 		articleID entity.ArticleID,
 		markdown io.Reader,
 	) (*internal_usecase.DTOAPIPutAdminArticleMarkdown, error)
+	APIPostAdminFiles(
+		ctx context.Context,
+		fileName string,
+		file io.Reader,
+	) (*internal_usecase.DTOAPIPostAdminFiles, error)
+	APIGetAdminFiles(
+		ctx context.Context,
+		queryString string,
+		page int,
+		limit int,
+	) (*internal_usecase.DTOAPIGetAdminFiles, error)
 
 	// Not production codes
 	CreateTestData001(

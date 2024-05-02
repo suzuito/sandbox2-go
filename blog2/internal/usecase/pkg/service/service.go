@@ -47,7 +47,31 @@ type Service interface {
 		input io.Reader,
 	) (*entity.FileUploaded, error)
 
-	StartFileUploadedProcess(ctx context.Context, file *entity.FileUploaded) (*entity.File, error)
+	DetectFileType(
+		ctx context.Context,
+		data []byte,
+	) (entity.FileType, string)
+	PutFile(
+		ctx context.Context,
+		file *entity.File,
+		data []byte,
+	) error
+	ExistFile(
+		ctx context.Context,
+		fileID entity.FileID,
+	) error
+
+	CreateThumbnail(
+		ctx context.Context,
+		fileID entity.FileID,
+	) (*entity.FileThumbnail, error)
+
+	SearchFiles(
+		ctx context.Context,
+		queryString string,
+		offset int,
+		limit int,
+	) ([]*entity.FileAndThumbnail, error)
 
 	CreateTestData(ctx context.Context) error
 }

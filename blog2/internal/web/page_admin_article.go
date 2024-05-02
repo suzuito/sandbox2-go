@@ -16,10 +16,12 @@ type PageAdminArticle struct {
 }
 
 type PageAdminArticleJsEnv struct {
-	Article         entity.Article `json:"article"`
-	NotAttachedTags []*entity.Tag  `json:"notAttachedTags"`
-	Markdown        string         `json:"markdown"`
-	HTML            string         `json:"html"`
+	Article              entity.Article `json:"article"`
+	NotAttachedTags      []*entity.Tag  `json:"notAttachedTags"`
+	Markdown             string         `json:"markdown"`
+	HTML                 string         `json:"html"`
+	BaseURLFile          string         `json:"baseUrlFile"`
+	BaseURLFileThumbnail string         `json:"baseUrlFileThumbnail"`
 }
 
 func (t *Impl) PageAdminArticle(ctx *gin.Context) {
@@ -40,10 +42,12 @@ func (t *Impl) PageAdminArticle(ctx *gin.Context) {
 			},
 			ComponentCommonHead: ComponentCommonHead{},
 			JsEnv: PageAdminArticleJsEnv{
-				Article:         *article,
-				NotAttachedTags: dto.NotAttachedTags,
-				Markdown:        dto.MarkdownBody,
-				HTML:            dto.HTMLBody,
+				Article:              *article,
+				NotAttachedTags:      dto.NotAttachedTags,
+				Markdown:             dto.MarkdownBody,
+				HTML:                 dto.HTMLBody,
+				BaseURLFile:          t.BaseURLFile,
+				BaseURLFileThumbnail: t.BaseURLFileThumbnail,
 			},
 		},
 	)

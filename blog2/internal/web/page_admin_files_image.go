@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
 )
 
 type PageAdminFilesImage struct {
@@ -21,39 +20,39 @@ func (t *Impl) GetAdminFilesImage(ctx *gin.Context) {
 	)
 }
 
-func (t *Impl) PostAdminFilesImage(ctx *gin.Context) {
-	fileHeader, err := ctx.FormFile("inputImage")
-	if err != nil {
-		t.P.RenderHTML(
-			ctx,
-			http.StatusBadRequest,
-			"page_error.html",
-			PageError{
-				ComponentCommonHead: ComponentCommonHead{},
-				Message:             err.Error(),
-			},
-		)
-		return
-	}
-	f, err := fileHeader.Open()
-	if err != nil {
-		t.P.RenderHTML(
-			ctx,
-			http.StatusBadRequest,
-			"page_error.html",
-			PageError{
-				ComponentCommonHead: ComponentCommonHead{},
-				Message:             err.Error(),
-			},
-		)
-		return
-	}
-	defer f.Close()
-	_, err = t.U.PostAdminFiles(ctx, "", entity.FileTypeImage, f)
-	if err != nil {
-		t.L.Error("", "err", err)
-		t.RenderUnknownError(ctx)
-		return
-	}
-	ctx.Redirect(http.StatusFound, "/admin/files/image")
-}
+// func (t *Impl) PostAdminFilesImage(ctx *gin.Context) {
+// 	fileHeader, err := ctx.FormFile("inputImage")
+// 	if err != nil {
+// 		t.P.RenderHTML(
+// 			ctx,
+// 			http.StatusBadRequest,
+// 			"page_error.html",
+// 			PageError{
+// 				ComponentCommonHead: ComponentCommonHead{},
+// 				Message:             err.Error(),
+// 			},
+// 		)
+// 		return
+// 	}
+// 	f, err := fileHeader.Open()
+// 	if err != nil {
+// 		t.P.RenderHTML(
+// 			ctx,
+// 			http.StatusBadRequest,
+// 			"page_error.html",
+// 			PageError{
+// 				ComponentCommonHead: ComponentCommonHead{},
+// 				Message:             err.Error(),
+// 			},
+// 		)
+// 		return
+// 	}
+// 	defer f.Close()
+// 	_, err = t.U.PostAdminFiles(ctx, "", entity.FileTypeImage, f)
+// 	if err != nil {
+// 		t.L.Error("", "err", err)
+// 		t.RenderUnknownError(ctx)
+// 		return
+// 	}
+// 	ctx.Redirect(http.StatusFound, "/admin/files/image")
+// }

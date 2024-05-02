@@ -1,4 +1,5 @@
 import { Article, ArticleId } from "../entity/article";
+import { File as ArticleFile, FileAndThumbnail, FileThumbnail } from "../entity/file";
 import { Tag, TagId } from "../entity/tag";
 
 export interface APIClient {
@@ -16,4 +17,12 @@ export interface APIClient {
         addTagId: TagId[],
         deleteTagId: TagId[],
     ): Promise<{ article: Article, notAttachedTags: Tag[] }>;
+    postAdminFiles(
+        file: File,
+    ): Promise<{ file: ArticleFile, fileThumbnail: FileThumbnail | undefined }>;
+    getAdminFiles(
+        q: string,
+        page: number,
+        size: number,
+    ): Promise<{ page: number, size: number, files: FileAndThumbnail[] }>
 }
