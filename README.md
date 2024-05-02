@@ -34,6 +34,11 @@
 
 ## Development
 
+```bash
+# Install air
+go install github.com/cosmtrek/air@latest
+```
+
 ### common
 
 #### Test
@@ -59,7 +64,7 @@ vim ./.service/blog/local.env.sh
 source ./.service/blog/local.env.sh
 
 # server
-air -c ./.service/blog/.air.server.toml
+$(go env GOPATH)/bin/air -c ./.service/blog/.air.server.toml
 curl http://localhost:8080/ping
 
 # check rdb
@@ -80,13 +85,54 @@ Migration
 
 ```bash
 # Create new migration
-migrate create -dir .schema -ext sql init
+.bin/migrate create -dir .schema -ext sql init
 ```
 
 #### Test
 
 ```bash
 make blog-test
+```
+
+### blog2
+
+```bash
+make blog2-init
+make blog2-init-rdb
+```
+
+#### Run
+
+```bash
+# Environment variables
+cp ./.service/blog2/local.env.sh.sample ./.service/blog2/local.env.sh
+## Modification of environment variables
+vim ./.service/blog2/local.env.sh
+source ./.service/blog2/local.env.sh
+
+# create test data
+make blog2-init-rdb-test-data
+
+# server
+$(go env GOPATH)/bin/air -c ./.service/blog2/.air.server.toml
+curl http://localhost:8080/ping
+
+# js
+cd blog2/_ts && npm run serve
+```
+
+#### Migration
+
+```bash
+NAME=init make blog2-migrate-create
+```
+
+#### DB
+
+Local
+
+```bash
+mysql -u root -h 127.0.0.1 -P 3307
 ```
 
 ### crawler

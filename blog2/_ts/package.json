@@ -1,0 +1,32 @@
+{
+    "name": "blog2",
+    "version": "1.0.0",
+    "author": {
+        "name": "suzuito"
+    },
+    "engines": {
+        "node": ">=20.0.0 <21.0.0",
+        "npm": ">=10.0.0 <11.0.0"
+    },
+    "scripts": {
+        "serve": "webpack --mode=development -w",
+        "build": "webpack --mode=production"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.1.1",
+        "eslint": "^8.57.0",
+        "eslint-plugin-react": "^7.34.1",
+        "globals": "^15.1.0",
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.4.2",
+        "typescript-eslint": "^7.8.0",
+        "webpack": "^5.90.3",
+        "webpack-cli": "^5.1.4"
+    },
+    "dependencies": {
+        "@types/react": "^18.3.1",
+        "@types/react-dom": "^18.3.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    }
+}

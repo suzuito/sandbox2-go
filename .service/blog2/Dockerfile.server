@@ -1,0 +1,34 @@
+# Build js
+FROM node:20-alpine AS build1
+
+ARG NODE_ENV
+ENV NODE_ENV ${NODE_ENV}
+
+RUN apk add --no-cache make
+
+WORKDIR /app
+COPY . ./
+RUN cd blog2/_ts/ && npm ci && npm run build
+
+# Build server
+FROM golang:1.22-alpine AS build2
+
+RUN apk add --no-cache make
+
+WORKDIR /app
+
+COPY . ./
+COPY --from=build1 /app/blog2/internal/web/_js/ blog2/internal/web/_js/
+RUN make blog2-build-server
+
+# Image
+FROM alpine:latest
+
+WORKDIR /app
+COPY --from=build2 /app/blog2-server.out .
+COPY --from=build2 /app/blog2/internal/web/_js/ blog2/internal/web/_js/
+COPY --from=build2 /app/blog2/internal/web/_css/ blog2/internal/web/_css/
+COPY --from=build2 /app/blog2/internal/web/_images/ blog2/internal/web/_images/
+COPY --from=build2 /app/blog2/internal/web/*.html blog2/internal/web/
+
+ENTRYPOINT ["/app/blog2-server.out"]

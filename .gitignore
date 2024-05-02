@@ -30,3 +30,6 @@ local.env.sh
 changelog.md
 
 .bin/migrate
+
+blog2/internal/web/_js/*
+blog2/_ts/node_modules

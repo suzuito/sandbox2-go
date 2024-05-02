@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {{template "component_common_head" .}}
+    <style>
+        .page_article {
+            padding: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        {{template "component_header" .}}
+    </header>
+    <main>
+        <div class="content">
+            {{template "component_breadcrumbs" .}}
+            <div class="page_article">
+                <h1 style="display: none;">
+                    {{.Article.Title}}
+                </h1>
+                <div>
+                    {{if .Article.PublishedAt}}
+                    {{.Article.PublishedAt.Format "2006-01-02"}}
+                    {{end}}
+                </div>
+                <div>
+                    {{range .Article.Tags}}
+                    <span>
+                        <a href="/articles?tag={{.ID}}">{{.Name}}</a>
+                    </span>
+                    {{end}}
+                </div>
+                <div>
+                    {{.ArticleHTML}}
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        {{template "component_footer"}}
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <style>
+        .page_admin_article-main {
+            position: absolute;
+            /* border: 3px solid red; */
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+
+            border: 3px solid red;
+        }
+    </style>
+    <meta name="robots" content="noindex">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {{template "component_common_head" .}}
+    <script type="text/javascript" src="/js/page_admin_article.js"></script>
+</head>
+
+<body>
+    <header>
+        {{template "component_header" .}}
+    </header>
+    <script>window.env = {{.JsEnv }}</script>
+    <div class="content">
+        <main>
+            <div class="page_admin_article-main" id="react-app">
+            </div>
+        </main>
+    </div>
+    <footer>
+        {{template "component_footer"}}
+    </footer>
+</body>
+
+
+</html>
