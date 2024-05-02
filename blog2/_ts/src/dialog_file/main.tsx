@@ -58,7 +58,7 @@ export default function DialogFile({
                                 }}>URLをコピーする</button>
                             </div>
                             <div>
-                                <a href={getFileUrl(file.file)} target="_blank">{file.file.id}</a>
+                                <a href={getFileUrl(file.file)} target="_blank" rel="noreferrer">{file.file.id}</a>
                             </div>
                         </div>
                     )
