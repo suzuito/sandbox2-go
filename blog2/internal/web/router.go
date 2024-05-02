@@ -13,6 +13,7 @@ type Impl struct {
 	U                    usecase.Usecase
 	P                    presenter.Presenter
 	L                    *slog.Logger
+	NoIndex              bool
 	AdminToken           string
 	BaseURLFile          string
 	BaseURLFileThumbnail string
@@ -26,6 +27,12 @@ func SetRouter(
 	e *gin.Engine,
 	w *Impl,
 ) {
+	if w.NoIndex {
+		e.Use(func(ctx *gin.Context) {
+			ctx.Header("X-Robots-Tag", "noindex")
+			ctx.Next()
+		})
+	}
 	e.LoadHTMLGlob(path.Join("blog2/internal/web", "*.html"))
 	e.Static("js", "blog2/internal/web/_js")
 	e.Static("css", "blog2/internal/web/_css")

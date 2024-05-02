@@ -45,10 +45,15 @@ func NewWebImpl(
 	u usecase.Usecase,
 	logger *slog.Logger,
 ) *web.Impl {
+	noIndex := true
+	if env.Env != "prd" {
+		noIndex = false
+	}
 	w := web.Impl{
 		U:                    u,
 		P:                    web.NewPresenter(),
 		L:                    logger,
+		NoIndex:              noIndex,
 		AdminToken:           env.AdminToken,
 		BaseURLFile:          env.BaseURLFile,
 		BaseURLFileThumbnail: env.BaseURLFileThumbnail,
