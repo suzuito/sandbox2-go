@@ -3,6 +3,7 @@ body {
     /* https://fonts.google.com/noto/specimen/Noto+Sans+JP */
     font-family: 'Noto Sans JP', sans-serif;
     font-size: 16px;
+    overflow-wrap: anywhere;
 }
 
 header {
