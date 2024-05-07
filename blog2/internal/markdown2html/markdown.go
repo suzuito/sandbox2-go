@@ -110,6 +110,27 @@ func getLinesInMarkdown(node ast.Node, reader text.Reader) int {
 	return lines
 }
 
+type astTransformerAddImageInfo struct {
+}
+
+func (a *astTransformerAddImageInfo) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
+	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		if n.Kind() != ast.KindImage {
+			return ast.WalkContinue, nil
+		}
+		if !entering {
+			return ast.WalkContinue, nil
+		}
+		nodeImage, ok := n.(*ast.Image)
+		if !ok {
+			return ast.WalkContinue, nil
+		}
+		nodeImage.SetAttributeString("style", []byte("max-width: 100%;"))
+		nodeImage.SetAttributeString("class", []byte("article-image")) // Postprocessorにて、リンク付き画像にするためにclassを追加する
+		return ast.WalkContinue, nil
+	})
+}
+
 func convertMarkdownToHTML(
 	ctx context.Context,
 	src string,
@@ -143,6 +164,7 @@ func convertMarkdownToHTML(
 				util.Prioritized(&astTransformerAddLinkBlank{}, 1), // Add target="_blank" to <a> tag in html
 				util.Prioritized(&astTransformerHeading{}, 1),
 				util.Prioritized(&astTransformerAddMarkdownLines{}, 1),
+				util.Prioritized(&astTransformerAddImageInfo{}, 1),
 			),
 			parser.WithAutoHeadingID(), // For TOC
 		),
