@@ -1,4 +1,6 @@
-[![codecov](https://codecov.io/gh/suzuito/sandbox2-go/graph/badge.svg?token=Rj1wZ7rRgW)](https://codecov.io/gh/suzuito/sandbox2-go)
+[![codecov](https://codecov.io/github/suzuito/sandbox2-go/branch/main/graph/badge.svg?token=Rj1wZ7rRgW)](https://codecov.io/github/suzuito/sandbox2-go)
+[![check_in_main](https://github.com/suzuito/sandbox2-go/actions/workflows/check-in-main.yaml/badge.svg?branch=main)](https://github.com/suzuito/sandbox2-go/actions/workflows/check-in-main.yaml)
+
 
 # sandbox2-go
 
