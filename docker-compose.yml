@@ -10,15 +10,3 @@ services:
       - ./.service/blog2/.conf.d:/etc/mysql/conf.d
     ports:
       - 3307:3306
-  crawler-firebase-emulator:
-    build:
-      dockerfile: Dockerfile.firebase
-      context: ./.service/crawler/
-    working_dir: /opt/app
-    volumes:
-      - ./.service/crawler:/opt/app
-    command: /bin/sh -c '/usr/local/bin/firebase emulators:start --project=dummy-prj'
-    ports:
-      - 8081:8081
-      - 8082:8082
-      - 8083:8083

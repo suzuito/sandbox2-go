@@ -40,26 +40,3 @@ blog2-build-server:
 	go build -o blog2-server.out blog2/cmd/server/*.go
 blog2-mock:
 	./mockgen blog2/internal/markdown2html/markdown2html.go
-
-#
-# crawler
-#
-crawler-init:
-	docker compose up -d crawler-firebase-emulator
-	while [ true ]; do curl http://localhost:8082 > /dev/null 2>&1 && echo 'Firebase emulator connection is OK' && break; echo 'Waiting until Firebase emulator connection is OK' && sleep 1; done
-crawler-mock:
-	./mockgen crawler/pkg/entity/crawler/fetcher.go
-	./mockgen crawler/pkg/entity/crawler/parser.go
-	./mockgen crawler/pkg/entity/crawler/publisher.go
-	./mockgen crawler/pkg/entity/notifier/notifier.go
-	./mockgen crawler/internal/usecase/factory/crawler.go
-	./mockgen crawler/internal/usecase/factory/notifier.go
-	./mockgen crawler/internal/usecase/repository/crawler.go
-	./mockgen crawler/internal/usecase/repository/time_series_data.go
-	./mockgen crawler/internal/usecase/repository/notifier.go
-	./mockgen crawler/internal/usecase/repository/crawler_configuration.go
-	./mockgen crawler/internal/usecase/queue/trigger_crawler.go
-	./mockgen crawler/internal/usecase/discord/discord_go_session.go
-	./mockgen crawler/internal/infra/fetcher/httpclientwrapper/http_client_wrapper.go
-crawler-test:
-	sh test.sh ./crawler/...
