@@ -38,6 +38,8 @@ blog2-migrate-create:
 	.bin/migrate create -ext sql -dir ./.service/blog2/.schema/ $(NAME)
 blog2-build-server:
 	go build -o blog2-server.out blog2/cmd/server/*.go
+blog2-mock:
+	./mockgen blog2/internal/markdown2html/markdown2html.go
 
 #
 # crawler
