@@ -1,7 +1,5 @@
 apiVersion: skaffold/v4beta7
 kind: Config
-metadata: 
-  name: deploy-run-quickstart
 profiles:
 - name: stg
   manifests:
