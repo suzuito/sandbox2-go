@@ -20,7 +20,7 @@ steps:
       'create',
       'commit-${SHORT_SHA}',
       '--delivery-pipeline',
-      'blog-server',
+      '${_DELIVERY_PIPELINE}',
       '--region',
       'asia-northeast1',
       '--images',
