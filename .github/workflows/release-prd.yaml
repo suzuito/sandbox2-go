@@ -1,4 +1,4 @@
-name: release
+name: release-prd
 on:
   workflow_dispatch:
     inputs:
@@ -8,7 +8,7 @@ on:
         type: string
 
 jobs:
-  create-release-draft:
+  release-prd:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
@@ -16,12 +16,3 @@ jobs:
       - run: bash create-release-draft.sh ${{ inputs.version }} ${{ github.ref }}
         env:
           GH_TOKEN: ${{ github.token }}
-  release-stg:
-    permissions: write-all
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: git push origin --delete stg
-        continue-on-error: true
-      - run: git tag stg
-      - run: git push origin stg
