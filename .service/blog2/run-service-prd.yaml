@@ -6,12 +6,13 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/minScale: 1
+        autoscaling.knative.dev/minScale: 0
         autoscaling.knative.dev/maxScale: 1
         run.googleapis.com/cloudsql-instances: products-common-common-202406:asia-northeast1:sandbox-instance
         run.googleapis.com/secrets: secret-alias-2:projects/1010894990875/secrets/mysql_sandbox_instance_user_password_app
     spec:
       serviceAccountName: blog2-server-app-sa@blog-prd-20240419.iam.gserviceaccount.com
+      timeoutSeconds: 60
       containers:
       - image: app-image
         resources:
