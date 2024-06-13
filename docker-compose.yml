@@ -1,18 +1,4 @@
 services:
-  blog-mysql:
-    build:
-      dockerfile: Dockerfile.mysql
-      context: ./.service/blog/
-    platform: linux/x86_64
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
-      LC_ALL: ja_JP.UTF-8
-      LANG: ja_JP.UTF-8
-      TZ: Asia/Tokyo
-    volumes:
-      - ./.service/blog/.conf.d:/etc/mysql/conf.d
-    ports:
-      - 3306:3306
   blog2-mysql:
     build:
       dockerfile: Dockerfile.mysql
@@ -24,15 +10,3 @@ services:
       - ./.service/blog2/.conf.d:/etc/mysql/conf.d
     ports:
       - 3307:3306
-  crawler-firebase-emulator:
-    build:
-      dockerfile: Dockerfile.firebase
-      context: ./.service/crawler/
-    working_dir: /opt/app
-    volumes:
-      - ./.service/crawler:/opt/app
-    command: /bin/sh -c '/usr/local/bin/firebase emulators:start --project=dummy-prj'
-    ports:
-      - 8081:8081
-      - 8082:8082
-      - 8083:8083

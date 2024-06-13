@@ -1,0 +1,14 @@
+name: release-stg
+on:
+  workflow_dispatch:
+
+jobs:
+  release-stg:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: git push origin --delete stg
+        continue-on-error: true
+      - run: git tag stg
+      - run: git push origin stg

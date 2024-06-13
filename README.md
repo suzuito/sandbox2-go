@@ -1,4 +1,6 @@
-[![codecov](https://codecov.io/gh/suzuito/sandbox2-go/graph/badge.svg?token=Rj1wZ7rRgW)](https://codecov.io/gh/suzuito/sandbox2-go)
+[![codecov](https://codecov.io/github/suzuito/sandbox2-go/branch/main/graph/badge.svg?token=Rj1wZ7rRgW)](https://codecov.io/github/suzuito/sandbox2-go)
+[![check_in_main](https://github.com/suzuito/sandbox2-go/actions/workflows/check-in-main.yaml/badge.svg?branch=main)](https://github.com/suzuito/sandbox2-go/actions/workflows/check-in-main.yaml)
+
 
 # sandbox2-go
 
@@ -133,40 +135,6 @@ Local
 
 ```bash
 mysql -u root -h 127.0.0.1 -P 3307
-```
-
-### crawler
-
-Make develop environment
-
-```bash
-make crawler-init
-```
-
-#### Run
-
-Open filebase UI in local.
-http://localhost:8082
-
-Load environment variables.
-
-```bash
-cp ./.service/crawler/local.env.sh.sample ./.service/crawler/local.env.sh
-vi ./.service/crawler/local.env.sh
-source ./.service/crawler/local.env.sh
-```
-
-Run crawler app
-
-```bash
-./crawler-crawl.exe
-```
-
-Run notifier app
-
-```bash
-go run ./crawler/cmd/crawl/main.go -crawler-id knowledgeworkblog -crawler-input-data '{"URL":"https://note.com/knowledgework/n/n4d7b97ff802c"}'
-go run ./crawler/cmd/notify/main.go -full-path Crawler/TimeSeriesData/goblog/goblog-2023-08-14
 ```
 
 ## デプロイ

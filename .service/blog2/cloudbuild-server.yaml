@@ -1,0 +1,34 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: [
+      'build',
+      '-t',
+      'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}',
+      '-f',
+      '.service/blog2/Dockerfile.server',
+      '.',
+      '--build-arg',
+      'NODE_ENV=development'
+    ]
+  - name: gcr.io/cloud-builders/docker
+    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}']
+  - name: gcr.io/cloud-builders/gcloud
+    dir: '.service/blog2/'
+    args: [
+      'deploy',
+      'releases',
+      'create',
+      'commit-${SHORT_SHA}',
+      '--delivery-pipeline',
+      '${_DELIVERY_PIPELINE}',
+      '--region',
+      'asia-northeast1',
+      '--images',
+      'app-image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}'
+    ]
+images:
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}'
+options:
+  logging: CLOUD_LOGGING_ONLY
+  pool:
+    name: projects/$PROJECT_ID/locations/asia-northeast1/workerPools/minimum

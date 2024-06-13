@@ -2,6 +2,8 @@ package markdown2html
 
 import (
 	"context"
+
+	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
 type Markdown2HTML interface {
@@ -21,9 +23,13 @@ func (t *Markdown2HTMLImpl) Generate(
 ) error {
 	// Pre processor
 	// Markdown to HTML
-	if err := convertMarkdownToHTML(ctx, src, dst); err != nil {
-		return err
+	html := ""
+	if err := convertMarkdownToHTML(ctx, src, &html); err != nil {
+		return terrors.Wrap(err)
 	}
 	// Post processor
+	if err := convertHTML(ctx, html, dst); err != nil {
+		return terrors.Wrap(err)
+	}
 	return nil
 }
