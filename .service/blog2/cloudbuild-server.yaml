@@ -3,7 +3,7 @@ steps:
     args: [
       'build',
       '-t',
-      'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${BRANCH_NAME}',
+      'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}',
       '-f',
       '.service/blog2/Dockerfile.server',
       '.',
@@ -11,7 +11,7 @@ steps:
       'NODE_ENV=development'
     ]
   - name: gcr.io/cloud-builders/docker
-    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${BRANCH_NAME}']
+    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}']
   - name: gcr.io/cloud-builders/gcloud
     dir: '.service/blog2/'
     args: [
@@ -24,10 +24,10 @@ steps:
       '--region',
       'asia-northeast1',
       '--images',
-      'app-image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${BRANCH_NAME}'
+      'app-image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}'
     ]
 images:
-  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${BRANCH_NAME}'
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/services/blog_server:${TAG_NAME}'
 options:
   logging: CLOUD_LOGGING_ONLY
   pool:
