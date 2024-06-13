@@ -5,9 +5,9 @@ profiles:
   manifests:
     rawYaml:
     - run-service-stg.yaml
-# - name: prd
-#   manifests:
-#     rawYaml:
-#     - run-service-prd.yaml
+- name: prd
+  manifests:
+    rawYaml:
+    - run-service-prd.yaml
 deploy:
   cloudrun: {}
