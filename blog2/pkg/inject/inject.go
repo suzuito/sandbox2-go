@@ -46,7 +46,7 @@ func NewWebImpl(
 	logger *slog.Logger,
 ) *web.Impl {
 	noIndex := true
-	if env.Env != "prd" {
+	if env.Env == "prd" {
 		noIndex = false
 	}
 	w := web.Impl{

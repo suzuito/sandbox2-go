@@ -1,0 +1,56 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: dummy # from-param: server-${location}-from-cloud-deploy
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: 0
+        autoscaling.knative.dev/maxScale: 1
+        run.googleapis.com/cloudsql-instances: products-common-common-202406:asia-northeast1:sandbox-instance
+        run.googleapis.com/secrets: secret-alias-2:projects/1010894990875/secrets/mysql_sandbox_instance_user_password_app
+    spec:
+      serviceAccountName: blog2-server-app-sa@blog-prd-20240419.iam.gserviceaccount.com
+      timeoutSeconds: 60
+      containers:
+      - image: app-image
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 128Mi
+        env:
+        - name: ARTICLE_MARKDOWN_BUCKET
+          value: blog-prd-blog2-article-markdown
+        - name: BASE_URL_FILE
+          value: https://storage.googleapis.com/blog-prd-blog2-file
+        - name: BASE_URL_FILE_THUMBNAIL
+          value: https://storage.googleapis.com/blog-prd-blog2-file-thumbnail
+        - name: DB_NAME
+          value: blog2-prd
+        - name: DB_USER
+          value: app
+        - name: ENV
+          value: prd
+        - name: FILE_BUCKET
+          value: blog-prd-blog2-file
+        - name: FILE_THUMBNAIL_BUCKET
+          value: blog-prd-blog2-file-thumbnail
+        - name: GOOGLE_TAG_MANAGER_ID
+          value: G-3Z9Y88MWBW
+        - name: SITE_ORIGIN
+          value: blog.tach.dev
+        - name: hoge
+          value: aaa
+        - name: DB_INSTANCE_UNIX_SOCKET
+          value: /cloudsql/products-common-common-202406:asia-northeast1:sandbox-instance
+        - name: ADMIN_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: '1'
+              name: token_blog2_admin
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: '1'
+              name: secret-alias-2
