@@ -16,3 +16,7 @@ updates:
     directory: "/.service/blog2/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/blog2/_ts/"
+    schedule:
+      interval: "daily"
