@@ -40,3 +40,11 @@ blog2-build-server:
 	go build -o blog2-server.out blog2/cmd/server/*.go
 blog2-mock:
 	./mockgen blog2/internal/markdown2html/markdown2html.go
+
+#
+# photodx/bff
+#
+photodx/bff-init:
+	echo "TODO"
+photodx/bff-build:
+	go build -o photodx-bff.out photodx/cmd/bff/*.go

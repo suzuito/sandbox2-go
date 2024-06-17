@@ -1,20 +1,19 @@
 [![codecov](https://codecov.io/github/suzuito/sandbox2-go/branch/main/graph/badge.svg?token=Rj1wZ7rRgW)](https://codecov.io/github/suzuito/sandbox2-go)
 [![check_in_main](https://github.com/suzuito/sandbox2-go/actions/workflows/check-in-main.yaml/badge.svg?branch=main)](https://github.com/suzuito/sandbox2-go/actions/workflows/check-in-main.yaml)
 
-
 # sandbox2-go
 
-趣味開発用のSandboxレポジトリ。
+趣味開発用の Sandbox レポジトリ。
 
 ## ディレクトリ構造
 
 ディレクトリ構造は下記の通り。
 
-|||
-|---|---|
-|`cmd`|サブプロジェクト（後述）に依存しないコマンドラインユーティリティ|
-|`.service`|サブプロジェクト毎の開発環境を構築するためのリソース群|
-|`$subProject/`|サブプロジェクト（後述）のルートディレクトリ|
+|                |                                                                  |
+| -------------- | ---------------------------------------------------------------- |
+| `cmd`          | サブプロジェクト（後述）に依存しないコマンドラインユーティリティ |
+| `.service`     | サブプロジェクト毎の開発環境を構築するためのリソース群           |
+| `$subProject/` | サブプロジェクト（後述）のルートディレクトリ                     |
 
 ### サブプロジェクト
 
@@ -137,6 +136,19 @@ Local
 mysql -u root -h 127.0.0.1 -P 3307
 ```
 
+### photodx
+
+```bash
+make photodx/bff-init
+```
+
+#### Run
+
+```bash
+$(go env GOPATH)/bin/air -c ./.service/photodx/bff/.air.toml
+curl http://localhost:8080/ping
+```
+
 ## デプロイ
 
 定義
@@ -147,5 +159,5 @@ mysql -u root -h 127.0.0.1 -P 3307
 手順
 
 1. Github action `create-release-draft` を実行する。
-  a. Github action が release draft を作成する。
+   a. Github action が release draft を作成する。
 2. Release draft を公開する。
