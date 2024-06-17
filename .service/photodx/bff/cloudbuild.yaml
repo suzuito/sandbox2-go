@@ -1,11 +1,12 @@
 steps:
   - name: gcr.io/cloud-builders/docker
-    dir: .service/photodx/bff
     args:
       [
         "build",
         "-t",
         "asia-northeast1-docker.pkg.dev/$PROJECT_ID/photodx/bff:${TAG_NAME}",
+        "-f",
+        ".service/photodx/bff/Dockerfile",
         ".",
       ]
   - name: gcr.io/cloud-builders/docker
