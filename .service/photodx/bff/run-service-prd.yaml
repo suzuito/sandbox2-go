@@ -20,3 +20,5 @@ spec:
           env:
             - name: ENV
               value: prd
+            - name: hoge
+              value: fuga
