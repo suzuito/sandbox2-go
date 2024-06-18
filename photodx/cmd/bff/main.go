@@ -8,7 +8,7 @@ import (
 
 func main() {
 	engine := gin.Default()
-	engine.GET("/hoge", func(ctx *gin.Context) {
+	engine.GET("/api/hoge", func(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "hoge")
 	})
 	engine.Run()
