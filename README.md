@@ -139,7 +139,14 @@ mysql -u root -h 127.0.0.1 -P 3307
 ### photodx
 
 ```bash
+# Environment variables
+cp ./.service/photodx/local.env.sh.sample ./.service/photodx/local.env.sh
+## Modification of environment variables
+vim ./.service/photodx/local.env.sh
+source ./.service/photodx/local.env.sh
+
 make photodx/bff-init
+make photodx/bff-init-rdb
 ```
 
 #### Run
