@@ -6,10 +6,11 @@ import (
 	"strings"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
-func updateSearchIndex(ctx context.Context, txOrDB TxOrDB, articleID entity.ArticleID) error {
+func updateSearchIndex(ctx context.Context, txOrDB csql.TxOrDB, articleID entity.ArticleID) error {
 	articles, err := getArticles(ctx, txOrDB, articleID)
 	if err != nil {
 		return terrors.Wrap(err)
