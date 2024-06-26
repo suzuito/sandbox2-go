@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
@@ -14,8 +15,8 @@ func (t *RepositoryArticle) CreateArticle(
 	now time.Time,
 ) (*entity.Article, error) {
 	var article *entity.Article
-	err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
-		_, err := execContext(
+	err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
+		_, err := csql.ExecContext(
 			ctx,
 			tx,
 			"INSERT INTO `articles`(`id`, `title`, `published`, `published_at`, `created_at`, `updated_at`) VALUES (?, ?, false, NULL, FROM_UNIXTIME(?), FROM_UNIXTIME(?))",

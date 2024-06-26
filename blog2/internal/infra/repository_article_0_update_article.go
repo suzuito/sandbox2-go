@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
@@ -21,7 +22,7 @@ func (t *RepositoryArticle) UpdateArticle(
 		return nil, terrors.Wrap(fmt.Errorf("all fields are null"))
 	}
 	var article *entity.Article
-	err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
+	err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
 		args := []any{}
 		q := "UPDATE `articles` SET "
 		statsSet := []string{}
@@ -40,7 +41,7 @@ func (t *RepositoryArticle) UpdateArticle(
 		q += strings.Join(statsSet, ",")
 		q += " WHERE `articles`.`id` = ?"
 		args = append(args, articleID)
-		_, err := execContext(ctx, tx, q, args...)
+		_, err := csql.ExecContext(ctx, tx, q, args...)
 		if err != nil {
 			return terrors.Wrap(err)
 		}

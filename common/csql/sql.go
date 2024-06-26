@@ -1,4 +1,4 @@
-package infra
+package csql
 
 import (
 	"context"
@@ -28,7 +28,7 @@ type TxOrDB interface {
 	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
-func sqlIn[T []E, E any](fieldName string, cols T) string {
+func SqlIn[T []E, E any](fieldName string, cols T) string {
 	s := make([]byte, len(cols)*2-1)
 	for i := range cols {
 		j := i * 2
@@ -41,7 +41,7 @@ func sqlIn[T []E, E any](fieldName string, cols T) string {
 	return fmt.Sprintf("`%s` IN (%s)", fieldName, string(s))
 }
 
-func toAnySlice[T []E, E any](cols T) []any {
+func ToAnySlice[T []E, E any](cols T) []any {
 	ret := []any{}
 	for _, e := range cols {
 		ret = append(ret, e)
@@ -49,7 +49,7 @@ func toAnySlice[T []E, E any](cols T) []any {
 	return ret
 }
 
-func queryContext(
+func QueryContext(
 	ctx context.Context,
 	txOrDB TxOrDB,
 	query string,
@@ -66,7 +66,7 @@ func queryContext(
 	return rows, nil
 }
 
-func queryRowContext(
+func QueryRowContext(
 	ctx context.Context,
 	txOrDB TxOrDB,
 	query string,
@@ -76,7 +76,7 @@ func queryRowContext(
 	return row
 }
 
-func execContext(
+func ExecContext(
 	ctx context.Context,
 	txOrDB TxOrDB,
 	query string,
@@ -93,7 +93,7 @@ func execContext(
 	return result, nil
 }
 
-func withTransaction(ctx context.Context, db *sql.DB, f func(tx TxOrDB) error) error {
+func WithTransaction(ctx context.Context, db *sql.DB, f func(tx TxOrDB) error) error {
 	tx, err := db.Begin()
 	if err != nil {
 		return terrors.Wrap(err)
