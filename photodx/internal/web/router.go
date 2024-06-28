@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -12,6 +11,11 @@ func SetRouter(
 	e *gin.Engine,
 	w *Impl,
 ) {
+	e.NoRoute(func(ctx *gin.Context) {
+		w.P.JSON(ctx, http.StatusNotFound, ResponseError{
+			Message: "not found",
+		})
+	})
 	e.Use(func(ctx *gin.Context) {
 		ctx.Header("X-Robots-Tag", "noindex")
 		ctx.Next()
@@ -30,25 +34,39 @@ func SetRouter(
 		})
 	})
 
-	api := e.Group("api")
-	api.Use(w.MiddlewareAuth0Authe)
 	{
-		api.GET("hoge", func(ctx *gin.Context) {
-			claims := ctxGetAuth0ValidatedClaims(ctx)
-			fmt.Println(claims)
-			customClaims := claims.CustomClaims.(*Auth0CustomClaims)
-			fmt.Println(customClaims)
-		})
-		photoStudios := api.Group("photo_studios")
+		a := e.Group("a")
 		{
-			photoStudio := photoStudios.Group(":photoStudioID")
-			photoStudio.Use(w.MiddlewarePhotoStudio)
+			// サービス管理者向けAPI
+			a.Use(w.APIMiddlewareAuthAuthe)
+			photoStudios := a.Group("photo_studios")
 			{
-				customers := photoStudio.Group("customers")
+				photoStudios.POST("", w.APIPostPhotoStudios)
+				photoStudio := photoStudios.Group(":photoStudioID")
+				photoStudio.Use(w.APIMiddlewarePhotoStudio)
 				{
-					customers.GET("search", w.GetPhotoStudioCustomers)
+					members := photoStudio.Group("members")
+					{
+						members.POST("", w.APIPostPhotoStudioMembers)
+					}
+					customers := photoStudio.Group("customers")
+					{
+						customers.GET("search", w.APIGetPhotoStudioCustomers)
+					}
 				}
 			}
 		}
+	}
+
+	{
+		b := e.Group("b")
+		// Authを担うAPI
+		b.POST("login", w.AuthPostLogin)
+	}
+
+	{
+		c := e.Group("c")
+		// スーパーAPI
+		c.POST("init", w.SuperPostInit)
 	}
 }

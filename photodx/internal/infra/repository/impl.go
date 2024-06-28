@@ -1,7 +1,7 @@
-package rdb
+package repository
 
 import "database/sql"
 
-type Repository struct {
+type Impl struct {
 	Pool *sql.DB
 }

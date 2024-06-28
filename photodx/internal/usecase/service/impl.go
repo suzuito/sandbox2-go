@@ -1,7 +1,21 @@
 package service
 
-import "github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/repository"
+import (
+	"time"
+
+	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/auth"
+	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/proc"
+	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/repository"
+)
 
 type Impl struct {
-	Repository repository.Repository
+	PhotoStudioMemberIDGenerator              proc.RandomStringGenerator
+	PhotoStudioMemberInitialPasswordGenerator proc.RandomStringGenerator
+	Repository                                repository.Repository
+	SaltRepository                            repository.SaltRepository
+	RefreshTokenJWTCreator                    auth.JWTCreator
+	RefreshTokenJWTVerifier                   auth.JWTVerifier
+	AccessTokenJWTCreator                     auth.JWTCreator
+	AccessTokenJWTVerifier                    auth.JWTVerifier
+	NowFunc                                   func() time.Time
 }

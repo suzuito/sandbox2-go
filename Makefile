@@ -50,8 +50,9 @@ photodx/db-init:
 	DB_HOST=127.0.0.1 DB_PORT=3308 sh wait-until-db-open.sh
 photodx/db-init-rdb: .bin/migrate
 	mysql -u root -h 127.0.0.1 -P 3308 -e 'create database if not exists `$(PHOTODX_DB_NAME)`'
-	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3308)/$(PHOTODX_DB_NAME)" drop -f
-	.bin/migrate -source file://./.service/blog2/.schema/ -database "mysql://root:@tcp(127.0.0.1:3308)/$(PHOTODX_DB_NAME)" up
+	.bin/migrate -source file://./.service/photodx/db/.schema/ -database "mysql://root:@tcp(127.0.0.1:3308)/$(PHOTODX_DB_NAME)" drop -f
+	.bin/migrate -source file://./.service/photodx/db/.schema/ -database "mysql://root:@tcp(127.0.0.1:3308)/$(PHOTODX_DB_NAME)" up
+	mysql -u root -h 127.0.0.1 -P 3308 -D $(PHOTODX_DB_NAME) < ./.service/photodx/db/localdata.sql
 
 #
 # photodx/bff

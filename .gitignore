@@ -33,3 +33,9 @@ changelog.md
 
 blog2/internal/web/_js/*
 blog2/_ts/node_modules
+
+private.pem
+public.pem
+
+a.sh
+memo.md
