@@ -18,3 +18,14 @@ func (t *Impl) GetPhotoStudioMemberByEmail(
 	}
 	return member, nil
 }
+
+func (t *Impl) GetPhotoStudioMember(
+	ctx context.Context,
+	photoStudioMemberID entity.PhotoStudioMemberID,
+) (*entity.PhotoStudioMember, error) {
+	member, err := t.Repository.GetPhotoStudioMember(ctx, photoStudioMemberID)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return member, nil
+}

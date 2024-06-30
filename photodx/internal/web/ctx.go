@@ -7,8 +7,9 @@ import (
 type ctxKey string
 
 const (
-	ctxPrincipal   ctxKey = "Principal"
-	ctxPhotoStudio ctxKey = "PhotoStudio"
+	ctxPrincipal             ctxKey = "Principal"
+	ctxPhotoStudio           ctxKey = "PhotoStudio"
+	ctxPrincipalRefreshToken ctxKey = "PrincipalRefreshToken"
 )
 
 func ctxSet[T any](ctx *gin.Context, k ctxKey, v T) {

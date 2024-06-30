@@ -24,6 +24,10 @@ type Service interface {
 		email string,
 		name string,
 	) (*entity.PhotoStudioMember, string, error)
+	GetPhotoStudioMember(
+		ctx context.Context,
+		photoStudioMemberID entity.PhotoStudioMemberID,
+	) (*entity.PhotoStudioMember, error)
 	GetPhotoStudioMemberByEmail(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
@@ -48,7 +52,6 @@ type Service interface {
 	CreateAccessToken(
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
-		roles []rbac.RoleID,
 	) (string, error)
 	VerifyAccessToken(
 		ctx context.Context,
@@ -62,5 +65,5 @@ type Service interface {
 	VerifyRefreshToken(
 		ctx context.Context,
 		refreshToken string,
-	) error
+	) (entity.PrincipalRefreshToken, error)
 }

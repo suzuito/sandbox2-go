@@ -38,10 +38,14 @@ func (t *Impl) CreateRefreshToken(
 func (t *Impl) VerifyRefreshToken(
 	ctx context.Context,
 	refreshToken string,
-) error {
-	_, err := t.RefreshTokenJWTVerifier.VerifyJWTToken(ctx, refreshToken, &auth.JWTClaimsRefreshToken{})
+) (entity.PrincipalRefreshToken, error) {
+	claims, err := t.RefreshTokenJWTVerifier.VerifyJWTToken(ctx, refreshToken, &auth.JWTClaimsRefreshToken{})
 	if err != nil {
-		return terrors.Wrap(err)
+		return nil, terrors.Wrap(err)
 	}
-	return nil
+	claimsRefreshToken, ok := claims.(*auth.JWTClaimsRefreshToken)
+	if !ok {
+		return nil, terrors.Wrapf("cannot convert JWTClaims to JWTClaimsAccessToken")
+	}
+	return claimsRefreshToken, nil
 }

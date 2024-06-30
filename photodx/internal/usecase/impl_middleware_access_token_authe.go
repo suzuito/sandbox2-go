@@ -7,19 +7,19 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
 )
 
-type DTOAPIMiddlewareAuthAuthe struct {
+type DTOMiddlewareAccessTokenAuthe struct {
 	Principal entity.Principal
 }
 
-func (t *Impl) APIMiddlewareAuthAuthe(
+func (t *Impl) MiddlewareAccessTokenAuthe(
 	ctx context.Context,
 	accessToken string,
-) (*DTOAPIMiddlewareAuthAuthe, error) {
+) (*DTOMiddlewareAccessTokenAuthe, error) {
 	principal, err := t.S.VerifyAccessToken(ctx, accessToken)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return &DTOAPIMiddlewareAuthAuthe{
+	return &DTOMiddlewareAccessTokenAuthe{
 		Principal: principal,
 	}, nil
 }

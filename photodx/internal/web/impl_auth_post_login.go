@@ -35,10 +35,8 @@ func (t *Impl) AuthPostLogin(ctx *gin.Context) {
 		return
 	}
 	t.P.JSON(ctx, http.StatusOK, struct {
-		AccessToken  string `json:"accessToken"`
 		RefreshToken string `json:"refreshToken"`
 	}{
-		AccessToken:  dto.AccessToken,
 		RefreshToken: dto.RefreshToken,
 	})
 }

@@ -38,19 +38,19 @@ func SetRouter(
 		a := e.Group("a")
 		{
 			// サービス管理者向けAPI
-			a.Use(w.APIMiddlewareAuthAuthe)
-			photoStudios := a.Group("photo_studios")
+			a.Use(w.MiddlewareAccessTokenAuthe)
 			{
+				photoStudios := a.Group("photo_studios")
 				photoStudios.POST("", w.APIPostPhotoStudios)
-				photoStudio := photoStudios.Group(":photoStudioID")
-				photoStudio.Use(w.APIMiddlewarePhotoStudio)
 				{
-					members := photoStudio.Group("members")
+					photoStudio := photoStudios.Group(":photoStudioID")
+					photoStudio.Use(w.APIMiddlewarePhotoStudio)
 					{
+						members := photoStudio.Group("members")
 						members.POST("", w.APIPostPhotoStudioMembers)
 					}
-					customers := photoStudio.Group("customers")
 					{
+						customers := photoStudio.Group("customers")
 						customers.GET("search", w.APIGetPhotoStudioCustomers)
 					}
 				}
@@ -62,6 +62,15 @@ func SetRouter(
 		b := e.Group("b")
 		// Authを担うAPI
 		b.POST("login", w.AuthPostLogin)
+		{
+			x := b.Group("x")
+			x.Use(w.MiddlewareRefreshTokenAuthe)
+			x.Use(w.MiddlewareRefreshTokenAutho)
+			x.POST(
+				"refresh",
+				w.AuthPostRefresh,
+			)
+		}
 	}
 
 	{

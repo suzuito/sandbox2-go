@@ -7,10 +7,14 @@ import (
 )
 
 type Usecase interface {
-	APIMiddlewareAuthAuthe(
+	MiddlewareAccessTokenAuthe(
 		ctx context.Context,
 		accessToken string,
-	) (*DTOAPIMiddlewareAuthAuthe, error)
+	) (*DTOMiddlewareAccessTokenAuthe, error)
+	MiddlewareRefreshTokenAuthe(
+		ctx context.Context,
+		refreshToken string,
+	) (*DTOMiddlewareRefreshTokenAuthe, error)
 	APIMiddlewarePhotoStudio(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
@@ -21,6 +25,10 @@ type Usecase interface {
 		email string,
 		password string,
 	) (*DTOAuthPostLogin, error)
+	AuthPostRefresh(
+		ctx context.Context,
+		photoStudioMemberID entity.PhotoStudioMemberID,
+	) (*DTOAuthPostRefresh, error)
 	APIPostPhotoStudioMembers(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,

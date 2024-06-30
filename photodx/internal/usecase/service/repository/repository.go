@@ -17,6 +17,10 @@ type Repository interface {
 		photoStudio *entity.PhotoStudio,
 	) (*entity.PhotoStudio, error)
 
+	GetPhotoStudioMember(
+		ctx context.Context,
+		photoStudioMemberID entity.PhotoStudioMemberID,
+	) (*entity.PhotoStudioMember, error)
 	GetPhotoStudioMemberByEmail(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,

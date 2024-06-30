@@ -14,6 +14,51 @@ import (
 func (t *Impl) CreateAccessToken(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
+) (string, error) {
+	photoStudioMember, err := t.Repository.GetPhotoStudioMember(
+		ctx,
+		photoStudioMemberID,
+	)
+	if err != nil {
+		return "", terrors.Wrap(err)
+	}
+	roles, err := t.Repository.GetPhotoStudioMemberRoles(
+		ctx,
+		photoStudioMember.ID,
+	)
+	if err != nil {
+		return "", terrors.Wrap(err)
+	}
+	roleIDs := []rbac.RoleID{}
+	for _, role := range roles {
+		roleIDs = append(roleIDs, role.ID)
+	}
+	now := t.NowFunc()
+	ttlMinutes := 5
+	expiresAt := now.Add(time.Second * time.Duration(ttlMinutes) * 60)
+	claims := auth.JWTClaimsAccessToken{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   string(photoStudioMemberID),
+			IssuedAt:  jwt.NewNumericDate(now),
+			NotBefore: jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
+		},
+		Roles: roleIDs,
+	}
+	tokenString, err := t.AccessTokenJWTCreator.CreateJWTToken(
+		ctx,
+		&claims,
+	)
+	if err != nil {
+		return "", terrors.Wrap(err)
+	}
+	return tokenString, nil
+}
+
+/*
+func (t *Impl) CreateAccessToken(
+	ctx context.Context,
+	photoStudioMemberID entity.PhotoStudioMemberID,
 	roles []rbac.RoleID,
 ) (string, error) {
 	now := t.NowFunc()
@@ -37,6 +82,7 @@ func (t *Impl) CreateAccessToken(
 	}
 	return tokenString, nil
 }
+*/
 
 func (t *Impl) VerifyAccessToken(
 	ctx context.Context,
