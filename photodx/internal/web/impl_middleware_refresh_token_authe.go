@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
 )
 
 func (t *Impl) MiddlewareRefreshTokenAuthe(ctx *gin.Context) {
@@ -21,6 +20,6 @@ func (t *Impl) MiddlewareRefreshTokenAuthe(ctx *gin.Context) {
 		ctx.Next()
 		return
 	}
-	ctxSet[entity.PrincipalRefreshToken](ctx, ctxPrincipalRefreshToken, dto.Principal)
+	ctxSet(ctx, ctxPrincipalRefreshToken, dto.Principal)
 	ctx.Next()
 }

@@ -22,7 +22,7 @@ func (t *Impl) SuperPostInit(ctx context.Context) (*DTOSuperPostInit, error) {
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	superMember, initialPassword, err := t.S.CreatePhotoStudioMember(
+	superMember, _, _, initialPassword, err := t.S.CreatePhotoStudioMember(
 		ctx,
 		photoStudio.ID,
 		"super@photodx.tach.dev",

@@ -58,10 +58,11 @@ func NewUsecase(
 	s := service.Impl{
 		PhotoStudioMemberIDGenerator:              &proc.IDGeneratorImpl{},
 		PhotoStudioMemberInitialPasswordGenerator: &proc.InitialPasswordGeneratorImpl{},
-		Repository:              &repo,
-		SaltRepository:          &saltRepo,
-		RefreshTokenJWTCreator:  &jwths,
-		RefreshTokenJWTVerifier: &jwths,
+		PasswordHasher:                            &proc.PasswordHasherMD5{},
+		Repository:                                &repo,
+		SaltRepository:                            &saltRepo,
+		RefreshTokenJWTCreator:                    &jwths,
+		RefreshTokenJWTVerifier:                   &jwths,
 		AccessTokenJWTCreator: &auth.JWTCreatorRS{
 			PrivateKey: accessTokenJWTPrivateKey,
 		},

@@ -8,8 +8,7 @@ import (
 )
 
 type DTOAuthPostLogin struct {
-	PhotoStudioMember *entity.PhotoStudioMember
-	RefreshToken      string
+	RefreshToken string
 }
 
 func (t *Impl) AuthPostLogin(
@@ -18,19 +17,15 @@ func (t *Impl) AuthPostLogin(
 	email string,
 	password string,
 ) (*DTOAuthPostLogin, error) {
-	if err := t.S.VerifyPhotoStudioMemberPassword(
+	photoStudioMember, _, _, err := t.S.VerifyPhotoStudioMemberPassword(
 		ctx,
 		photoStudioID,
 		email,
 		password,
-	); err != nil {
+	)
+	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	photoStudioMember, err := t.S.GetPhotoStudioMemberByEmail(
-		ctx,
-		photoStudioID,
-		email,
-	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -39,7 +34,6 @@ func (t *Impl) AuthPostLogin(
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOAuthPostLogin{
-		PhotoStudioMember: photoStudioMember,
-		RefreshToken:      refreshToken,
+		RefreshToken: refreshToken,
 	}, nil
 }

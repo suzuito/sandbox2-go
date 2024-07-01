@@ -11,6 +11,7 @@ func (t *Impl) AuthPostRefresh(ctx *gin.Context) {
 	principal := ctxGet[entity.PrincipalRefreshToken](ctx, ctxPrincipalRefreshToken)
 	dto, err := t.U.AuthPostRefresh(ctx, principal.GetPhotoStudioMemberID())
 	if err != nil {
+		t.L.Error("", "err", err)
 		t.P.JSON(ctx, http.StatusInternalServerError, ResponseError{
 			Message: "internal server error",
 		})

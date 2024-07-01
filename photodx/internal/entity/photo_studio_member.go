@@ -14,3 +14,5 @@ func (t *PhotoStudioMember) Validate() error {
 	// TODO name validation
 	return nil
 }
+
+const MaxRolesPerPhotoStudioMember = 10

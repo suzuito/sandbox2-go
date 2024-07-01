@@ -20,25 +20,22 @@ type Repository interface {
 	GetPhotoStudioMember(
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
-	) (*entity.PhotoStudioMember, error)
+	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
 	GetPhotoStudioMemberByEmail(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
 		email string,
-	) (*entity.PhotoStudioMember, error)
+	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
 	CreatePhotoStudioMember(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
 		photoStudioMember *entity.PhotoStudioMember,
 		initialPasswordHashValue string,
-	) (*entity.PhotoStudioMember, error)
+		initialRoles []rbac.RoleID,
+	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
 	GetPhotoStudioMemberPasswordHashByEmail(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
 		email string,
-	) (string, error)
-	GetPhotoStudioMemberRoles(
-		ctx context.Context,
-		photoStudioMemberID entity.PhotoStudioMemberID,
-	) ([]*rbac.Role, error)
+	) (string, *entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
 }

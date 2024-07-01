@@ -15,17 +15,13 @@ func (t *Impl) CreateAccessToken(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
 ) (string, error) {
-	photoStudioMember, err := t.Repository.GetPhotoStudioMember(
+	photoStudioMember, roles, photoStudio, err := t.Repository.GetPhotoStudioMember(
 		ctx,
 		photoStudioMemberID,
 	)
 	if err != nil {
 		return "", terrors.Wrap(err)
 	}
-	roles, err := t.Repository.GetPhotoStudioMemberRoles(
-		ctx,
-		photoStudioMember.ID,
-	)
 	if err != nil {
 		return "", terrors.Wrap(err)
 	}
@@ -38,12 +34,13 @@ func (t *Impl) CreateAccessToken(
 	expiresAt := now.Add(time.Second * time.Duration(ttlMinutes) * 60)
 	claims := auth.JWTClaimsAccessToken{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   string(photoStudioMemberID),
+			Subject:   string(photoStudioMember.ID),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
-		Roles: roleIDs,
+		Roles:         roleIDs,
+		PhotoStudioID: photoStudio.ID,
 	}
 	tokenString, err := t.AccessTokenJWTCreator.CreateJWTToken(
 		ctx,
@@ -54,35 +51,6 @@ func (t *Impl) CreateAccessToken(
 	}
 	return tokenString, nil
 }
-
-/*
-func (t *Impl) CreateAccessToken(
-	ctx context.Context,
-	photoStudioMemberID entity.PhotoStudioMemberID,
-	roles []rbac.RoleID,
-) (string, error) {
-	now := t.NowFunc()
-	ttlMinutes := 5
-	expiresAt := now.Add(time.Second * time.Duration(ttlMinutes) * 60)
-	claims := auth.JWTClaimsAccessToken{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   string(photoStudioMemberID),
-			IssuedAt:  jwt.NewNumericDate(now),
-			NotBefore: jwt.NewNumericDate(now),
-			ExpiresAt: jwt.NewNumericDate(expiresAt),
-		},
-		Roles: roles,
-	}
-	tokenString, err := t.AccessTokenJWTCreator.CreateJWTToken(
-		ctx,
-		&claims,
-	)
-	if err != nil {
-		return "", terrors.Wrap(err)
-	}
-	return tokenString, nil
-}
-*/
 
 func (t *Impl) VerifyAccessToken(
 	ctx context.Context,
@@ -96,5 +64,10 @@ func (t *Impl) VerifyAccessToken(
 	if !ok {
 		return nil, terrors.Wrapf("cannot convert JWTClaims to JWTClaimsAccessToken")
 	}
-	return claimsAccessToken, nil
+	principal := entity.PrincipalImpl{
+		PhotoStudioMemberID: entity.PhotoStudioMemberID(claimsAccessToken.Subject),
+		PhotoStudioID:       claimsAccessToken.PhotoStudioID,
+		Roles:               rbac.GetAvailablePredefinedRolesFromRoleID(claimsAccessToken.Roles),
+	}
+	return &principal, nil
 }

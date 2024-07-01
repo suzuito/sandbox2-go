@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
+	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
 )
 
 func (t *Impl) APIPostPhotoStudioMembers(ctx *gin.Context) {
@@ -19,15 +20,26 @@ func (t *Impl) APIPostPhotoStudioMembers(ctx *gin.Context) {
 		return
 	}
 	photoStudio := ctxGet[*entity.PhotoStudio](ctx, ctxPhotoStudio)
-	dto, err := t.U.APIPostPhotoStudioMembers(ctx, photoStudio.ID, message.Email, message.Name)
+	dto, err := t.U.APIPostPhotoStudioMembers(
+		ctx,
+		photoStudio.ID,
+		message.Email,
+		message.Name,
+	)
 	if err != nil {
 		t.L.Error("", "err", err)
 		t.P.JSON(ctx, http.StatusInternalServerError, ResponseError{})
 		return
 	}
 	t.P.JSON(ctx, http.StatusCreated, struct {
-		SentInvitation bool `json:"sentInvitation"`
+		PhotoStudioMember *entity.PhotoStudioMember `json:"photoStudioMember"`
+		Roles             []*rbac.Role              `json:"roles"`
+		InitialPassword   string                    `json:"initialPassword"`
+		SentInvitation    bool                      `json:"sentInvitation"`
 	}{
-		SentInvitation: dto.SentInvitation,
+		PhotoStudioMember: dto.Member,
+		Roles:             dto.Roles,
+		InitialPassword:   dto.InitialPassword,
+		SentInvitation:    dto.SentInvitation,
 	})
 }

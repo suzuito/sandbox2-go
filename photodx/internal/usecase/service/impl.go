@@ -11,6 +11,7 @@ import (
 type Impl struct {
 	PhotoStudioMemberIDGenerator              proc.RandomStringGenerator
 	PhotoStudioMemberInitialPasswordGenerator proc.RandomStringGenerator
+	PasswordHasher                            proc.PasswordHasher
 	Repository                                repository.Repository
 	SaltRepository                            repository.SaltRepository
 	RefreshTokenJWTCreator                    auth.JWTCreator

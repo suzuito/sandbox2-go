@@ -9,7 +9,6 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
-	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/auth/predefined"
 	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/repository"
 )
 
@@ -18,7 +17,14 @@ func (t *Impl) CreatePhotoStudioMember(
 	photoStudioID entity.PhotoStudioID,
 	photoStudioMember *entity.PhotoStudioMember,
 	initialPasswordHashValue string,
-) (*entity.PhotoStudioMember, error) {
+	initialRoles []rbac.RoleID,
+) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
+	if _, _, _, err := t.GetPhotoStudioMember(ctx, photoStudioMember.ID); err == nil {
+		return nil, nil, nil, terrors.Wrap(&repository.DuplicateEntryError{
+			EntryType: repository.EntryTypePhotoStudioMember,
+			EntryID:   string(photoStudioMember.ID),
+		})
+	}
 	if err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
 		if _, err := csql.ExecContext(
 			ctx,
@@ -45,70 +51,104 @@ func (t *Impl) CreatePhotoStudioMember(
 			ctx,
 			tx,
 			photoStudioMember.ID,
-			[]rbac.RoleID{
-				predefined.RoleSuperUser.ID, // TODO スーパーユーザー権限を与えているのはデバッグ用途のため。後で変えてください。
-			},
+			initialRoles,
 		); err != nil {
 			return terrors.Wrap(err)
 		}
 		return nil
 	}); err != nil {
-		return nil, terrors.Wrap(err)
+		return nil, nil, nil, terrors.Wrap(err)
 	}
-	created, err := t.GetPhotoStudioMember(ctx, photoStudioMember.ID)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	return created, nil
-}
-
-func (t *Impl) getPhotoStudioMember(
-	ctx context.Context,
-	cond string,
-	condArgs []any,
-) (*entity.PhotoStudioMember, error) {
-	row := csql.QueryRowContext(
-		ctx,
-		t.Pool,
-		"SELECT `id`, `email`, `name`, `active` FROM `photo_studio_members`"+cond,
-		condArgs...,
-	)
-	member := entity.PhotoStudioMember{}
-	if err := row.Scan(
-		&member.ID,
-		&member.Email,
-		&member.Name,
-		&member.Active,
-	); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, terrors.Wrap(&repository.NoEntryError{
-				EntryType: "PhotoStudioMember",
-			})
-		}
-		return nil, terrors.Wrap(err)
-	}
-	return &member, nil
+	return t.GetPhotoStudioMember(ctx, photoStudioMember.ID)
 }
 
 func (t *Impl) GetPhotoStudioMember(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
-) (*entity.PhotoStudioMember, error) {
-	return t.getPhotoStudioMember(
+) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
+	row := csql.QueryRowContext(
 		ctx,
-		"WHERE `id` = ?",
-		[]any{photoStudioMemberID},
+		t.Pool,
+		"SELECT `id`, `email`, `name`, `active`, `photo_studio_id` FROM `photo_studio_members` WHERE `id` = ?",
+		photoStudioMemberID,
 	)
+	member := entity.PhotoStudioMember{}
+	photoStudioID := entity.PhotoStudioID("")
+	if err := row.Scan(
+		&member.ID,
+		&member.Email,
+		&member.Name,
+		&member.Active,
+		&photoStudioID,
+	); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil, nil, terrors.Wrap(&repository.NoEntryError{
+				EntryType: repository.EntryTypePhotoStudioMember,
+				EntryID:   string(member.ID),
+			})
+		}
+		return nil, nil, nil, terrors.Wrap(err)
+	}
+	rolesPerPhotoStudioMember, err := getPhotoStudioMemberRoles(ctx, t.Pool, []entity.PhotoStudioMemberID{photoStudioMemberID})
+	if err != nil {
+		return nil, nil, nil, terrors.Wrap(err)
+	}
+	photoStudio, err := t.GetPhotoStudio(ctx, photoStudioID)
+	if err != nil {
+		return nil, nil, nil, terrors.Wrap(err)
+	}
+	return &member, rolesPerPhotoStudioMember[member.ID], photoStudio, nil
 }
 
 func (t *Impl) GetPhotoStudioMemberByEmail(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,
 	email string,
-) (*entity.PhotoStudioMember, error) {
-	return t.getPhotoStudioMember(
+) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
+	row := csql.QueryRowContext(
 		ctx,
-		"WHERE `photo_studio_id` = ? AND `email` = ?",
-		[]any{photoStudioID, email},
+		t.Pool,
+		"SELECT `id` FROM `photo_studio_members` WHERE `photo_studio_id` = ? AND `email` = ?",
+		photoStudioID,
+		email,
 	)
+	photoStudioMemberID := entity.PhotoStudioMemberID("")
+	if err := row.Scan(&photoStudioMemberID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil, nil, terrors.Wrap(&repository.NoEntryError{
+				EntryType: repository.EntryTypePhotoStudioMember,
+				EntryID:   "by email",
+			})
+		}
+		return nil, nil, nil, terrors.Wrap(err)
+	}
+	return t.GetPhotoStudioMember(ctx, photoStudioMemberID)
+}
+
+func (t *Impl) GetPhotoStudioMemberPasswordHashByEmail(
+	ctx context.Context,
+	photoStudioID entity.PhotoStudioID,
+	email string,
+) (string, *entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
+	member, roles, photoStudio, err := t.GetPhotoStudioMemberByEmail(ctx, photoStudioID, email)
+	if err != nil {
+		return "", nil, nil, nil, terrors.Wrap(err)
+	}
+	row := csql.QueryRowContext(
+		ctx,
+		t.Pool,
+		"SELECT `value` FROM `photo_studio_member_password_hash_values` WHERE `photo_studio_member_id` = ?",
+		member.ID,
+	)
+	hashValue := ""
+	if err := row.Scan(&hashValue); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil, nil, nil, terrors.Wrap(&repository.NoEntryError{
+				EntryType: repository.EntryTypePhotoStudioMember,
+				EntryID:   string(member.ID),
+			})
+		}
+		return "", nil, nil, nil, terrors.Wrap(err)
+	}
+	return hashValue, member, roles, photoStudio, nil
 }

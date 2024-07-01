@@ -5,11 +5,14 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
+	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
 )
 
 type DTOAPIPostPhotoStudioMembers struct {
-	Member         *entity.PhotoStudioMember
-	SentInvitation bool
+	Member          *entity.PhotoStudioMember
+	Roles           []*rbac.Role
+	InitialPassword string
+	SentInvitation  bool
 }
 
 func (t *Impl) APIPostPhotoStudioMembers(
@@ -18,7 +21,7 @@ func (t *Impl) APIPostPhotoStudioMembers(
 	email string,
 	name string,
 ) (*DTOAPIPostPhotoStudioMembers, error) {
-	member, _, err := t.S.CreatePhotoStudioMember(ctx, photoStudioID, email, name)
+	member, roles, _, initialPassword, err := t.S.CreatePhotoStudioMember(ctx, photoStudioID, email, name)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -28,7 +31,9 @@ func (t *Impl) APIPostPhotoStudioMembers(
 		sentInvitation = false
 	}
 	return &DTOAPIPostPhotoStudioMembers{
-		Member:         member,
-		SentInvitation: sentInvitation,
+		Member:          member,
+		Roles:           roles,
+		InitialPassword: initialPassword,
+		SentInvitation:  sentInvitation,
 	}, nil
 }

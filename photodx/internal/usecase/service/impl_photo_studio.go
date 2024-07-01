@@ -5,8 +5,14 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
-	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/repository"
 )
+
+func (t *Impl) GetPhotoStudio(
+	ctx context.Context,
+	photoStudioID entity.PhotoStudioID,
+) (*entity.PhotoStudio, error) {
+	return t.Repository.GetPhotoStudio(ctx, photoStudioID)
+}
 
 func (t *Impl) CreatePhotoStudio(
 	ctx context.Context,
@@ -17,9 +23,6 @@ func (t *Impl) CreatePhotoStudio(
 		ID:     photoStudioID,
 		Name:   name,
 		Active: false,
-	}
-	if _, err := t.Repository.GetPhotoStudio(ctx, photoStudioID); err == nil {
-		return nil, terrors.Wrap(&repository.DuplicateEntryError{EntryType: "PhotoStudio"})
 	}
 	created, err := t.Repository.CreatePhotoStudio(ctx, &photoStudio)
 	if err != nil {

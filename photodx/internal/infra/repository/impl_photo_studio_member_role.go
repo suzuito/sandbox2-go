@@ -8,58 +8,53 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
-	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/auth"
-	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/auth/predefined"
 )
-
-func (t *Impl) GetPhotoStudioMemberRoles(
-	ctx context.Context,
-	photoStudioMemberID entity.PhotoStudioMemberID,
-) ([]*rbac.Role, error) {
-	return getPhotoStudioMemberRoles(ctx, t.Pool, photoStudioMemberID)
-}
 
 func getPhotoStudioMemberRoles(
 	ctx context.Context,
 	txOrDB csql.TxOrDB,
-	photoStudioMemberID entity.PhotoStudioMemberID,
-) ([]*rbac.Role, error) {
+	photoStudioMemberIDs []entity.PhotoStudioMemberID,
+) (map[entity.PhotoStudioMemberID][]*rbac.Role, error) {
 	rows, err := csql.QueryContext(
 		ctx,
 		txOrDB,
-		"SELECT `role_id` FROM `photo_studio_member_roles` WHERE `photo_studio_member_id` = ?",
-		photoStudioMemberID,
+		"SELECT `role_id`, `photo_studio_member_id` FROM `photo_studio_member_roles` WHERE "+csql.SqlIn("photo_studio_member_id", photoStudioMemberIDs),
+		csql.ToAnySlice(photoStudioMemberIDs)...,
 	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	defer rows.Close()
-	roles := []*rbac.Role{}
+	rolesPerPhotoStudioMember := map[entity.PhotoStudioMemberID][]*rbac.Role{}
 	for rows.Next() {
-		role := rbac.Role{}
+		roleID := rbac.RoleID("")
+		photoStudioMemberID := entity.PhotoStudioMemberID("")
 		if err := rows.Scan(
-			&role.ID,
+			&roleID,
+			&photoStudioMemberID,
 		); err != nil {
 			return nil, terrors.Wrap(err)
 		}
-		predefinedRole, exists := predefined.AvailablePredefinedRoles[role.ID]
+		role, exists := rbac.AvailablePredefinedRoles[roleID]
 		if !exists {
 			continue
 		}
-		roles = append(roles, predefinedRole)
+		roles := rolesPerPhotoStudioMember[photoStudioMemberID]
+		roles = append(roles, role)
+		rolesPerPhotoStudioMember[photoStudioMemberID] = roles
 	}
-	return roles, nil
+	return rolesPerPhotoStudioMember, nil
 }
 
 func setPhotoStudioMemberRoles(
 	ctx context.Context,
 	txOrDB csql.TxOrDB,
 	photoStudioMemberID entity.PhotoStudioMemberID,
-	roles []rbac.RoleID,
+	roleIDs []rbac.RoleID,
 ) ([]*rbac.Role, error) {
 	valueStrings := []string{}
 	args := []any{}
-	for _, roleID := range roles {
+	for _, roleID := range roleIDs {
 		valueStrings = append(valueStrings, "(?,?,NOW())")
 		args = append(args, photoStudioMemberID, roleID)
 	}
@@ -83,8 +78,13 @@ func setPhotoStudioMemberRoles(
 	if err := row.Scan(&count); err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	if count > auth.MaxRolesPerPhotoStudioMember {
-		return nil, terrors.Wrapf("number of roles is over max : len=%d max=%d", count, auth.MaxRolesPerPhotoStudioMember)
+	if count > entity.MaxRolesPerPhotoStudioMember {
+		return nil, terrors.Wrapf("number of roles is over max : len=%d max=%d", count, entity.MaxRolesPerPhotoStudioMember)
 	}
-	return getPhotoStudioMemberRoles(ctx, txOrDB, photoStudioMemberID)
+	rolesPerPhotoStudioMember, err := getPhotoStudioMemberRoles(ctx, txOrDB, []entity.PhotoStudioMemberID{photoStudioMemberID})
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	rolesCreated := rolesPerPhotoStudioMember[photoStudioMemberID]
+	return rolesCreated, nil
 }

@@ -8,6 +8,7 @@ import (
 )
 
 type Service interface {
+	// impl_photo_studio.go
 	GetPhotoStudio(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
@@ -18,21 +19,22 @@ type Service interface {
 		name string,
 	) (*entity.PhotoStudio, error)
 
+	// impl_photo_studio_member.go
 	CreatePhotoStudioMember(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
 		email string,
 		name string,
-	) (*entity.PhotoStudioMember, string, error)
+	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, string, error)
 	GetPhotoStudioMember(
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
-	) (*entity.PhotoStudioMember, error)
+	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
 	GetPhotoStudioMemberByEmail(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
 		email string,
-	) (*entity.PhotoStudioMember, error)
+	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
 	SendPhotoStudioMemberInvitation(
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
@@ -42,13 +44,9 @@ type Service interface {
 		photoStudioID entity.PhotoStudioID,
 		email string,
 		password string,
-	) error
+	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
 
-	GetPhotoStudioMemberRoles(
-		ctx context.Context,
-		photoStudioMemberID entity.PhotoStudioMemberID,
-	) ([]*rbac.Role, error)
-
+	// impl_access_token.go
 	CreateAccessToken(
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
@@ -58,6 +56,7 @@ type Service interface {
 		accessToken string,
 	) (entity.Principal, error)
 
+	// impl_refresh_token.go
 	CreateRefreshToken(
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
@@ -66,4 +65,11 @@ type Service interface {
 		ctx context.Context,
 		refreshToken string,
 	) (entity.PrincipalRefreshToken, error)
+
+	// impl_authorize.go
+	Authorize(
+		ctx context.Context,
+		principal entity.Principal,
+		requiredPermissions []*rbac.Permission,
+	) error
 }

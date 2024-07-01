@@ -1,12 +1,6 @@
 package usecase
 
-import (
-	"context"
-
-	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
-)
-
+/*
 type DTOAPIPostPhotoStudios struct {
 	PhotoStudio *entity.PhotoStudio
 }
@@ -22,3 +16,4 @@ func (t *Impl) APIPostPhotoStudios(
 	}
 	return &DTOAPIPostPhotoStudios{PhotoStudio: photoStudio}, nil
 }
+*/
