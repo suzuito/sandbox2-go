@@ -1,33 +1,41 @@
 package web
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
-	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service"
 )
 
-func (t *Impl) MiddlewareAccessTokenAutho(
-	requiredPermissions []*rbac.Permission,
-) gin.HandlerFunc {
+func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
+	policy := rbac.NewPolicy(policyString)
 	return func(ctx *gin.Context) {
-		err := t.U.MiddlewareAccessTokenAutho(
+		principal := ctxGet[entity.Principal](ctx, ctxPrincipal)
+		if principal == nil {
+			t.P.JSON(ctx, http.StatusForbidden, ResponseError{
+				Message: "forbidden",
+			})
+			ctx.Abort()
+			return
+		}
+		result, err := policy.EvalGinContext(
+			principal.GetPermissions(),
+			string(principal.GetPhotoStudioMemberID()),
+			string(principal.GetPhotoStudioID()),
 			ctx,
-			ctxGet[entity.Principal](ctx, ctxPrincipal),
-			requiredPermissions,
 		)
-		var forbiddenError *service.ForbiddenError
-		if errors.As(err, &forbiddenError) {
-			t.P.JSON(
-				ctx,
-				http.StatusForbidden,
-				ResponseError{
-					Message: forbiddenError.Error(),
-				},
-			)
+		if err != nil {
+			t.P.JSON(ctx, http.StatusInternalServerError, ResponseError{
+				Message: "internal server error",
+			})
+			ctx.Abort()
+			return
+		}
+		if !result {
+			t.P.JSON(ctx, http.StatusForbidden, ResponseError{
+				Message: "forbidden",
+			})
 			ctx.Abort()
 			return
 		}

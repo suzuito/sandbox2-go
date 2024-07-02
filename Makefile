@@ -7,6 +7,18 @@ ARCH=amd64
 .bin/migrate:
 	cd /tmp && rm migrate && curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.${OS}-${ARCH}.tar.gz | tar xvz && cd - && mv /tmp/migrate .bin/migrate
 
+PROTOC_VERSION = 27.2
+PROTOC_OS_ARCH := osx-aarch_64
+PROTOC_GO_VERSION = 1.34.2
+.bin/protoc:
+	rm -rf /tmp/protoc-download \
+	&& mkdir /tmp/protoc-download \
+	&& cd /tmp/protoc-download \
+	&& curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-${PROTOC_OS_ARCH}.zip \
+	&& unzip protoc-${PROTOC_VERSION}-${PROTOC_OS_ARCH}.zip \
+	&& cd - && mv /tmp/protoc-download/bin/protoc ./.bin/protoc
+	&& go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOC_GO_VERSION}
+
 #
 # common
 #
@@ -40,6 +52,14 @@ blog2-build-server:
 	go build -o blog2-server.out blog2/cmd/server/*.go
 blog2-mock:
 	./mockgen blog2/internal/markdown2html/markdown2html.go
+
+#
+# photodx/
+#
+photodx/protoc: ./.bin/protoc
+	PATH=$(PATH):$(shell go env GOPATH)/bin ./.bin/protoc \
+	--go_out=./ \
+	./photodx/proto/entity/permission.proto
 
 #
 # photodx/db

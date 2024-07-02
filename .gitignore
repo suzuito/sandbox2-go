@@ -29,7 +29,7 @@ coverage.*
 local.env.sh
 changelog.md
 
-.bin/migrate
+.bin/*
 
 blog2/internal/web/_js/*
 blog2/_ts/node_modules

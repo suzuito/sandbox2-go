@@ -65,11 +65,4 @@ type Service interface {
 		ctx context.Context,
 		refreshToken string,
 	) (entity.PrincipalRefreshToken, error)
-
-	// impl_authorize.go
-	Authorize(
-		ctx context.Context,
-		principal entity.Principal,
-		requiredPermissions []*rbac.Permission,
-	) error
 }

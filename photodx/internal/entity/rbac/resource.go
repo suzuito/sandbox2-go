@@ -1,7 +1,6 @@
 package rbac
 
-type Resource string
-
 const (
-	ResourcePhotoStudio Resource = "PhotoStudio"
+	ResourcePhotoStudio       string = "PhotoStudio"
+	ResourcePhotoStudioMember string = "PhotoStudioMember"
 )

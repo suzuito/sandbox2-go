@@ -1,26 +1,30 @@
 package rbac
 
+import "github.com/suzuito/sandbox2-go/photodx/internal/entity/pbrbac"
+
 type RoleID string
 
 type Role struct {
 	ID          RoleID
-	Permissions []*Permission
+	Permissions []*pbrbac.Permission
 }
 
 // Predefined roles
 var RoleGuest = Role{
 	ID:          "Guest",
-	Permissions: []*Permission{},
+	Permissions: []*pbrbac.Permission{},
 }
 var RoleSuperUser = Role{
 	ID: "SuperUser",
-	Permissions: []*Permission{
-		{Resource: ResourcePhotoStudio, Action: ActionGet},
-		{Resource: ResourcePhotoStudio, Action: ActionList},
-		{Resource: ResourcePhotoStudio, Action: ActionUpdate},
-		{Resource: ResourcePhotoStudio, Action: ActionCreate},
-		{Resource: ResourcePhotoStudio, Action: ActionUpdate},
-		{Resource: ResourcePhotoStudio, Action: ActionDelete},
+	Permissions: []*pbrbac.Permission{
+		{Resource: "PhotoStudio", Target: ".*", Action: "create"},
+		{Resource: "PhotoStudio", Target: ".*", Action: "read"},
+		{Resource: "PhotoStudio", Target: ".*", Action: "update"},
+		{Resource: "PhotoStudio", Target: ".*", Action: "delete"},
+		{Resource: "PhotoStudioMember", Target: ".*", Action: "create"},
+		{Resource: "PhotoStudioMember", Target: ".*", Action: "read"},
+		{Resource: "PhotoStudioMember", Target: ".*", Action: "update"},
+		{Resource: "PhotoStudioMember", Target: ".*", Action: "delete"},
 	},
 }
 

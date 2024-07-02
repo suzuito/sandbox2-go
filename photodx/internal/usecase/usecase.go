@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity"
-	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
 )
 
 type Usecase interface {
@@ -12,11 +11,6 @@ type Usecase interface {
 		ctx context.Context,
 		accessToken string,
 	) (*DTOMiddlewareAccessTokenAuthe, error)
-	MiddlewareAccessTokenAutho(
-		ctx context.Context,
-		principal entity.Principal,
-		requiredPermissions []*rbac.Permission,
-	) error
 	MiddlewareRefreshTokenAuthe(
 		ctx context.Context,
 		refreshToken string,
@@ -41,6 +35,10 @@ type Usecase interface {
 		email string,
 		name string,
 	) (*DTOAPIPostPhotoStudioMembers, error)
+	APIGetInit(
+		ctx context.Context,
+		principal entity.Principal,
+	) (*DTOAPIGetInit, error)
 	// APIPostPhotoStudios(
 	// 	ctx context.Context,
 	// 	photoStudioID entity.PhotoStudioID,

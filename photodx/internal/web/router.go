@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
 )
 
 func SetRouter(
@@ -40,15 +39,36 @@ func SetRouter(
 		{
 			// API
 			a.Use(w.MiddlewareAccessTokenAuthe)
+			a.GET(
+				"init",
+				w.MiddlewareAccessTokenAutho(
+					`
+					permissions.exists(
+						p,
+						p.resource == "PhotoStudio" && principalPhotoStudioId.matches(p.target) && "read".matches(p.action)
+					) &&
+					permissions.exists(
+						p,
+						p.resource == "PhotoStudioMember" && principalPhotoStudioMemberId.matches(p.target) && "read".matches(p.action)
+					)
+					`,
+				),
+				w.APIGetInit,
+			)
 			{
 				photoStudios := a.Group("photo_studios")
 				// photoStudios.POST("", w.APIPostPhotoStudios)
 				{
 					photoStudio := photoStudios.Group(":photoStudioID")
 					photoStudio.Use(
-						w.MiddlewareAccessTokenAutho([]*rbac.Permission{
-							{Resource: rbac.ResourcePhotoStudio, Action: rbac.ActionGet},
-						}),
+						w.MiddlewareAccessTokenAutho(
+							`
+							permissions.exists(
+    							p,
+			                    p.resource == "PhotoStudio" && principalPhotoStudioId.matches(p.target) && "read".matches(p.action)
+		                    )
+							`,
+						),
 						w.APIMiddlewarePhotoStudio,
 					)
 					photoStudio.GET("", w.APIGetPhotoStudio)

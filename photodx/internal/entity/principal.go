@@ -1,11 +1,15 @@
 package entity
 
-import "github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
+import (
+	"github.com/suzuito/sandbox2-go/photodx/internal/entity/pbrbac"
+	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
+)
 
 type Principal interface {
 	GetPhotoStudioMemberID() PhotoStudioMemberID
 	GetPhotoStudioID() PhotoStudioID
 	GetRoles() []*rbac.Role
+	GetPermissions() []*pbrbac.Permission
 }
 
 type PrincipalImpl struct {
@@ -24,4 +28,12 @@ func (t *PrincipalImpl) GetPhotoStudioID() PhotoStudioID {
 
 func (t *PrincipalImpl) GetRoles() []*rbac.Role {
 	return t.Roles
+}
+
+func (t *PrincipalImpl) GetPermissions() []*pbrbac.Permission {
+	permissions := []*pbrbac.Permission{}
+	for _, role := range t.GetRoles() {
+		permissions = append(permissions, role.Permissions...)
+	}
+	return permissions
 }
