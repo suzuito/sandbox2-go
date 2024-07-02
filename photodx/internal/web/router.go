@@ -35,9 +35,30 @@ func SetRouter(
 	})
 
 	{
+		// ユーザー画面向けAPI
+		x := e.Group("x")
+		{
+			x.Use(func(ctx *gin.Context) {
+			}) // auth0 authe
+			x.GET(
+				"init",
+				w.MiddlewareAccessTokenAutho(
+					`
+					permissions.exists(
+						p,
+						p.resource == "PhotoStudio" && "read".matches(p.action)
+					)
+					`,
+				),
+				func(ctx *gin.Context) {},
+			)
+		}
+	}
+
+	{
+		// スタジオ管理画面向けAPI
 		a := e.Group("a")
 		{
-			// API
 			a.Use(w.MiddlewareAccessTokenAuthe)
 			a.GET(
 				"init",
@@ -86,8 +107,8 @@ func SetRouter(
 	}
 
 	{
-		b := e.Group("b")
 		// Authを担うAPI
+		b := e.Group("b")
 		b.POST("login", w.AuthPostLogin)
 		{
 			x := b.Group("x")
@@ -101,8 +122,8 @@ func SetRouter(
 	}
 
 	{
-		c := e.Group("c")
 		// スーパーAPI
+		c := e.Group("c")
 		c.POST("init", w.SuperPostInit)
 	}
 }
