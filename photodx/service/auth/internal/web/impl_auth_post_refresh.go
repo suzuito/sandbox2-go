@@ -9,7 +9,7 @@ import (
 )
 
 func (t *Impl) AuthPostRefresh(ctx *gin.Context) {
-	principal := common_web.CtxGet[entity.PrincipalRefreshToken](ctx, common_web.CtxPrincipalRefreshToken)
+	principal := common_web.CtxGet[entity.AdminPrincipalRefreshToken](ctx, common_web.CtxPrincipalRefreshToken)
 	dto, err := t.U.AuthPostRefresh(ctx, principal.GetPhotoStudioMemberID())
 	if err != nil {
 		t.L.Error("", "err", err)

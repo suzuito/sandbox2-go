@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/user/internal/entity"
 )
 
 type DTOMiddlewareAccessTokenAuthe struct {
-	Principal entity.AdminPrincipal
+	UserPrincipal entity.UserPrincipal
 }
 
 func (t *Impl) MiddlewareAccessTokenAuthe(
@@ -20,6 +20,6 @@ func (t *Impl) MiddlewareAccessTokenAuthe(
 		return nil, terrors.Wrap(err)
 	}
 	return &DTOMiddlewareAccessTokenAuthe{
-		Principal: principal,
+		UserPrincipal: principal,
 	}, nil
 }

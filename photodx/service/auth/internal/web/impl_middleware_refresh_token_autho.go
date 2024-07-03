@@ -9,7 +9,7 @@ import (
 )
 
 func (t *Impl) MiddlewareRefreshTokenAutho(ctx *gin.Context) {
-	principal := common_web.CtxGet[entity.PrincipalRefreshToken](ctx, common_web.CtxPrincipalRefreshToken)
+	principal := common_web.CtxGet[entity.AdminPrincipalRefreshToken](ctx, common_web.CtxPrincipalRefreshToken)
 	if principal == nil {
 		t.P.JSON(
 			ctx,

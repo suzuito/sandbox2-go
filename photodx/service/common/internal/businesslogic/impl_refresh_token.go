@@ -17,7 +17,7 @@ func (t *BusinessLogicImpl) CreateRefreshToken(
 	now := t.NowFunc()
 	ttlDays := 7
 	expiresAt := now.Add(time.Hour * time.Duration(ttlDays) * 24)
-	claims := auth.JWTClaimsRefreshToken{
+	claims := auth.JWTClaimsAdminRefreshToken{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   string(photoStudioMemberID),
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -38,12 +38,12 @@ func (t *BusinessLogicImpl) CreateRefreshToken(
 func (t *BusinessLogicImpl) VerifyRefreshToken(
 	ctx context.Context,
 	refreshToken string,
-) (entity.PrincipalRefreshToken, error) {
-	claims, err := t.RefreshTokenJWTVerifier.VerifyJWTToken(ctx, refreshToken, &auth.JWTClaimsRefreshToken{})
+) (entity.AdminPrincipalRefreshToken, error) {
+	claims, err := t.RefreshTokenJWTVerifier.VerifyJWTToken(ctx, refreshToken, &auth.JWTClaimsAdminRefreshToken{})
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	claimsRefreshToken, ok := claims.(*auth.JWTClaimsRefreshToken)
+	claimsRefreshToken, ok := claims.(*auth.JWTClaimsAdminRefreshToken)
 	if !ok {
 		return nil, terrors.Wrapf("cannot convert JWTClaims to JWTClaimsAccessToken")
 	}

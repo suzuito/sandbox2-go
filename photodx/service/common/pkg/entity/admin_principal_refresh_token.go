@@ -1,5 +1,5 @@
 package entity
 
-type PrincipalRefreshToken interface {
+type AdminPrincipalRefreshToken interface {
 	GetPhotoStudioMemberID() PhotoStudioMemberID
 }

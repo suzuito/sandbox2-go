@@ -8,7 +8,7 @@ import (
 )
 
 type DTOMiddlewareRefreshTokenAuthe struct {
-	Principal entity.PrincipalRefreshToken
+	Principal entity.AdminPrincipalRefreshToken
 }
 
 func (t *Impl) MiddlewareRefreshTokenAuthe(

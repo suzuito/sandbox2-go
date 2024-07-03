@@ -6,7 +6,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
 
-type JWTClaimsAccessToken struct {
+type JWTClaimsAdminAccessToken struct {
 	jwt.RegisteredClaims
 	Roles         []rbac.RoleID        `json:"roles"`
 	PhotoStudioID entity.PhotoStudioID `json:"photoStudioId"`

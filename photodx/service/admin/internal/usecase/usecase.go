@@ -17,6 +17,6 @@ type Usecase interface {
 	) (*DTOAPIMiddlewarePhotoStudio, error)
 	APIGetInit(
 		ctx context.Context,
-		principal entity.Principal,
+		principal entity.AdminPrincipal,
 	) (*DTOAPIGetInit, error)
 }

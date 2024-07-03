@@ -15,6 +15,7 @@ import (
 	admin_web "github.com/suzuito/sandbox2-go/photodx/service/admin/pkg/web"
 	auth_web "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/web"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
+	user_web "github.com/suzuito/sandbox2-go/photodx/service/user/pkg/web"
 )
 
 func main() {
@@ -52,6 +53,7 @@ func setUp(
 	)
 	auth_web.SetRouter(engine, logger, logic)
 	admin_web.SetRouter(engine, logger, logic)
+	user_web.SetRouter(engine, logger, logic)
 	if err := engine.Run(fmt.Sprintf(":%d", env.Port)); err != nil {
 		return terrors.Wrapf("cannot run server : %w", err)
 	}

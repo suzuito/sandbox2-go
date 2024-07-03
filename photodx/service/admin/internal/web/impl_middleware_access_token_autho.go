@@ -12,7 +12,7 @@ import (
 func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
 	policy := rbac.NewPolicy(policyString)
 	return func(ctx *gin.Context) {
-		principal := common_web.CtxGet[entity.Principal](ctx, common_web.CtxPrincipal)
+		principal := common_web.CtxGet[entity.AdminPrincipal](ctx, common_web.CtxPrincipal)
 		if principal == nil {
 			t.P.JSON(ctx, http.StatusForbidden, common_web.ResponseError{
 				Message: "forbidden",

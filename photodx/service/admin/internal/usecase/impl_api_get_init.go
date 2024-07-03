@@ -14,7 +14,7 @@ type DTOAPIGetInit struct {
 
 func (t *Impl) APIGetInit(
 	ctx context.Context,
-	principal entity.Principal,
+	principal entity.AdminPrincipal,
 ) (*DTOAPIGetInit, error) {
 	photoStudioMember, _, photoStudio, err := t.B.GetPhotoStudioMember(
 		ctx,

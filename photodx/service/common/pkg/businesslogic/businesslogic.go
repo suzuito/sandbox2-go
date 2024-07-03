@@ -45,7 +45,7 @@ type BusinessLogic interface {
 	VerifyAccessToken(
 		ctx context.Context,
 		accessToken string,
-	) (entity.Principal, error)
+	) (entity.AdminPrincipal, error)
 
 	// impl_refresh_token.go
 	CreateRefreshToken(
@@ -55,5 +55,5 @@ type BusinessLogic interface {
 	VerifyRefreshToken(
 		ctx context.Context,
 		refreshToken string,
-	) (entity.PrincipalRefreshToken, error)
+	) (entity.AdminPrincipalRefreshToken, error)
 }

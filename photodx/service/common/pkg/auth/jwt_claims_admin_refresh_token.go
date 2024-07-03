@@ -5,11 +5,11 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-type JWTClaimsRefreshToken struct {
+type JWTClaimsAdminRefreshToken struct {
 	jwt.RegisteredClaims
 	Hoge string `json:"hoge"`
 }
 
-func (t *JWTClaimsRefreshToken) GetPhotoStudioMemberID() entity.PhotoStudioMemberID {
+func (t *JWTClaimsAdminRefreshToken) GetPhotoStudioMemberID() entity.PhotoStudioMemberID {
 	return entity.PhotoStudioMemberID(t.Subject)
 }
