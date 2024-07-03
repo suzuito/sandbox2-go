@@ -10,9 +10,9 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
+	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/inject"
 	"github.com/suzuito/sandbox2-go/photodx/internal/web"
-	"github.com/suzuito/sandbox2-go/photodx/pkg/environment"
-	"github.com/suzuito/sandbox2-go/photodx/pkg/inject"
 )
 
 func main() {

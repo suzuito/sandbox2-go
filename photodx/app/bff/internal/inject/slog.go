@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/golang-cz/devslog"
-	"github.com/suzuito/sandbox2-go/photodx/pkg/environment"
+	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
 )
 
 func NewSlogHandler(

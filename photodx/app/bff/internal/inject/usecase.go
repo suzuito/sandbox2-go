@@ -9,13 +9,13 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
 	"github.com/suzuito/sandbox2-go/photodx/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/photodx/internal/infra/saltrepository"
 	"github.com/suzuito/sandbox2-go/photodx/internal/usecase"
 	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service"
 	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/auth"
 	"github.com/suzuito/sandbox2-go/photodx/internal/usecase/service/proc"
-	"github.com/suzuito/sandbox2-go/photodx/pkg/environment"
 )
 
 func NewUsecase(

@@ -3,10 +3,10 @@ package inject
 import (
 	"log/slog"
 
+	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
 	"github.com/suzuito/sandbox2-go/photodx/internal/usecase"
 	"github.com/suzuito/sandbox2-go/photodx/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/internal/web/presenter"
-	"github.com/suzuito/sandbox2-go/photodx/pkg/environment"
 )
 
 func NewWebImpl(

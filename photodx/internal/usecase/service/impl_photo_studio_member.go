@@ -8,18 +8,6 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/internal/entity/rbac"
 )
 
-func (t *Impl) GetPhotoStudioMemberByEmail(
-	ctx context.Context,
-	photoStudioID entity.PhotoStudioID,
-	email string,
-) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	member, roles, photoStudio, err := t.Repository.GetPhotoStudioMemberByEmail(ctx, photoStudioID, email)
-	if err != nil {
-		return nil, nil, nil, terrors.Wrap(err)
-	}
-	return member, roles, photoStudio, nil
-}
-
 func (t *Impl) GetPhotoStudioMember(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,

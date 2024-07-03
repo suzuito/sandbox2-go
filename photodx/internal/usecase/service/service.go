@@ -30,15 +30,6 @@ type Service interface {
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
 	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
-	GetPhotoStudioMemberByEmail(
-		ctx context.Context,
-		photoStudioID entity.PhotoStudioID,
-		email string,
-	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
-	SendPhotoStudioMemberInvitation(
-		ctx context.Context,
-		photoStudioMemberID entity.PhotoStudioMemberID,
-	) error
 	VerifyPhotoStudioMemberPassword(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,

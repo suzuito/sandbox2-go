@@ -82,7 +82,7 @@ photodx/bff-init: photodx/db-init
 photodx/bff-init-rdb: photodx/db-init-rdb
 	echo "TODO"
 photodx/bff-build:
-	go build -o photodx-bff.out photodx/cmd/bff/*.go
+	go build -o photodx-bff.out photodx/app/bff/cmd/*.go
 photodx/migrate-create: .bin/migrate
 	# Example: make blog2-migrate-create NAME=create_article
 	.bin/migrate create -ext sql -dir ./.service/photodx/db/.schema/ $(NAME)

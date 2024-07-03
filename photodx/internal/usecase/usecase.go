@@ -29,21 +29,10 @@ type Usecase interface {
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
 	) (*DTOAuthPostRefresh, error)
-	APIPostPhotoStudioMembers(
-		ctx context.Context,
-		photoStudioID entity.PhotoStudioID,
-		email string,
-		name string,
-	) (*DTOAPIPostPhotoStudioMembers, error)
 	APIGetInit(
 		ctx context.Context,
 		principal entity.Principal,
 	) (*DTOAPIGetInit, error)
-	// APIPostPhotoStudios(
-	// 	ctx context.Context,
-	// 	photoStudioID entity.PhotoStudioID,
-	// 	name string,
-	// ) (*DTOAPIPostPhotoStudios, error)
 	SuperPostInit(
 		ctx context.Context,
 	) (*DTOSuperPostInit, error)

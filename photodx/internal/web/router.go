@@ -92,15 +92,6 @@ func SetRouter(
 						),
 						w.APIMiddlewarePhotoStudio,
 					)
-					photoStudio.GET("", w.APIGetPhotoStudio)
-					{
-						members := photoStudio.Group("members")
-						members.POST("", w.APIPostPhotoStudioMembers)
-					}
-					{
-						customers := photoStudio.Group("customers")
-						customers.GET("search", w.APIGetPhotoStudioCustomers)
-					}
 				}
 			}
 		}
