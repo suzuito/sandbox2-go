@@ -16,22 +16,32 @@ func NewBusinessLogic(
 	passwordHasher proc.PasswordHasher,
 	repository repository.Repository,
 	saltRepository repository.SaltRepository,
-	refreshTokenJWTCreator auth.JWTCreator,
-	refreshTokenJWTVerifier auth.JWTVerifier,
-	accessTokenJWTCreator auth.JWTCreator,
-	accessTokenJWTVerifier auth.JWTVerifier,
+	adminRefreshTokenJWTCreator auth.JWTCreator,
+	adminRefreshTokenJWTVerifier auth.JWTVerifier,
+	adminAccessTokenJWTCreator auth.JWTCreator,
+	adminAccessTokenJWTVerifier auth.JWTVerifier,
+	userAccessTokenJWTVerifier auth.JWTVerifier,
 	nowFunc func() time.Time,
 ) businesslogic.BusinessLogic {
-	return &businesslogic_internal.BusinessLogicImpl{
+	return &businesslogic_internal.Impl{
+		Repository:     repository,
+		SaltRepository: saltRepository,
+		NowFunc:        nowFunc,
+
 		PhotoStudioMemberIDGenerator:              photoStudioMemberIDGenerator,
 		PhotoStudioMemberInitialPasswordGenerator: photoStudioMemberInitialPasswordGenerator,
 		PasswordHasher:                            passwordHasher,
-		Repository:                                repository,
-		SaltRepository:                            saltRepository,
-		RefreshTokenJWTCreator:                    refreshTokenJWTCreator,
-		RefreshTokenJWTVerifier:                   refreshTokenJWTVerifier,
-		AccessTokenJWTCreator:                     accessTokenJWTCreator,
-		AccessTokenJWTVerifier:                    accessTokenJWTVerifier,
-		NowFunc:                                   nowFunc,
+		AdminRefreshTokenJWTCreator:               adminRefreshTokenJWTCreator,
+		AdminRefreshTokenJWTVerifier:              adminRefreshTokenJWTVerifier,
+		AdminAccessTokenJWTCreator:                adminAccessTokenJWTCreator,
+		AdminAccessTokenJWTVerifier:               adminAccessTokenJWTVerifier,
+
+		// TODO ↓出鱈目。後でちゃんとする。
+		UserAccessTokenJWTVerifier:    adminAccessTokenJWTVerifier,
+		UserIDGenerator:               photoStudioMemberIDGenerator,
+		UserAccessTokenJWTCreator:     adminAccessTokenJWTCreator,
+		UserRefreshTokenJWTCreator:    adminRefreshTokenJWTCreator,
+		UserRefreshTokenJWTVerifier:   adminRefreshTokenJWTVerifier,
+		OAuth2LoginFlowStateGenerator: photoStudioMemberIDGenerator,
 	}
 }

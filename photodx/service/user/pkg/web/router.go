@@ -26,5 +26,14 @@ func SetRouter(
 	}
 	app := e.Group("app")
 	app.Use(w.MiddlewareAccessTokenAuthe)
-	app.GET("init", w.GetInit)
+	app.GET(
+		"init",
+		w.MiddlewareAccessTokenAutho(`
+			permissions.exists(
+				p,
+				p.resource == "PhotoStudio" && "read".matches(p.action)
+			)
+		`),
+		w.GetInit,
+	)
 }

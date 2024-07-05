@@ -39,13 +39,17 @@ func NewBusinessLogic(
 	)
 	saltRepo := common_inject.NewSaltRepository("foo")
 	jwths := auth.JWTHS{
-		PrivateKey: []byte(env.JWTRefreshTokenSigningPrivateKey),
+		PrivateKey: []byte(env.JWTAdminRefreshTokenSigningPrivateKey),
 	}
-	accessTokenJWTPrivateKey, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(env.JWTAccessTokenSigningPrivateKey))
+	adminAccessTokenJWTPrivateKey, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(env.JWTAdminAccessTokenSigningPrivateKey))
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	accessTokenJWTPublicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(env.JWTAccessTokenSigningPublicKey))
+	adminAccessTokenJWTPublicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(env.JWTAdminAccessTokenSigningPublicKey))
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	auth0Verifier, err := auth.NewJWTVerifierAuth0(env.Auth0Domain, env.Auth0Audience)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -58,13 +62,18 @@ func NewBusinessLogic(
 		&jwths,
 		&jwths,
 		&auth.JWTCreatorRS{
-			PrivateKey: accessTokenJWTPrivateKey,
+			PrivateKey: adminAccessTokenJWTPrivateKey,
 		},
 		&auth.JWTVerifiers{
 			Verifiers: []auth.JWTVerifier{
 				&auth.JWTVerifierRS{
-					PublicKey: accessTokenJWTPublicKey,
+					PublicKey: adminAccessTokenJWTPublicKey,
 				},
+			},
+		},
+		&auth.JWTVerifiers{
+			Verifiers: []auth.JWTVerifier{
+				auth0Verifier,
 			},
 		},
 		time.Now,

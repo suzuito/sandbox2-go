@@ -11,7 +11,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
 
-func (t *BusinessLogicImpl) CreateAccessToken(
+func (t *Impl) CreateAdminAccessToken(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
 ) (string, error) {
@@ -42,7 +42,7 @@ func (t *BusinessLogicImpl) CreateAccessToken(
 		Roles:         roleIDs,
 		PhotoStudioID: photoStudio.ID,
 	}
-	tokenString, err := t.AccessTokenJWTCreator.CreateJWTToken(
+	tokenString, err := t.AdminAccessTokenJWTCreator.CreateJWTToken(
 		ctx,
 		&claims,
 	)
@@ -52,11 +52,11 @@ func (t *BusinessLogicImpl) CreateAccessToken(
 	return tokenString, nil
 }
 
-func (t *BusinessLogicImpl) VerifyAccessToken(
+func (t *Impl) VerifyAdminAccessToken(
 	ctx context.Context,
 	accessToken string,
 ) (entity.AdminPrincipal, error) {
-	claims, err := t.AccessTokenJWTVerifier.VerifyJWTToken(ctx, accessToken, &auth.JWTClaimsAdminAccessToken{})
+	claims, err := t.AdminAccessTokenJWTVerifier.VerifyJWTToken(ctx, accessToken, &auth.JWTClaimsAdminAccessToken{})
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

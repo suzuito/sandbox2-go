@@ -34,11 +34,11 @@ func SetRouter(
 				`
 					permissions.exists(
 						p,
-						p.resource == "PhotoStudio" && principalPhotoStudioId.matches(p.target) && "read".matches(p.action)
+						p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)
 					) &&
 					permissions.exists(
 						p,
-						p.resource == "PhotoStudioMember" && principalPhotoStudioMemberId.matches(p.target) && "read".matches(p.action)
+						p.resource == "PhotoStudioMember" && adminPrincipalPhotoStudioMemberId.matches(p.target) && "read".matches(p.action)
 					)
 					`,
 			),
@@ -54,7 +54,7 @@ func SetRouter(
 						`
 							permissions.exists(
     							p,
-			                    p.resource == "PhotoStudio" && principalPhotoStudioId.matches(p.target) && "read".matches(p.action)
+			                    p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)
 		                    )
 							`,
 					),

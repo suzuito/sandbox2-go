@@ -8,15 +8,23 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
 )
 
-type BusinessLogicImpl struct {
+type Impl struct {
+	Repository     repository.Repository
+	SaltRepository repository.SaltRepository
+	NowFunc        func() time.Time
+
 	PhotoStudioMemberIDGenerator              proc.RandomStringGenerator
 	PhotoStudioMemberInitialPasswordGenerator proc.RandomStringGenerator
 	PasswordHasher                            proc.PasswordHasher
-	Repository                                repository.Repository
-	SaltRepository                            repository.SaltRepository
-	RefreshTokenJWTCreator                    auth.JWTCreator
-	RefreshTokenJWTVerifier                   auth.JWTVerifier
-	AccessTokenJWTCreator                     auth.JWTCreator
-	AccessTokenJWTVerifier                    auth.JWTVerifier
-	NowFunc                                   func() time.Time
+	AdminRefreshTokenJWTCreator               auth.JWTCreator
+	AdminRefreshTokenJWTVerifier              auth.JWTVerifier
+	AdminAccessTokenJWTCreator                auth.JWTCreator
+	AdminAccessTokenJWTVerifier               auth.JWTVerifier
+
+	UserRefreshTokenJWTCreator    auth.JWTCreator
+	UserRefreshTokenJWTVerifier   auth.JWTVerifier
+	UserAccessTokenJWTCreator     auth.JWTCreator
+	UserAccessTokenJWTVerifier    auth.JWTVerifier
+	OAuth2LoginFlowStateGenerator proc.RandomStringGenerator
+	UserIDGenerator               proc.RandomStringGenerator
 }

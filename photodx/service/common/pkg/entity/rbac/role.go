@@ -27,6 +27,12 @@ var RoleSuperUser = Role{
 		{Resource: "PhotoStudioMember", Target: ".*", Action: "delete"},
 	},
 }
+var RoleUser = Role{
+	ID: "User",
+	Permissions: []*pbrbac.Permission{
+		{Resource: "PhotoStudio", Target: ".*", Action: "read"},
+	},
+}
 
 var AvailablePredefinedRoles = map[RoleID]*Role{}
 
@@ -48,6 +54,7 @@ func init() {
 	roles := []Role{
 		RoleGuest,
 		RoleSuperUser,
+		RoleUser,
 	}
 	for i := range roles {
 		AvailablePredefinedRoles[roles[i].ID] = &roles[i]

@@ -9,7 +9,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
 
-func (t *BusinessLogicImpl) GetPhotoStudioMember(
+func (t *Impl) GetPhotoStudioMember(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
@@ -20,7 +20,7 @@ func (t *BusinessLogicImpl) GetPhotoStudioMember(
 	return member, roles, photoStudio, nil
 }
 
-func (t *BusinessLogicImpl) CreatePhotoStudioMember(
+func (t *Impl) CreatePhotoStudioMember(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,
 	email string,
@@ -63,7 +63,7 @@ func (t *BusinessLogicImpl) CreatePhotoStudioMember(
 	return created, roles, photoStudio, initialPassword, nil
 }
 
-func (t *BusinessLogicImpl) VerifyPhotoStudioMemberPassword(
+func (t *Impl) VerifyPhotoStudioMemberPassword(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,
 	email string,

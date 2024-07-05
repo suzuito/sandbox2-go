@@ -1,4 +1,4 @@
-package rbac
+package entity
 
 import (
 	"github.com/google/cel-go/cel"
@@ -19,11 +19,15 @@ func init() {
 			),
 		),
 		cel.Variable(
-			"principalPhotoStudioMemberId",
+			"adminPrincipalPhotoStudioMemberId",
 			cel.StringType,
 		),
 		cel.Variable(
-			"principalPhotoStudioId",
+			"adminPrincipalPhotoStudioId",
+			cel.StringType,
+		),
+		cel.Variable(
+			"userPrincipalUserId",
 			cel.StringType,
 		),
 		cel.Variable(

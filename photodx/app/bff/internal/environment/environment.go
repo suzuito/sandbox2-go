@@ -15,7 +15,7 @@ type Environment struct {
 	CorsAllowHeaders  []string `required:"false" split_words:"true"`
 	CorsExposeHeaders []string `required:"false" split_words:"true"`
 
-	JWTRefreshTokenSigningPrivateKey string `required:"true" split_words:"true"`
-	JWTAccessTokenSigningPrivateKey  string `required:"true" split_words:"true"`
-	JWTAccessTokenSigningPublicKey   string `required:"true" split_words:"true"`
+	JWTAdminRefreshTokenSigningPrivateKey string `required:"true" split_words:"true"`
+	JWTAdminAccessTokenSigningPrivateKey  string `required:"true" split_words:"true"`
+	JWTAdminAccessTokenSigningPublicKey   string `required:"true" split_words:"true"`
 }

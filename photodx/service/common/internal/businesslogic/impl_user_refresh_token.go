@@ -10,22 +10,22 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-func (t *BusinessLogicImpl) CreateRefreshToken(
+func (t *Impl) CreateUserRefreshToken(
 	ctx context.Context,
-	photoStudioMemberID entity.PhotoStudioMemberID,
+	userID entity.UserID,
 ) (string, error) {
 	now := t.NowFunc()
 	ttlDays := 7
 	expiresAt := now.Add(time.Hour * time.Duration(ttlDays) * 24)
-	claims := auth.JWTClaimsAdminRefreshToken{
+	claims := auth.JWTClaimsUserRefreshToken{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   string(photoStudioMemberID),
+			Subject:   string(userID),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
 	}
-	tokenString, err := t.RefreshTokenJWTCreator.CreateJWTToken(
+	tokenString, err := t.UserRefreshTokenJWTCreator.CreateJWTToken(
 		ctx,
 		&claims,
 	)
@@ -35,17 +35,17 @@ func (t *BusinessLogicImpl) CreateRefreshToken(
 	return tokenString, nil
 }
 
-func (t *BusinessLogicImpl) VerifyRefreshToken(
+func (t *Impl) VerifyUserRefreshToken(
 	ctx context.Context,
 	refreshToken string,
-) (entity.AdminPrincipalRefreshToken, error) {
-	claims, err := t.RefreshTokenJWTVerifier.VerifyJWTToken(ctx, refreshToken, &auth.JWTClaimsAdminRefreshToken{})
+) (entity.UserPrincipalRefreshToken, error) {
+	claims, err := t.UserRefreshTokenJWTVerifier.VerifyJWTToken(ctx, refreshToken, &auth.JWTClaimsUserRefreshToken{})
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	claimsRefreshToken, ok := claims.(*auth.JWTClaimsAdminRefreshToken)
+	claimsRefreshToken, ok := claims.(*auth.JWTClaimsUserRefreshToken)
 	if !ok {
-		return nil, terrors.Wrapf("cannot convert JWTClaims to JWTClaimsAccessToken")
+		return nil, terrors.Wrapf("cannot convert JWTClaims to JWTClaimsUserRefreshToken")
 	}
 	return claimsRefreshToken, nil
 }

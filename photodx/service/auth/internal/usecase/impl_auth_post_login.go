@@ -29,7 +29,7 @@ func (t *Impl) AuthPostLogin(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	refreshToken, err := t.B.CreateRefreshToken(ctx, photoStudioMember.ID)
+	refreshToken, err := t.B.CreateAdminRefreshToken(ctx, photoStudioMember.ID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -7,14 +7,14 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-func (t *BusinessLogicImpl) GetPhotoStudio(
+func (t *Impl) GetPhotoStudio(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,
 ) (*entity.PhotoStudio, error) {
 	return t.Repository.GetPhotoStudio(ctx, photoStudioID)
 }
 
-func (t *BusinessLogicImpl) CreatePhotoStudio(
+func (t *Impl) CreatePhotoStudio(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,
 	name string,

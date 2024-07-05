@@ -1,17 +1,18 @@
-package rbac
+package entity
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/cel-go/cel"
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/pbrbac"
 )
 
 type Policy interface {
-	EvalGinContext(
-		permissions []*pbrbac.Permission,
-		principalPhotoStudioMemberID string,
-		principalPhotoStudioID string,
+	EvalGinContextForAdmin(
+		principal AdminPrincipal,
+		ctx *gin.Context,
+	) (bool, error)
+	EvalGinContextForUser(
+		principal UserPrincipal,
 		ctx *gin.Context,
 	) (bool, error)
 }
@@ -23,10 +24,8 @@ type PolicyImpl struct {
 	program      cel.Program
 }
 
-func (t *PolicyImpl) EvalGinContext(
-	permissions []*pbrbac.Permission,
-	principalPhotoStudioMemberID string,
-	principalPhotoStudioID string,
+func (t *PolicyImpl) EvalGinContextForAdmin(
+	principal AdminPrincipal,
 	ctx *gin.Context,
 ) (bool, error) {
 	pathParams := map[string]string{}
@@ -34,10 +33,26 @@ func (t *PolicyImpl) EvalGinContext(
 		pathParams[param.Key] = param.Value
 	}
 	input := map[string]any{
-		"permissions":                  permissions,
-		"principalPhotoStudioMemberId": string(principalPhotoStudioMemberID),
-		"principalPhotoStudioId":       string(principalPhotoStudioID),
-		"pathParams":                   pathParams,
+		"permissions":                       principal.GetPermissions(),
+		"adminPrincipalPhotoStudioMemberId": string(principal.GetPhotoStudioMemberID()),
+		"adminPrincipalPhotoStudioId":       string(principal.GetPhotoStudioID()),
+		"pathParams":                        pathParams,
+	}
+	return t.Eval(input)
+}
+
+func (t *PolicyImpl) EvalGinContextForUser(
+	principal UserPrincipal,
+	ctx *gin.Context,
+) (bool, error) {
+	pathParams := map[string]string{}
+	for _, param := range ctx.Params {
+		pathParams[param.Key] = param.Value
+	}
+	input := map[string]any{
+		"permissions":         principal.GetPermissions(),
+		"userPrincipalUserId": string(principal.GetUserID()),
+		"pathParams":          pathParams,
 	}
 	return t.Eval(input)
 }
