@@ -3,12 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/inject"
@@ -34,28 +32,52 @@ func setUp(
 	if err := envconfig.Process("", &env); err != nil {
 		return terrors.Wrapf("cannot load environment variables : %w", err)
 	}
-	slogHandler := inject.NewSlogHandler(&env)
-	handler := clog.CustomHandler{
-		Handler: slogHandler,
+	resource, err := inject.NewResource(ctx, &env)
+	if err != nil {
+		return terrors.Wrapf("NewResource is failed : %w", err)
 	}
-	logger := slog.New(&handler)
-	logic, err := inject.NewBusinessLogic(&env, logger)
+	defer resource.Close()
+	logic, err := inject.NewBusinessLogic(&env, resource.Logger, resource.Pool)
 	if err != nil {
 		return terrors.Wrapf("NewBusinessLogic is failed : %w", err)
 	}
 	engine := gin.Default()
 	common_web.SetRouter(
 		engine,
-		logger,
+		resource.Logger,
 		env.CorsAllowOrigins,
 		env.CorsAllowMethods,
 		env.CorsAllowHeaders,
 		env.CorsExposeHeaders,
 	)
-	auth_web.SetRouter(engine, logger, logic)
-	admin_web.SetRouter(engine, logger, logic)
-	user_web.SetRouter(engine, logger, logic)
-	authuser_web.SetRouter(engine, logger, logic)
+	admin_web.SetRouter(engine, resource.Logger, logic)
+	if err := auth_web.Main(
+		engine,
+		resource.Logger,
+		resource.Pool,
+		env.JWTAdminRefreshTokenSigningPrivateKey,
+		env.JWTAdminAccessTokenSigningPrivateKey,
+		env.JWTAdminAccessTokenSigningPublicKey,
+	); err != nil {
+		return terrors.Wrapf("Main is failed : %w", err)
+	}
+	if err := user_web.Main(
+		engine,
+		resource.Logger,
+		env.JWTUserAccessTokenSigningPublicKey,
+	); err != nil {
+		return terrors.Wrapf("Main is failed : %w", err)
+	}
+	if err := authuser_web.Main(
+		engine,
+		resource.Logger,
+		resource.Pool,
+		env.JWTUserRefreshTokenSigningPrivateKey,
+		env.JWTUserAccessTokenSigningPrivateKey,
+		env.JWTUserAccessTokenSigningPublicKey,
+	); err != nil {
+		return terrors.Wrapf("Main is failed : %w", err)
+	}
 	if err := engine.Run(fmt.Sprintf(":%d", env.Port)); err != nil {
 		return terrors.Wrapf("cannot run server : %w", err)
 	}

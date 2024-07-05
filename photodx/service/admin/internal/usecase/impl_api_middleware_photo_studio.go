@@ -15,10 +15,13 @@ func (t *Impl) APIMiddlewarePhotoStudio(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,
 ) (*DTOAPIMiddlewarePhotoStudio, error) {
-	photoStudio, err := t.B.GetPhotoStudio(ctx, photoStudioID)
-	if err != nil {
-		t.L.Error("", "err", err)
-		return nil, terrors.Wrap(err)
-	}
-	return &DTOAPIMiddlewarePhotoStudio{PhotoStudio: photoStudio}, nil
+	/*
+		photoStudio, err := t.B.GetPhotoStudio(ctx, photoStudioID)
+		if err != nil {
+			t.L.Error("", "err", err)
+			return nil, terrors.Wrap(err)
+		}
+		return &DTOAPIMiddlewarePhotoStudio{PhotoStudio: photoStudio}, nil
+	*/
+	return nil, terrors.Wrapf("not impl")
 }

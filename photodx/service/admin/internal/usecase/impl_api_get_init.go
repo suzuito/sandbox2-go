@@ -16,15 +16,18 @@ func (t *Impl) APIGetInit(
 	ctx context.Context,
 	principal entity.AdminPrincipal,
 ) (*DTOAPIGetInit, error) {
-	photoStudioMember, _, photoStudio, err := t.B.GetPhotoStudioMember(
-		ctx,
-		principal.GetPhotoStudioMemberID(),
-	)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	return &DTOAPIGetInit{
-		PhotoStudio:       photoStudio,
-		PhotoStudioMember: photoStudioMember,
-	}, nil
+	/*
+		photoStudioMember, _, photoStudio, err := t.B.GetPhotoStudioMember(
+			ctx,
+			principal.GetPhotoStudioMemberID(),
+		)
+		if err != nil {
+			return nil, terrors.Wrap(err)
+		}
+		return &DTOAPIGetInit{
+			PhotoStudio:       photoStudio,
+			PhotoStudioMember: photoStudioMember,
+		}, nil
+	*/
+	return nil, terrors.Wrapf("not impl")
 }

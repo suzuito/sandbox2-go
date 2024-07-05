@@ -7,9 +7,8 @@ import (
 )
 
 type BusinessLogic interface {
-	// impl_admin_access_token.go
-	VerifyAdminAccessToken(
-		ctx context.Context,
+	// impl_user_access_token.go
+	VerifyUserAccessToken(ctx context.Context,
 		accessToken string,
-	) (entity.AdminPrincipal, error)
+	) (entity.UserPrincipal, error)
 }
