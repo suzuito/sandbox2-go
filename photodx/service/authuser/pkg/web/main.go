@@ -1,7 +1,6 @@
 package web
 
 import (
-	"database/sql"
 	"log/slog"
 	"net/url"
 	"time"
@@ -17,12 +16,13 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/oauth2loginflow"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
+	"gorm.io/gorm"
 )
 
 func Main(
 	e *gin.Engine,
 	l *slog.Logger,
-	pool *sql.DB,
+	gormDB *gorm.DB,
 	userRefreshTokenJWTPrivateKey string,
 	userAccessTokenJWTPrivateKey string,
 	userAccessTokenJWTPublicKey string,
@@ -39,7 +39,7 @@ func Main(
 		return terrors.Wrap(err)
 	}
 	b := businesslogic.Impl{
-		Repository:                  inject.NewRepository(pool),
+		Repository:                  inject.NewRepository(gormDB, time.Now),
 		NowFunc:                     time.Now,
 		UserRefreshTokenJWTCreator:  &userRefreshTokenJWTProcessor,
 		UserRefreshTokenJWTVerifier: &userRefreshTokenJWTProcessor,

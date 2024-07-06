@@ -1,7 +1,6 @@
 package inject
 
 import (
-	"database/sql"
 	"log/slog"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -15,7 +14,6 @@ import (
 func NewBusinessLogic(
 	env *environment.Environment,
 	logger *slog.Logger,
-	pool *sql.DB,
 ) (businesslogic.BusinessLogic, error) {
 	adminAccessTokenJWTPublicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(env.JWTAdminAccessTokenSigningPublicKey))
 	if err != nil {

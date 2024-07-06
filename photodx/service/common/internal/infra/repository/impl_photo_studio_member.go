@@ -2,17 +2,70 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
-	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
+	"gorm.io/gorm"
 )
 
 func (t *Impl) CreatePhotoStudioMember(
+	ctx context.Context,
+	photoStudioID entity.PhotoStudioID,
+	photoStudioMember *entity.PhotoStudioMember,
+	initialPasswordHashValue string,
+	initialRoles []rbac.RoleID,
+) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
+	if err := t.GormDB.
+		WithContext(ctx).
+		Where(photoStudioMember.ID).
+		First(&modelPhotoStudioMember{}).Error; err == nil {
+		return nil, nil, nil, terrors.Wrap(&repository.DuplicateEntryError{
+			EntryType: repository.EntryTypePhotoStudioMember,
+			EntryID:   string(photoStudioMember.ID),
+		})
+	}
+	if err := t.GormDB.Transaction(func(tx *gorm.DB) error {
+		mPhotoStudioMember := newModelPhotoStudioMember(photoStudioMember)
+		mPhotoStudioMember.CreatedAt = t.NowFunc()
+		mPhotoStudioMember.UpdatedAt = t.NowFunc()
+		if err := tx.Create(mPhotoStudioMember).Error; err != nil {
+			return terrors.Wrap(err)
+		}
+		mPasswordHash := modelPhotoStudioMemberPasswordHashValue{
+			PhotoStudioMemberID: mPhotoStudioMember.ID,
+			Value:               initialPasswordHashValue,
+			CreatedAt:           t.NowFunc(),
+			UpdatedAt:           t.NowFunc(),
+		}
+		if err := tx.Create(&mPasswordHash).Error; err != nil {
+			return terrors.Wrap(err)
+		}
+		mRoles := modelPhotoStudioMemberRoles{}
+		for _, initialRole := range initialRoles {
+			mRoles = append(
+				mRoles,
+				&modelPhotoStudioMemberRole{
+					PhotoStudioMemberID: mPhotoStudioMember.ID,
+					RoleID:              initialRole,
+					CreatedAt:           t.NowFunc(),
+				},
+			)
+		}
+		if err := tx.Create(&mRoles).Error; err != nil {
+			return terrors.Wrap(err)
+		}
+		return nil
+	}); err != nil {
+		return nil, nil, nil, terrors.Wrap(err)
+	}
+	return t.GetPhotoStudioMember(ctx, photoStudioMember.ID)
+}
+
+/*
+func (t *Impl) CreatePhotoStudioMemberOld(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,
 	photoStudioMember *entity.PhotoStudioMember,
@@ -61,43 +114,15 @@ func (t *Impl) CreatePhotoStudioMember(
 	}
 	return t.GetPhotoStudioMember(ctx, photoStudioMember.ID)
 }
+*/
 
 func (t *Impl) GetPhotoStudioMember(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	row := csql.QueryRowContext(
-		ctx,
-		t.Pool,
-		"SELECT `id`, `email`, `name`, `active`, `photo_studio_id` FROM `photo_studio_members` WHERE `id` = ?",
-		photoStudioMemberID,
-	)
-	member := entity.PhotoStudioMember{}
-	photoStudioID := entity.PhotoStudioID("")
-	if err := row.Scan(
-		&member.ID,
-		&member.Email,
-		&member.Name,
-		&member.Active,
-		&photoStudioID,
-	); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil, nil, terrors.Wrap(&repository.NoEntryError{
-				EntryType: repository.EntryTypePhotoStudioMember,
-				EntryID:   string(member.ID),
-			})
-		}
-		return nil, nil, nil, terrors.Wrap(err)
-	}
-	rolesPerPhotoStudioMember, err := getPhotoStudioMemberRoles(ctx, t.Pool, []entity.PhotoStudioMemberID{photoStudioMemberID})
-	if err != nil {
-		return nil, nil, nil, terrors.Wrap(err)
-	}
-	photoStudio, err := t.GetPhotoStudio(ctx, photoStudioID)
-	if err != nil {
-		return nil, nil, nil, terrors.Wrap(err)
-	}
-	return &member, rolesPerPhotoStudioMember[member.ID], photoStudio, nil
+	return t.getPhotoStudioMember(ctx, []gormQueryWhere{
+		{query: photoStudioMemberID},
+	})
 }
 
 func (t *Impl) GetPhotoStudioMemberByEmail(
@@ -105,24 +130,10 @@ func (t *Impl) GetPhotoStudioMemberByEmail(
 	photoStudioID entity.PhotoStudioID,
 	email string,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	row := csql.QueryRowContext(
-		ctx,
-		t.Pool,
-		"SELECT `id` FROM `photo_studio_members` WHERE `photo_studio_id` = ? AND `email` = ?",
-		photoStudioID,
-		email,
-	)
-	photoStudioMemberID := entity.PhotoStudioMemberID("")
-	if err := row.Scan(&photoStudioMemberID); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil, nil, terrors.Wrap(&repository.NoEntryError{
-				EntryType: repository.EntryTypePhotoStudioMember,
-				EntryID:   "by email",
-			})
-		}
-		return nil, nil, nil, terrors.Wrap(err)
-	}
-	return t.GetPhotoStudioMember(ctx, photoStudioMemberID)
+	return t.getPhotoStudioMember(ctx, []gormQueryWhere{
+		{query: "photo_studio_id = ?", args: []any{photoStudioID}},
+		{query: "email = ?", args: []any{email}},
+	})
 }
 
 func (t *Impl) GetPhotoStudioMemberPasswordHashByEmail(
@@ -134,21 +145,45 @@ func (t *Impl) GetPhotoStudioMemberPasswordHashByEmail(
 	if err != nil {
 		return "", nil, nil, nil, terrors.Wrap(err)
 	}
-	row := csql.QueryRowContext(
-		ctx,
-		t.Pool,
-		"SELECT `value` FROM `photo_studio_member_password_hash_values` WHERE `photo_studio_member_id` = ?",
-		member.ID,
-	)
-	hashValue := ""
-	if err := row.Scan(&hashValue); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+	passwordHash := modelPhotoStudioMemberPasswordHashValue{}
+	if err := t.GormDB.
+		WithContext(ctx).
+		Where("photo_studio_member_id = ?", member.ID).
+		First(&passwordHash).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return "", nil, nil, nil, terrors.Wrap(&repository.NoEntryError{
-				EntryType: repository.EntryTypePhotoStudioMember,
+				EntryType: "PhotoStudioMemberPasswordHash",
 				EntryID:   string(member.ID),
 			})
 		}
 		return "", nil, nil, nil, terrors.Wrap(err)
 	}
-	return hashValue, member, roles, photoStudio, nil
+	return passwordHash.Value, member, roles, photoStudio, nil
+}
+
+func (t *Impl) getPhotoStudioMember(
+	ctx context.Context,
+	wheres []gormQueryWhere,
+) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
+	mPhotoStudioMember := modelPhotoStudioMember{}
+	db := t.GormDB.WithContext(ctx)
+	for _, where := range wheres {
+		db = db.Where(where.query, where.args...)
+	}
+	db = db.
+		Preload("PhotoStudio").
+		Preload("Roles")
+	if err := db.First(&mPhotoStudioMember).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil, nil, &repository.NoEntryError{
+				EntryType: repository.EntryTypePhotoStudioMember,
+				EntryID:   string(mPhotoStudioMember.ID),
+			}
+		}
+		return nil, nil, nil, terrors.Wrap(err)
+	}
+	return mPhotoStudioMember.ToEntity(),
+		mPhotoStudioMember.Roles.ToEntity(),
+		mPhotoStudioMember.PhotoStudio.ToEntity(),
+		nil
 }

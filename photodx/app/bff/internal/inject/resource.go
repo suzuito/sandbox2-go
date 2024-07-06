@@ -2,28 +2,29 @@ package inject
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/golang-cz/devslog"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
+	gorm_mysql "gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	gorm_logger "gorm.io/gorm/logger"
 )
 
 type Resource struct {
-	Pool   *sql.DB
+	GormDB *gorm.DB
 	Logger *slog.Logger
 }
 
 func (t *Resource) Close() {
 	t.Logger.Info("Close resources")
-	if err := t.Pool.Close(); err != nil {
-		t.Logger.Error("Pool.Close() is failed", "err", err)
-	}
 }
 
 func NewResource(
@@ -66,13 +67,22 @@ func newLocalResource(
 		ParseTime:            true,
 		AllowNativePasswords: true,
 	}
-	pool, err := sql.Open(
-		"mysql",
-		mysqlConfig.FormatDSN(),
+	gormdb, err := gorm.Open(
+		gorm_mysql.Open(mysqlConfig.FormatDSN()),
+		&gorm.Config{
+			Logger: gorm_logger.New(
+				log.New(os.Stdout, "\r\n", log.LstdFlags),
+				gorm_logger.Config{
+					Colorful:      true,
+					LogLevel:      gorm_logger.Info,
+					SlowThreshold: time.Second,
+				},
+			),
+		},
 	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	resource.Pool = pool
+	resource.GormDB = gormdb
 	return &resource, nil
 }

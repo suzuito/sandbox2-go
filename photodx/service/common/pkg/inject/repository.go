@@ -1,14 +1,19 @@
 package inject
 
 import (
-	"database/sql"
+	"time"
 
 	internal_repository "github.com/suzuito/sandbox2-go/photodx/service/common/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
+	"gorm.io/gorm"
 )
 
-func NewRepository(pool *sql.DB) repository.Repository {
+func NewRepository(
+	gormDB *gorm.DB,
+	nowFunc func() time.Time,
+) repository.Repository {
 	return &internal_repository.Impl{
-		Pool: pool,
+		GormDB:  gormDB,
+		NowFunc: nowFunc,
 	}
 }

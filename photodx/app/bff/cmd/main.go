@@ -37,7 +37,7 @@ func setUp(
 		return terrors.Wrapf("NewResource is failed : %w", err)
 	}
 	defer resource.Close()
-	logic, err := inject.NewBusinessLogic(&env, resource.Logger, resource.Pool)
+	logic, err := inject.NewBusinessLogic(&env, resource.Logger)
 	if err != nil {
 		return terrors.Wrapf("NewBusinessLogic is failed : %w", err)
 	}
@@ -50,11 +50,11 @@ func setUp(
 		env.CorsAllowHeaders,
 		env.CorsExposeHeaders,
 	)
-	admin_web.SetRouter(engine, resource.Logger, logic)
+	admin_web.Main(engine, resource.Logger, logic)
 	if err := auth_web.Main(
 		engine,
 		resource.Logger,
-		resource.Pool,
+		resource.GormDB,
 		env.JWTAdminRefreshTokenSigningPrivateKey,
 		env.JWTAdminAccessTokenSigningPrivateKey,
 		env.JWTAdminAccessTokenSigningPublicKey,
@@ -71,7 +71,7 @@ func setUp(
 	if err := authuser_web.Main(
 		engine,
 		resource.Logger,
-		resource.Pool,
+		resource.GormDB,
 		env.JWTUserRefreshTokenSigningPrivateKey,
 		env.JWTUserAccessTokenSigningPrivateKey,
 		env.JWTUserAccessTokenSigningPublicKey,

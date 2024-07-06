@@ -10,7 +10,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 )
 
-func SetRouter(
+func Main(
 	e *gin.Engine,
 	l *slog.Logger,
 	b businesslogic.BusinessLogic,

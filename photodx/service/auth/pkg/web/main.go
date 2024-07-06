@@ -1,7 +1,6 @@
 package web
 
 import (
-	"database/sql"
 	"log/slog"
 	"time"
 
@@ -15,12 +14,13 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/inject"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
+	"gorm.io/gorm"
 )
 
 func Main(
 	e *gin.Engine,
 	l *slog.Logger,
-	pool *sql.DB,
+	gormDB *gorm.DB,
 	adminRefreshTokenJWTPrivateKey string,
 	adminAccessTokenJWTPrivateKey string,
 	adminAccessTokenJWTPublicKey string,
@@ -37,7 +37,7 @@ func Main(
 		return terrors.Wrap(err)
 	}
 	b := businesslogic.Impl{
-		Repository:                   inject.NewRepository(pool),
+		Repository:                   inject.NewRepository(gormDB, time.Now),
 		SaltRepository:               inject.NewSaltRepository("foo"),
 		PasswordHasher:               &proc.PasswordHasherMD5{},
 		PhotoStudioMemberIDGenerator: &proc.IDGeneratorImpl{},
@@ -77,5 +77,7 @@ func Main(
 			w.AuthPostRefresh,
 		)
 	}
+	// 後で消す
+	auth.POST("super_init", w.SuperPostInit)
 	return nil
 }

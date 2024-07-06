@@ -31,10 +31,11 @@ func (t *Impl) CreatePhotoStudioMember(
 		return nil, nil, nil, "", terrors.Wrap(err)
 	}
 	member := entity.PhotoStudioMember{
-		ID:     entity.PhotoStudioMemberID(id),
-		Email:  email,
-		Name:   name,
-		Active: false,
+		ID:            entity.PhotoStudioMemberID(id),
+		PhotoStudioID: photoStudioID,
+		Email:         email,
+		Name:          name,
+		Active:        false,
 	}
 	if err := member.Validate(); err != nil {
 		return nil, nil, nil, "", terrors.Wrap(err)

@@ -1,7 +1,13 @@
 package repository
 
-import "database/sql"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Impl struct {
-	Pool *sql.DB
+	GormDB *gorm.DB
+
+	NowFunc func() time.Time
 }
