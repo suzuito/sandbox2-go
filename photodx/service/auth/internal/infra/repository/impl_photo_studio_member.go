@@ -7,6 +7,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
+	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/infra/gormutil"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
 	"gorm.io/gorm"
 )
@@ -64,64 +65,12 @@ func (t *Impl) CreatePhotoStudioMember(
 	return t.GetPhotoStudioMember(ctx, photoStudioMember.ID)
 }
 
-/*
-func (t *Impl) CreatePhotoStudioMemberOld(
-	ctx context.Context,
-	photoStudioID entity.PhotoStudioID,
-	photoStudioMember *entity.PhotoStudioMember,
-	initialPasswordHashValue string,
-	initialRoles []rbac.RoleID,
-) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	if _, _, _, err := t.GetPhotoStudioMember(ctx, photoStudioMember.ID); err == nil {
-		return nil, nil, nil, terrors.Wrap(&repository.DuplicateEntryError{
-			EntryType: repository.EntryTypePhotoStudioMember,
-			EntryID:   string(photoStudioMember.ID),
-		})
-	}
-	if err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
-		if _, err := csql.ExecContext(
-			ctx,
-			tx,
-			"INSERT INTO `photo_studio_members`(`id`, `photo_studio_id`, `email`, `name`, `active`, `created_at`, `updated_at`) VALUES(?, ?, ?, ?, ?, NOW(), NOW())",
-			photoStudioMember.ID,
-			photoStudioID,
-			photoStudioMember.Email,
-			photoStudioMember.Name,
-			photoStudioMember.Active,
-		); err != nil {
-			return terrors.Wrap(err)
-		}
-		if _, err := csql.ExecContext(
-			ctx,
-			tx,
-			"INSERT INTO `photo_studio_member_password_hash_values`(`photo_studio_member_id`, `value`, `created_at`, `updated_at`) VALUES(?, ?, NOW(), NOW())",
-			photoStudioMember.ID,
-			initialPasswordHashValue,
-		); err != nil {
-			return terrors.Wrap(err)
-		}
-		if _, err := setPhotoStudioMemberRoles(
-			ctx,
-			tx,
-			photoStudioMember.ID,
-			initialRoles,
-		); err != nil {
-			return terrors.Wrap(err)
-		}
-		return nil
-	}); err != nil {
-		return nil, nil, nil, terrors.Wrap(err)
-	}
-	return t.GetPhotoStudioMember(ctx, photoStudioMember.ID)
-}
-*/
-
 func (t *Impl) GetPhotoStudioMember(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	return t.getPhotoStudioMember(ctx, []gormQueryWhere{
-		{query: photoStudioMemberID},
+	return t.getPhotoStudioMember(ctx, []gormutil.GormQueryWhere{
+		{Query: photoStudioMemberID},
 	})
 }
 
@@ -130,9 +79,9 @@ func (t *Impl) GetPhotoStudioMemberByEmail(
 	photoStudioID entity.PhotoStudioID,
 	email string,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	return t.getPhotoStudioMember(ctx, []gormQueryWhere{
-		{query: "photo_studio_id = ?", args: []any{photoStudioID}},
-		{query: "email = ?", args: []any{email}},
+	return t.getPhotoStudioMember(ctx, []gormutil.GormQueryWhere{
+		{Query: "photo_studio_id = ?", Args: []any{photoStudioID}},
+		{Query: "email = ?", Args: []any{email}},
 	})
 }
 
@@ -163,12 +112,12 @@ func (t *Impl) GetPhotoStudioMemberPasswordHashByEmail(
 
 func (t *Impl) getPhotoStudioMember(
 	ctx context.Context,
-	wheres []gormQueryWhere,
+	wheres []gormutil.GormQueryWhere,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
 	mPhotoStudioMember := modelPhotoStudioMember{}
 	db := t.GormDB.WithContext(ctx)
 	for _, where := range wheres {
-		db = db.Where(where.query, where.args...)
+		db = db.Where(where.Query, where.Args...)
 	}
 	db = db.
 		Preload("PhotoStudio").

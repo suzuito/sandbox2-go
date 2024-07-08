@@ -3,9 +3,9 @@ package businesslogic
 import (
 	"time"
 
+	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
 )
 
 type Impl struct {

@@ -113,7 +113,9 @@ func (t *Impl) FetchProfileAndCreateUserIfNotExists(
 		return nil, terrors.Wrap(err)
 	}
 	user.ID = entity.UserID(userID)
-	createdUser, err := t.Repository.CreateUser(ctx, user)
+	createdUser, err := t.Repository.CreateUserByResourceOwnerID(
+		ctx, user, providerID, resourceOwnerID,
+	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

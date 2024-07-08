@@ -8,10 +8,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/businesslogic"
+	infra_repository "github.com/suzuito/sandbox2-go/photodx/service/auth/internal/infra/repository"
+	infra_saltrepository "github.com/suzuito/sandbox2-go/photodx/service/auth/internal/infra/saltrepository"
 	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/auth/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/inject"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 	"gorm.io/gorm"
@@ -37,10 +38,13 @@ func Main(
 		return terrors.Wrap(err)
 	}
 	b := businesslogic.Impl{
-		Repository:                   inject.NewRepository(gormDB, time.Now),
-		SaltRepository:               inject.NewSaltRepository("foo"),
-		PasswordHasher:               &proc.PasswordHasherMD5{},
-		PhotoStudioMemberIDGenerator: &proc.IDGeneratorImpl{},
+		Repository: &infra_repository.Impl{
+			GormDB:  gormDB,
+			NowFunc: time.Now,
+		},
+		SaltRepository:                            &infra_saltrepository.Impl{},
+		PasswordHasher:                            &proc.PasswordHasherMD5{},
+		PhotoStudioMemberIDGenerator:              &proc.IDGeneratorImpl{},
 		PhotoStudioMemberInitialPasswordGenerator: &proc.InitialPasswordGeneratorImpl{},
 		NowFunc:                      time.Now,
 		AdminRefreshTokenJWTCreator:  &adminRefreshTokenJWTProcessor,

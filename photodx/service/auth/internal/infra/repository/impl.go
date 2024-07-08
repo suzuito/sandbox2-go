@@ -7,7 +7,6 @@ import (
 )
 
 type Impl struct {
-	GormDB *gorm.DB
-
+	GormDB  *gorm.DB
 	NowFunc func() time.Time
 }

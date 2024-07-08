@@ -9,10 +9,10 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/businesslogic"
+	infra_repository "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/inject"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/oauth2loginflow"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
@@ -39,7 +39,7 @@ func Main(
 		return terrors.Wrap(err)
 	}
 	b := businesslogic.Impl{
-		Repository:                  inject.NewRepository(gormDB, time.Now),
+		Repository:                  &infra_repository.Impl{GormDB: gormDB, NowFunc: time.Now},
 		NowFunc:                     time.Now,
 		UserRefreshTokenJWTCreator:  &userRefreshTokenJWTProcessor,
 		UserRefreshTokenJWTVerifier: &userRefreshTokenJWTProcessor,

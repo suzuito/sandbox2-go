@@ -7,6 +7,7 @@ type EntryType string
 const (
 	EntryTypePhotoStudio       EntryType = "PhotoStudio"
 	EntryTypePhotoStudioMember EntryType = "PhotoStudioMember"
+	EntryTypeUser              EntryType = "User"
 )
 
 type DuplicateEntryError struct {

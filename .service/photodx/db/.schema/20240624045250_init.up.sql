@@ -1,3 +1,4 @@
+-- Admin auth
 CREATE TABLE `photo_studios` (
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `name` VARCHAR(128) NOT NULL, -- TODO: Rethink MAX length
@@ -76,4 +77,31 @@ CREATE TABLE `customers_photostudio_mappings` (
     PRIMARY KEY (`customer_id`, `photo_studio_id`),
     FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (`photo_studio_id`) REFERENCES `photo_studios` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+-- User auth
+CREATE TABLE `oauth2_loginflow_states` (
+    `code` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `provider_id` VARCHAR(128) NOT NULL,
+    `redirect_url` VARCHAR(512) NOT NULL,
+    `callback_url` VARCHAR(512) NOT NULL,
+    `expires_at` TIMESTAMP NOT NULL
+);
+
+CREATE TABLE `users` (
+    `id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `name` VARCHAR(128),
+    `profile_image_url` VARCHAR(512) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
+);
+
+CREATE TABLE `provider_resource_owners_users_mappings` (
+    `provider_id` VARCHAR(128) NOT NULL,
+    `resource_owner_id` VARCHAR(128) NOT NULL,
+    `user_id` VARCHAR(128) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL,
+    PRIMARY KEY (`provider_id`, `resource_owner_id`),
+    UNIQUE KEY (`user_id`, `provider_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
