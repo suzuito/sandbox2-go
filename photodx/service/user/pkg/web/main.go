@@ -25,7 +25,7 @@ func Main(
 	b := businesslogic.Impl{
 		UserAccessTokenJWTVerifier: &auth.JWTVerifiers{
 			Verifiers: []auth.JWTVerifier{
-				&auth.JWTVerifierRS{
+				&auth.JWTVerifierRS256{
 					PublicKey: userAccessTokenJWTPublicKeyBytes,
 				},
 			},

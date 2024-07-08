@@ -37,12 +37,8 @@ func setUp(
 		return terrors.Wrapf("NewResource is failed : %w", err)
 	}
 	defer resource.Close()
-	logic, err := inject.NewBusinessLogic(&env, resource.Logger)
-	if err != nil {
-		return terrors.Wrapf("NewBusinessLogic is failed : %w", err)
-	}
 	engine := gin.Default()
-	common_web.SetRouter(
+	common_web.Main(
 		engine,
 		resource.Logger,
 		env.CorsAllowOrigins,
@@ -50,7 +46,13 @@ func setUp(
 		env.CorsAllowHeaders,
 		env.CorsExposeHeaders,
 	)
-	admin_web.Main(engine, resource.Logger, logic)
+	if err := admin_web.Main(
+		engine,
+		resource.Logger,
+		env.JWTAdminAccessTokenSigningPublicKey,
+	); err != nil {
+		return terrors.Wrapf("Main is failed : %w", err)
+	}
 	if err := auth_web.Main(
 		engine,
 		resource.Logger,

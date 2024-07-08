@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
+	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
@@ -42,13 +43,5 @@ func (t *Impl) CreateUserAccessToken(
 func (t *Impl) VerifyUserAccessToken(ctx context.Context,
 	accessToken string,
 ) (entity.UserPrincipal, error) {
-	claims, err := t.UserAccessTokenJWTVerifier.VerifyJWTToken(ctx, accessToken, nil)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	claimsAccessToken, ok := claims.(*auth.JWTClaimsUserAccessToken)
-	if !ok {
-		return nil, terrors.Wrapf("cannot convert JWTClaims to JWTClaimsUserAccessToken")
-	}
-	return claimsAccessToken, nil
+	return common_businesslogic.VerifyUserAccessToken(ctx, t.UserAccessTokenJWTVerifier, accessToken)
 }

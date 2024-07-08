@@ -6,13 +6,13 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type JWTHS struct {
+type JWTHS256 struct {
 	PrivateKey []byte
 }
 
 var signingMethodHS = jwt.SigningMethodHS256
 
-func (t *JWTHS) VerifyJWTToken(
+func (t *JWTHS256) VerifyJWTToken(
 	ctx context.Context,
 	tokenString string,
 	zeroClaims jwt.Claims,
@@ -20,7 +20,7 @@ func (t *JWTHS) VerifyJWTToken(
 	return verifyJWTToken(ctx, tokenString, signingMethodHS, t.PrivateKey, zeroClaims)
 }
 
-func (t *JWTHS) CreateJWTToken(
+func (t *JWTHS256) CreateJWTToken(
 	ctx context.Context,
 	claims jwt.Claims,
 ) (string, error) {

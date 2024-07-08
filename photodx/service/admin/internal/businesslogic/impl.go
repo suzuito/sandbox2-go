@@ -9,5 +9,4 @@ import (
 type Impl struct {
 	L                           *slog.Logger
 	AdminAccessTokenJWTVerifier auth.JWTVerifier
-	UserAccessTokenJWTVerifier  auth.JWTVerifier
 }

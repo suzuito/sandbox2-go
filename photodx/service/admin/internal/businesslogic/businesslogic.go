@@ -7,7 +7,6 @@ import (
 )
 
 type BusinessLogic interface {
-	// impl_admin_access_token.go
 	VerifyAdminAccessToken(
 		ctx context.Context,
 		accessToken string,

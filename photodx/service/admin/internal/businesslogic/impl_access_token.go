@@ -7,13 +7,13 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-func (t *Impl) VerifyUserAccessToken(
+func (t *Impl) VerifyAdminAccessToken(
 	ctx context.Context,
 	accessToken string,
-) (entity.UserPrincipal, error) {
-	return common_businesslogic.VerifyUserAccessToken(
+) (entity.AdminPrincipal, error) {
+	return common_businesslogic.VerifyAdminAccessToken(
 		ctx,
-		t.UserAccessTokenJWTVerifier,
+		t.AdminAccessTokenJWTVerifier,
 		accessToken,
 	)
 }

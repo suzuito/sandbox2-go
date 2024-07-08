@@ -27,7 +27,7 @@ func Main(
 	userAccessTokenJWTPrivateKey string,
 	userAccessTokenJWTPublicKey string,
 ) error {
-	userRefreshTokenJWTProcessor := auth.JWTHS{
+	userRefreshTokenJWTProcessor := auth.JWTHS256{
 		PrivateKey: []byte(userRefreshTokenJWTPrivateKey),
 	}
 	userAccessTokenJWTPrivateKeyBytes, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(userAccessTokenJWTPrivateKey))
@@ -43,12 +43,12 @@ func Main(
 		NowFunc:                     time.Now,
 		UserRefreshTokenJWTCreator:  &userRefreshTokenJWTProcessor,
 		UserRefreshTokenJWTVerifier: &userRefreshTokenJWTProcessor,
-		UserAccessTokenJWTCreator: &auth.JWTCreatorRS{
+		UserAccessTokenJWTCreator: &auth.JWTCreatorRS256{
 			PrivateKey: userAccessTokenJWTPrivateKeyBytes,
 		},
 		UserAccessTokenJWTVerifier: &auth.JWTVerifiers{
 			Verifiers: []auth.JWTVerifier{
-				&auth.JWTVerifierRS{
+				&auth.JWTVerifierRS256{
 					PublicKey: userAccessTokenJWTPublicKeyBytes,
 				},
 			},

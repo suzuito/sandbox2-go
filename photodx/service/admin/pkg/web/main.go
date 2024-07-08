@@ -4,19 +4,36 @@ import (
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/web"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
+	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 )
 
 func Main(
 	e *gin.Engine,
 	l *slog.Logger,
-	b businesslogic.BusinessLogic,
-) {
+	adminAccessTokenJWTPublicKey string,
+) error {
+	adminAccessTokenJWTPublicKeyBytes, err := jwt.ParseRSAPublicKeyFromPEM([]byte(adminAccessTokenJWTPublicKey))
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	b := businesslogic.Impl{
+		L: l,
+		AdminAccessTokenJWTVerifier: &auth.JWTVerifiers{
+			Verifiers: []auth.JWTVerifier{
+				&auth.JWTVerifierRS256{
+					PublicKey: adminAccessTokenJWTPublicKeyBytes,
+				},
+			},
+		},
+	}
 	u := usecase.Impl{
-		B: b,
+		B: &b,
 		L: l,
 	}
 	w := internal_web.Impl{
@@ -63,4 +80,5 @@ func Main(
 			}
 		}
 	}
+	return nil
 }
