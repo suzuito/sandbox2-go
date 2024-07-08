@@ -9,7 +9,7 @@ import (
 )
 
 func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
-	policy := entity.NewPolicy(policyString)
+	policy := entity.NewPolicyAdminPrincipalAccessToken(policyString)
 	return func(ctx *gin.Context) {
 		principal := common_web.CtxGet[entity.AdminPrincipalAccessToken](ctx, common_web.CtxPrincipal)
 		if principal == nil {
@@ -19,7 +19,7 @@ func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-		result, err := policy.EvalGinContextForAdmin(
+		result, err := policy.EvalGinContext(
 			principal,
 			ctx,
 		)
