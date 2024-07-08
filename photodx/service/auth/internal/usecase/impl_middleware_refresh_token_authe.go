@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/entity"
 )
 
 type DTOMiddlewareRefreshTokenAuthe struct {

@@ -9,7 +9,7 @@ import (
 )
 
 func (t *Impl) APIGetInit(ctx *gin.Context) {
-	dto, err := t.U.APIGetInit(ctx, common_web.CtxGet[entity.AdminPrincipal](ctx, common_web.CtxPrincipal))
+	dto, err := t.U.APIGetInit(ctx, common_web.CtxGet[entity.AdminPrincipalAccessToken](ctx, common_web.CtxPrincipal))
 	if err != nil {
 		t.L.Error("", "err", err)
 		t.P.JSON(ctx, http.StatusInternalServerError, common_web.ResponseError{

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/oauth2loginflow"
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 )
 

@@ -6,11 +6,10 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	internal_web "github.com/suzuito/sandbox2-go/photodx/service/common/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 )
 
-func SetRouter(
+func Main(
 	e *gin.Engine,
 	l *slog.Logger,
 	corsAllowOrigins []string,
@@ -18,16 +17,9 @@ func SetRouter(
 	corsAllowHeaders []string,
 	corsExposeHeaders []string,
 ) {
-	w := internal_web.Impl{
-		L:                 l,
-		P:                 &presenter.Impl{},
-		CorsAllowOrigins:  corsAllowOrigins,
-		CorsAllowMethods:  corsAllowMethods,
-		CorsAllowHeaders:  corsAllowHeaders,
-		CorsExposeHeaders: corsExposeHeaders,
-	}
+	var p presenter.Presenter = &presenter.Impl{}
 	e.NoRoute(func(ctx *gin.Context) {
-		w.P.JSON(ctx, http.StatusNotFound, ResponseError{
+		p.JSON(ctx, http.StatusNotFound, ResponseError{
 			Message: "not found",
 		})
 	})
@@ -36,10 +28,10 @@ func SetRouter(
 		ctx.Next()
 	})
 	e.Use(cors.New(cors.Config{
-		AllowOrigins:     w.CorsAllowOrigins,
-		AllowMethods:     w.CorsAllowMethods,
-		AllowHeaders:     w.CorsAllowHeaders,
-		ExposeHeaders:    w.CorsExposeHeaders,
+		AllowOrigins:     corsAllowOrigins,
+		AllowMethods:     corsAllowMethods,
+		AllowHeaders:     corsAllowHeaders,
+		ExposeHeaders:    corsExposeHeaders,
 		AllowCredentials: true,
 	}))
 	e.GET("health", func(ctx *gin.Context) {

@@ -7,6 +7,7 @@ type EntryType string
 const (
 	EntryTypePhotoStudio       EntryType = "PhotoStudio"
 	EntryTypePhotoStudioMember EntryType = "PhotoStudioMember"
+	EntryTypeUser              EntryType = "User"
 )
 
 type DuplicateEntryError struct {
@@ -24,5 +25,5 @@ type NoEntryError struct {
 }
 
 func (t *NoEntryError) Error() string {
-	return fmt.Sprintf("no entry %s", t.EntryID)
+	return fmt.Sprintf("no entry %s.%s", t.EntryType, t.EntryID)
 }

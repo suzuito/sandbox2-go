@@ -7,6 +7,10 @@ import (
 )
 
 type Usecase interface {
+	MiddlewareAccessTokenAuthe(
+		ctx context.Context,
+		accessToken string,
+	) (*DTOMiddlewareAccessTokenAuthe, error)
 	MiddlewareRefreshTokenAuthe(
 		ctx context.Context,
 		refreshToken string,

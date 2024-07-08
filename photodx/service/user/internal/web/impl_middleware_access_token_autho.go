@@ -9,9 +9,9 @@ import (
 )
 
 func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
-	policy := entity.NewPolicy(policyString)
+	policy := entity.NewPolicyUserPrincipalAccessToken(policyString)
 	return func(ctx *gin.Context) {
-		principal := common_web.CtxGet[entity.UserPrincipal](ctx, ctxUserPrincipal)
+		principal := common_web.CtxGet[entity.UserPrincipalAccessToken](ctx, ctxUserPrincipal)
 		if principal == nil {
 			t.P.JSON(ctx, http.StatusForbidden, common_web.ResponseError{
 				Message: "forbidden",
@@ -19,7 +19,7 @@ func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-		result, err := policy.EvalGinContextForUser(
+		result, err := policy.EvalGinContext(
 			principal,
 			ctx,
 		)
