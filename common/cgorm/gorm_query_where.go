@@ -1,4 +1,4 @@
-package gormutil
+package cgorm
 
 type GormQueryWhere struct {
 	Query any

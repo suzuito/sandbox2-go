@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/infra/gormutil"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
 	"gorm.io/gorm"
 )
@@ -69,7 +69,7 @@ func (t *Impl) GetPhotoStudioMember(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	return t.getPhotoStudioMember(ctx, []gormutil.GormQueryWhere{
+	return t.getPhotoStudioMember(ctx, []cgorm.GormQueryWhere{
 		{Query: photoStudioMemberID},
 	})
 }
@@ -79,7 +79,7 @@ func (t *Impl) GetPhotoStudioMemberByEmail(
 	photoStudioID entity.PhotoStudioID,
 	email string,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	return t.getPhotoStudioMember(ctx, []gormutil.GormQueryWhere{
+	return t.getPhotoStudioMember(ctx, []cgorm.GormQueryWhere{
 		{Query: "photo_studio_id = ?", Args: []any{photoStudioID}},
 		{Query: "email = ?", Args: []any{email}},
 	})
@@ -112,7 +112,7 @@ func (t *Impl) GetPhotoStudioMemberPasswordHashByEmail(
 
 func (t *Impl) getPhotoStudioMember(
 	ctx context.Context,
-	wheres []gormutil.GormQueryWhere,
+	wheres []cgorm.GormQueryWhere,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
 	mPhotoStudioMember := modelPhotoStudioMember{}
 	db := t.GormDB.WithContext(ctx)
