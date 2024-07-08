@@ -8,7 +8,7 @@ import (
 )
 
 type DTOMiddlewareAccessTokenAuthe struct {
-	Principal entity.AdminPrincipal
+	Principal entity.AdminPrincipalAccessToken
 }
 
 func (t *Impl) MiddlewareAccessTokenAuthe(

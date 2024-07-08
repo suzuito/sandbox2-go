@@ -5,24 +5,25 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/oauth2loginflow"
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
+	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
 type BusinessLogic interface {
 	// impl_user_access_token.go
 	CreateUserAccessToken(
 		ctx context.Context,
-		userID entity.UserID,
+		userID common_entity.UserID,
 	) (string, error)
 	VerifyUserAccessToken(ctx context.Context,
 		accessToken string,
-	) (entity.UserPrincipal, error)
+	) (common_entity.UserPrincipalAccessToken, error)
 
 	// impl_user_refresh_token.go
 	CreateUserRefreshToken(
 		ctx context.Context,
-		userID entity.UserID,
+		userID common_entity.UserID,
 	) (string, error)
 	VerifyUserRefreshToken(
 		ctx context.Context,
@@ -49,5 +50,5 @@ type BusinessLogic interface {
 		accessToken string,
 		providerID oauth2loginflow.ProviderID,
 		fetchProfile oauth2loginflow.Oauth2FetchProfileFunc,
-	) (*entity.User, error)
+	) (*common_entity.User, error)
 }

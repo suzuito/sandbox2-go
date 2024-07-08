@@ -6,13 +6,14 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
 func (t *Impl) CreateUserRefreshToken(
 	ctx context.Context,
-	userID entity.UserID,
+	userID common_entity.UserID,
 ) (string, error) {
 	now := t.NowFunc()
 	ttlDays := 7

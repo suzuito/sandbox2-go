@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/oauth2loginflow"
 )
 
 type Repository interface {

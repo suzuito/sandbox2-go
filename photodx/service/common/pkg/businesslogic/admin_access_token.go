@@ -13,7 +13,7 @@ func VerifyAdminAccessToken(
 	ctx context.Context,
 	verifier auth.JWTVerifier,
 	accessToken string,
-) (entity.AdminPrincipal, error) {
+) (entity.AdminPrincipalAccessToken, error) {
 	claims, err := verifier.VerifyJWTToken(ctx, accessToken, &auth.JWTClaimsAdminAccessToken{})
 	if err != nil {
 		return nil, terrors.Wrap(err)
@@ -22,7 +22,7 @@ func VerifyAdminAccessToken(
 	if !ok {
 		return nil, terrors.Wrapf("cannot convert JWTClaims to JWTClaimsAccessToken")
 	}
-	principal := entity.AdminPrincipalImpl{
+	principal := entity.AdminPrincipalAccessTokenImpl{
 		PhotoStudioMemberID: entity.PhotoStudioMemberID(claimsAccessToken.Subject),
 		PhotoStudioID:       claimsAccessToken.PhotoStudioID,
 		Roles:               rbac.GetAvailablePredefinedRolesFromRoleID(claimsAccessToken.Roles),

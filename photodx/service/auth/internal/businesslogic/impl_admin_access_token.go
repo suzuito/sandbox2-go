@@ -56,6 +56,6 @@ func (t *Impl) CreateAdminAccessToken(
 func (t *Impl) VerifyAdminAccessToken(
 	ctx context.Context,
 	accessToken string,
-) (entity.AdminPrincipal, error) {
+) (entity.AdminPrincipalAccessToken, error) {
 	return common_businesslogic.VerifyAdminAccessToken(ctx, t.AdminAccessTokenJWTVerifier, accessToken)
 }

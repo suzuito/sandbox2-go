@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/oauth2loginflow"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
 	"gorm.io/gorm"
 )

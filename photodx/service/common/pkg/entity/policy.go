@@ -8,11 +8,11 @@ import (
 
 type Policy interface {
 	EvalGinContextForAdmin(
-		principal AdminPrincipal,
+		principal AdminPrincipalAccessToken,
 		ctx *gin.Context,
 	) (bool, error)
 	EvalGinContextForUser(
-		principal UserPrincipal,
+		principal UserPrincipalAccessToken,
 		ctx *gin.Context,
 	) (bool, error)
 }
@@ -25,7 +25,7 @@ type PolicyImpl struct {
 }
 
 func (t *PolicyImpl) EvalGinContextForAdmin(
-	principal AdminPrincipal,
+	principal AdminPrincipalAccessToken,
 	ctx *gin.Context,
 ) (bool, error) {
 	pathParams := map[string]string{}
@@ -42,7 +42,7 @@ func (t *PolicyImpl) EvalGinContextForAdmin(
 }
 
 func (t *PolicyImpl) EvalGinContextForUser(
-	principal UserPrincipal,
+	principal UserPrincipalAccessToken,
 	ctx *gin.Context,
 ) (bool, error) {
 	pathParams := map[string]string{}

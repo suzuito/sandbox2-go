@@ -10,5 +10,5 @@ type BusinessLogic interface {
 	// impl_user_access_token.go
 	VerifyUserAccessToken(ctx context.Context,
 		accessToken string,
-	) (entity.UserPrincipal, error)
+	) (entity.UserPrincipalAccessToken, error)
 }

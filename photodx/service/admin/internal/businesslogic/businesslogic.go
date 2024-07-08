@@ -10,5 +10,5 @@ type BusinessLogic interface {
 	VerifyAdminAccessToken(
 		ctx context.Context,
 		accessToken string,
-	) (entity.AdminPrincipal, error)
+	) (entity.AdminPrincipalAccessToken, error)
 }

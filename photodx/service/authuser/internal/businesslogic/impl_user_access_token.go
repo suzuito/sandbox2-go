@@ -42,6 +42,6 @@ func (t *Impl) CreateUserAccessToken(
 
 func (t *Impl) VerifyUserAccessToken(ctx context.Context,
 	accessToken string,
-) (entity.UserPrincipal, error) {
+) (entity.UserPrincipalAccessToken, error) {
 	return common_businesslogic.VerifyUserAccessToken(ctx, t.UserAccessTokenJWTVerifier, accessToken)
 }

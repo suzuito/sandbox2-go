@@ -5,32 +5,32 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
 
-type AdminPrincipal interface {
+type AdminPrincipalAccessToken interface {
 	GetPhotoStudioMemberID() PhotoStudioMemberID
 	GetPhotoStudioID() PhotoStudioID
 	GetRoles() []*rbac.Role
 	GetPermissions() []*pbrbac.Permission
 }
 
-type AdminPrincipalImpl struct {
+type AdminPrincipalAccessTokenImpl struct {
 	PhotoStudioMemberID PhotoStudioMemberID
 	PhotoStudioID       PhotoStudioID
 	Roles               []*rbac.Role
 }
 
-func (t *AdminPrincipalImpl) GetPhotoStudioMemberID() PhotoStudioMemberID {
+func (t *AdminPrincipalAccessTokenImpl) GetPhotoStudioMemberID() PhotoStudioMemberID {
 	return t.PhotoStudioMemberID
 }
 
-func (t *AdminPrincipalImpl) GetPhotoStudioID() PhotoStudioID {
+func (t *AdminPrincipalAccessTokenImpl) GetPhotoStudioID() PhotoStudioID {
 	return t.PhotoStudioID
 }
 
-func (t *AdminPrincipalImpl) GetRoles() []*rbac.Role {
+func (t *AdminPrincipalAccessTokenImpl) GetRoles() []*rbac.Role {
 	return t.Roles
 }
 
-func (t *AdminPrincipalImpl) GetPermissions() []*pbrbac.Permission {
+func (t *AdminPrincipalAccessTokenImpl) GetPermissions() []*pbrbac.Permission {
 	permissions := []*pbrbac.Permission{}
 	for _, role := range t.GetRoles() {
 		permissions = append(permissions, role.Permissions...)

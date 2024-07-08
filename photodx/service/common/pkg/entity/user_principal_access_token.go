@@ -4,7 +4,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/pbrbac"
 )
 
-type UserPrincipal interface {
+type UserPrincipalAccessToken interface {
 	GetUserID() UserID
 	GetPermissions() []*pbrbac.Permission
 }
