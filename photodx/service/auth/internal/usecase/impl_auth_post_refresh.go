@@ -15,7 +15,7 @@ func (t *Impl) AuthPostRefresh(
 	ctx context.Context,
 	photoStudioMemberID entity.PhotoStudioMemberID,
 ) (*DTOAuthPostRefresh, error) {
-	accessTokenString, err := t.B.CreateAdminAccessToken(ctx, photoStudioMemberID)
+	accessTokenString, err := t.BusinessLogic.CreateAdminAccessToken(ctx, photoStudioMemberID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -7,7 +7,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
-	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
@@ -38,10 +37,4 @@ func (t *Impl) CreateUserAccessToken(
 		return "", terrors.Wrap(err)
 	}
 	return tokenString, nil
-}
-
-func (t *Impl) VerifyUserAccessToken(ctx context.Context,
-	accessToken string,
-) (entity.UserPrincipalAccessToken, error) {
-	return common_businesslogic.VerifyUserAccessToken(ctx, t.UserAccessTokenJWTVerifier, accessToken)
 }

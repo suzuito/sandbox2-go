@@ -21,6 +21,6 @@ func (t *Impl) MiddlewareAccessTokenAuthe(ctx *gin.Context) {
 		ctx.Next()
 		return
 	}
-	common_web.CtxSet(ctx, ctxUserPrincipal, dto.UserPrincipal)
+	common_web.CtxSetUserPrincipalAccessToken(ctx, dto.UserPrincipal)
 	ctx.Next()
 }

@@ -15,7 +15,7 @@ func (t *Impl) MiddlewareRefreshTokenAuthe(
 	ctx context.Context,
 	refreshToken string,
 ) (*DTOMiddlewareRefreshTokenAuthe, error) {
-	principal, err := t.B.VerifyAdminRefreshToken(ctx, refreshToken)
+	principal, err := t.BusinessLogic.VerifyAdminRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -10,9 +10,11 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/golang-cz/devslog"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
+	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	gorm_mysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	gorm_logger "gorm.io/gorm/logger"
@@ -21,6 +23,15 @@ import (
 type Resource struct {
 	GormDB *gorm.DB
 	Logger *slog.Logger
+
+	AdminAccessTokenJWTVerifier  auth.JWTVerifier
+	AdminAccessTokenJWTCreator   auth.JWTCreator
+	AdminRefreshTokenJWTVerifier auth.JWTVerifier
+	AdminRefreshTokenJWTCreator  auth.JWTCreator
+	UserAccessTokenJWTVerifier   auth.JWTVerifier
+	UserAccessTokenJWTCreator    auth.JWTCreator
+	UserRefreshTokenJWTVerifier  auth.JWTVerifier
+	UserRefreshTokenJWTCreator   auth.JWTCreator
 }
 
 func (t *Resource) Close() {
@@ -31,17 +42,21 @@ func NewResource(
 	ctx context.Context,
 	env *environment.Environment,
 ) (*Resource, error) {
+	resource := Resource{}
 	switch env.Env {
 	case "local":
-		return newLocalResource(env)
+		setLocalResource(env, &resource)
+	default:
+		return nil, terrors.Wrapf("undefined env resource : %s", env.Env)
 	}
-	return nil, terrors.Wrapf("undefined env resource : %w", env.Env)
+	setJWTResource(env, &resource)
+	return &resource, nil
 }
 
-func newLocalResource(
+func setLocalResource(
 	env *environment.Environment,
-) (*Resource, error) {
-	resource := Resource{}
+	resource *Resource,
+) error {
 	// logger
 	var level slog.Level
 	if err := level.UnmarshalText([]byte(env.LogLevel)); err != nil {
@@ -81,8 +96,63 @@ func newLocalResource(
 		},
 	)
 	if err != nil {
-		return nil, terrors.Wrap(err)
+		return terrors.Wrap(err)
 	}
 	resource.GormDB = gormdb
-	return &resource, nil
+	return nil
+}
+
+func setJWTResource(
+	env *environment.Environment,
+	resource *Resource,
+) error {
+	// AdminAccessToken
+	adminRefreshTokenProcessor := auth.JWTHS256{
+		PrivateKey: []byte(env.JWTAdminRefreshTokenSigningPrivateKey),
+	}
+	resource.AdminRefreshTokenJWTCreator = &adminRefreshTokenProcessor
+	resource.AdminRefreshTokenJWTVerifier = &adminRefreshTokenProcessor
+	adminAccessTokenJWTPrivateKeyBytes, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(env.JWTAdminAccessTokenSigningPrivateKey))
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	resource.AdminAccessTokenJWTCreator = &auth.JWTCreatorRS256{
+		PrivateKey: adminAccessTokenJWTPrivateKeyBytes,
+	}
+	adminAccessTokenJWTPublicKeyBytes, err := jwt.ParseRSAPublicKeyFromPEM([]byte(env.JWTAdminAccessTokenSigningPublicKey))
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	resource.AdminAccessTokenJWTVerifier = &auth.JWTVerifiers{
+		Verifiers: []auth.JWTVerifier{
+			&auth.JWTVerifierRS256{
+				PublicKey: adminAccessTokenJWTPublicKeyBytes,
+			},
+		},
+	}
+	// UserAccessToken
+	userRefreshTokenProcessor := auth.JWTHS256{
+		PrivateKey: []byte(env.JWTUserRefreshTokenSigningPrivateKey),
+	}
+	resource.UserRefreshTokenJWTCreator = &userRefreshTokenProcessor
+	resource.UserRefreshTokenJWTVerifier = &userRefreshTokenProcessor
+	userAccessTokenJWTPrivateKeyBytes, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(env.JWTUserAccessTokenSigningPrivateKey))
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	resource.UserAccessTokenJWTCreator = &auth.JWTCreatorRS256{
+		PrivateKey: userAccessTokenJWTPrivateKeyBytes,
+	}
+	userAccessTokenJWTPublicKeyBytes, err := jwt.ParseRSAPublicKeyFromPEM([]byte(env.JWTUserAccessTokenSigningPublicKey))
+	if err != nil {
+		return terrors.Wrap(err)
+	}
+	resource.UserAccessTokenJWTVerifier = &auth.JWTVerifiers{
+		Verifiers: []auth.JWTVerifier{
+			&auth.JWTVerifierRS256{
+				PublicKey: userAccessTokenJWTPublicKeyBytes,
+			},
+		},
+	}
+	return nil
 }

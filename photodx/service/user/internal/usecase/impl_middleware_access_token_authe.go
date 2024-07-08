@@ -15,7 +15,7 @@ func (t *Impl) MiddlewareAccessTokenAuthe(
 	ctx context.Context,
 	accessToken string,
 ) (*DTOMiddlewareAccessTokenAuthe, error) {
-	principal, err := t.B.VerifyUserAccessToken(ctx, accessToken)
+	principal, err := t.CommonBusinessLogic.VerifyUserAccessToken(ctx, accessToken)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

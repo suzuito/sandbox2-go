@@ -25,7 +25,7 @@ func (t *Impl) GetCallback(
 	code string,
 	stateCode oauth2loginflow.StateCode,
 ) (*DTOGetCallback, error) {
-	state, err := t.B.CallbackVerifyState(ctx, stateCode)
+	state, err := t.BusinessLogic.CallbackVerifyState(ctx, stateCode)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -45,19 +45,19 @@ func (t *Impl) GetCallback(
 	default:
 		return nil, terrors.Wrapf("unsupported provider %s", state.ProviderID)
 	}
-	accessTokenFromProvider, err := t.B.FetchAccessToken(ctx, tokenRequest)
+	accessTokenFromProvider, err := t.BusinessLogic.FetchAccessToken(ctx, tokenRequest)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	user, err := t.B.FetchProfileAndCreateUserIfNotExists(ctx, accessTokenFromProvider, state.ProviderID, fetchProfile)
+	user, err := t.BusinessLogic.FetchProfileAndCreateUserIfNotExists(ctx, accessTokenFromProvider, state.ProviderID, fetchProfile)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	refreshToken, err := t.B.CreateUserRefreshToken(ctx, user.ID)
+	refreshToken, err := t.BusinessLogic.CreateUserRefreshToken(ctx, user.ID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	accessToken, err := t.B.CreateUserAccessToken(ctx, user.ID)
+	accessToken, err := t.BusinessLogic.CreateUserAccessToken(ctx, user.ID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

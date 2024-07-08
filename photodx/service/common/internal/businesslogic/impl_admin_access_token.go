@@ -9,12 +9,11 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
 
-func VerifyAdminAccessToken(
+func (t *Impl) VerifyAdminAccessToken(
 	ctx context.Context,
-	verifier auth.JWTVerifier,
 	accessToken string,
 ) (entity.AdminPrincipalAccessToken, error) {
-	claims, err := verifier.VerifyJWTToken(ctx, accessToken, &auth.JWTClaimsAdminAccessToken{})
+	claims, err := t.AdminAccessTokenJWTVerifier.VerifyJWTToken(ctx, accessToken, &auth.JWTClaimsAdminAccessToken{})
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

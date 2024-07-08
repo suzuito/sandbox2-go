@@ -20,7 +20,7 @@ func (t *Impl) GetAuthorizeURLLINE(
 	callbackURL *url.URL,
 	oauth2RedirectURL *url.URL,
 ) (*DTOGetAuthorizeLINE, error) {
-	state, err := t.B.CreateOAuth2State(ctx, oauth2loginflow.ProviderLINE, callbackURL, oauth2RedirectURL)
+	state, err := t.BusinessLogic.CreateOAuth2State(ctx, oauth2loginflow.ProviderLINE, callbackURL, oauth2RedirectURL)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

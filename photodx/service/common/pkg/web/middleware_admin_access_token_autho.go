@@ -5,15 +5,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
-	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
+	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 )
 
-func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
+func MiddlewareAdminAccessTokenAutho(
+	policyString string,
+	presenter presenter.Presenter,
+) gin.HandlerFunc {
 	policy := entity.NewPolicyAdminPrincipalAccessToken(policyString)
 	return func(ctx *gin.Context) {
-		principal := common_web.CtxGet[entity.AdminPrincipalAccessToken](ctx, common_web.CtxPrincipal)
+		principal := CtxGetAdminPrincipalAccessToken(ctx)
 		if principal == nil {
-			t.P.JSON(ctx, http.StatusForbidden, common_web.ResponseError{
+			presenter.JSON(ctx, http.StatusForbidden, ResponseError{
 				Message: "forbidden",
 			})
 			ctx.Abort()
@@ -24,14 +27,14 @@ func (t *Impl) MiddlewareAccessTokenAutho(policyString string) gin.HandlerFunc {
 			ctx,
 		)
 		if err != nil {
-			t.P.JSON(ctx, http.StatusInternalServerError, common_web.ResponseError{
+			presenter.JSON(ctx, http.StatusInternalServerError, ResponseError{
 				Message: "internal server error",
 			})
 			ctx.Abort()
 			return
 		}
 		if !result {
-			t.P.JSON(ctx, http.StatusForbidden, common_web.ResponseError{
+			presenter.JSON(ctx, http.StatusForbidden, ResponseError{
 				Message: "forbidden",
 			})
 			ctx.Abort()

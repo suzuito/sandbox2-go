@@ -16,9 +16,6 @@ type BusinessLogic interface {
 		ctx context.Context,
 		userID common_entity.UserID,
 	) (string, error)
-	VerifyUserAccessToken(ctx context.Context,
-		accessToken string,
-	) (common_entity.UserPrincipalAccessToken, error)
 
 	// impl_user_refresh_token.go
 	CreateUserRefreshToken(

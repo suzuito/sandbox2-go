@@ -49,7 +49,7 @@ func setUp(
 	if err := admin_web.Main(
 		engine,
 		resource.Logger,
-		env.JWTAdminAccessTokenSigningPublicKey,
+		resource.AdminAccessTokenJWTVerifier,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
@@ -57,16 +57,17 @@ func setUp(
 		engine,
 		resource.Logger,
 		resource.GormDB,
-		env.JWTAdminRefreshTokenSigningPrivateKey,
-		env.JWTAdminAccessTokenSigningPrivateKey,
-		env.JWTAdminAccessTokenSigningPublicKey,
+		resource.AdminRefreshTokenJWTCreator,
+		resource.AdminRefreshTokenJWTVerifier,
+		resource.AdminAccessTokenJWTCreator,
+		resource.AdminAccessTokenJWTVerifier,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
 	if err := user_web.Main(
 		engine,
 		resource.Logger,
-		env.JWTUserAccessTokenSigningPublicKey,
+		resource.UserAccessTokenJWTVerifier,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
@@ -74,9 +75,10 @@ func setUp(
 		engine,
 		resource.Logger,
 		resource.GormDB,
-		env.JWTUserRefreshTokenSigningPrivateKey,
-		env.JWTUserAccessTokenSigningPrivateKey,
-		env.JWTUserAccessTokenSigningPublicKey,
+		resource.UserRefreshTokenJWTCreator,
+		resource.UserRefreshTokenJWTVerifier,
+		resource.UserAccessTokenJWTCreator,
+		resource.UserAccessTokenJWTVerifier,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}

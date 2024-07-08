@@ -4,9 +4,9 @@ import (
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
+	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
+	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 	"github.com/suzuito/sandbox2-go/photodx/service/user/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/user/internal/usecase"
@@ -16,23 +16,14 @@ import (
 func Main(
 	e *gin.Engine,
 	l *slog.Logger,
-	userAccessTokenJWTPublicKey string,
+	userAccessTokenJWTVerifier auth.JWTVerifier,
 ) error {
-	userAccessTokenJWTPublicKeyBytes, err := jwt.ParseRSAPublicKeyFromPEM([]byte(userAccessTokenJWTPublicKey))
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	b := businesslogic.Impl{
-		UserAccessTokenJWTVerifier: &auth.JWTVerifiers{
-			Verifiers: []auth.JWTVerifier{
-				&auth.JWTVerifierRS256{
-					PublicKey: userAccessTokenJWTPublicKeyBytes,
-				},
-			},
-		},
-	}
 	u := usecase.Impl{
-		B: &b,
+		BusinessLogic: &businesslogic.Impl{},
+		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
+			nil,
+			userAccessTokenJWTVerifier,
+		),
 		L: l,
 	}
 	w := internal_web.Impl{
@@ -44,12 +35,12 @@ func Main(
 	app.Use(w.MiddlewareAccessTokenAuthe)
 	app.GET(
 		"init",
-		w.MiddlewareAccessTokenAutho(`
+		common_web.MiddlewareAccessTokenAutho(`
 			permissions.exists(
 				p,
 				p.resource == "PhotoStudio" && "read".matches(p.action)
 			)
-		`),
+		`, w.P),
 		w.GetInit,
 	)
 	return nil

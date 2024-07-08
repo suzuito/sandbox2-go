@@ -14,7 +14,7 @@ type DTOSuperPostInit struct {
 }
 
 func (t *Impl) SuperPostInit(ctx context.Context) (*DTOSuperPostInit, error) {
-	photoStudio, err := t.B.CreatePhotoStudio(
+	photoStudio, err := t.BusinessLogic.CreatePhotoStudio(
 		ctx,
 		"godzilla",
 		"サービス管理",
@@ -22,7 +22,7 @@ func (t *Impl) SuperPostInit(ctx context.Context) (*DTOSuperPostInit, error) {
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	superMember, _, _, initialPassword, err := t.B.CreatePhotoStudioMember(
+	superMember, _, _, initialPassword, err := t.BusinessLogic.CreatePhotoStudioMember(
 		ctx,
 		photoStudio.ID,
 		"super@photodx.tach.dev",

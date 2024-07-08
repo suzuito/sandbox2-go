@@ -17,7 +17,7 @@ func (t *Impl) AuthPostLogin(
 	email string,
 	password string,
 ) (*DTOAuthPostLogin, error) {
-	photoStudioMember, _, _, err := t.B.VerifyPhotoStudioMemberPassword(
+	photoStudioMember, _, _, err := t.BusinessLogic.VerifyPhotoStudioMemberPassword(
 		ctx,
 		photoStudioID,
 		email,
@@ -29,7 +29,7 @@ func (t *Impl) AuthPostLogin(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	refreshToken, err := t.B.CreateAdminRefreshToken(ctx, photoStudioMember.ID)
+	refreshToken, err := t.BusinessLogic.CreateAdminRefreshToken(ctx, photoStudioMember.ID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	businesslogic_pkg "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
 )
@@ -80,7 +79,7 @@ func (t *Impl) VerifyPhotoStudioMemberPassword(
 		return nil, nil, nil, terrors.Wrap(err)
 	}
 	if hashInput != hashInDB {
-		return nil, nil, nil, businesslogic_pkg.ErrPasswordMismatch
+		return nil, nil, nil, ErrPasswordMismatch
 	}
 	return member, roles, photoStudio, nil
 }

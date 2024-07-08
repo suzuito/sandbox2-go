@@ -43,10 +43,6 @@ type BusinessLogic interface {
 		ctx context.Context,
 		photoStudioMemberID common_entity.PhotoStudioMemberID,
 	) (string, error)
-	VerifyAdminAccessToken(
-		ctx context.Context,
-		accessToken string,
-	) (common_entity.AdminPrincipalAccessToken, error)
 
 	// impl_admin_refresh_token.go
 	CreateAdminRefreshToken(

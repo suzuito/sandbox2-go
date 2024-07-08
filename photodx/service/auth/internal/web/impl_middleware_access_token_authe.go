@@ -5,7 +5,9 @@ import (
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 )
 
-func (t *Impl) MiddlewareAccessTokenAuthe(ctx *gin.Context) {
+func (t *Impl) MiddlewareAccessTokenAuthe(
+	ctx *gin.Context,
+) {
 	accessToken := common_web.ExtractBearerToken(ctx)
 	if accessToken == "" {
 		ctx.Next()

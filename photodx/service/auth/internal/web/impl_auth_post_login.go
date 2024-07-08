@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
+	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 )

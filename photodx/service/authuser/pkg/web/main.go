@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
 	infra_repository "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
+	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 	"gorm.io/gorm"
@@ -23,41 +22,26 @@ func Main(
 	e *gin.Engine,
 	l *slog.Logger,
 	gormDB *gorm.DB,
-	userRefreshTokenJWTPrivateKey string,
-	userAccessTokenJWTPrivateKey string,
-	userAccessTokenJWTPublicKey string,
+	userRefreshTokenJWTCreator auth.JWTCreator,
+	userRefreshTokenJWTVerifier auth.JWTVerifier,
+	userAccessTokenJWTCreator auth.JWTCreator,
+	userAccessTokenJWTVerifier auth.JWTVerifier,
 ) error {
-	userRefreshTokenJWTProcessor := auth.JWTHS256{
-		PrivateKey: []byte(userRefreshTokenJWTPrivateKey),
-	}
-	userAccessTokenJWTPrivateKeyBytes, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(userAccessTokenJWTPrivateKey))
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	userAccessTokenJWTPublicKeyBytes, err := jwt.ParseRSAPublicKeyFromPEM([]byte(userAccessTokenJWTPublicKey))
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	b := businesslogic.Impl{
-		Repository:                  &infra_repository.Impl{GormDB: gormDB, NowFunc: time.Now},
-		NowFunc:                     time.Now,
-		UserRefreshTokenJWTCreator:  &userRefreshTokenJWTProcessor,
-		UserRefreshTokenJWTVerifier: &userRefreshTokenJWTProcessor,
-		UserAccessTokenJWTCreator: &auth.JWTCreatorRS256{
-			PrivateKey: userAccessTokenJWTPrivateKeyBytes,
-		},
-		UserAccessTokenJWTVerifier: &auth.JWTVerifiers{
-			Verifiers: []auth.JWTVerifier{
-				&auth.JWTVerifierRS256{
-					PublicKey: userAccessTokenJWTPublicKeyBytes,
-				},
-			},
-		},
-		OAuth2LoginFlowStateGenerator: &proc.IDGeneratorImpl{},
-		UserIDGenerator:               &proc.IDGeneratorImpl{},
-	}
 	u := usecase.Impl{
-		B: &b,
+		BusinessLogic: &businesslogic.Impl{
+			Repository:                    &infra_repository.Impl{GormDB: gormDB, NowFunc: time.Now},
+			NowFunc:                       time.Now,
+			UserRefreshTokenJWTCreator:    userRefreshTokenJWTCreator,
+			UserRefreshTokenJWTVerifier:   userRefreshTokenJWTVerifier,
+			UserAccessTokenJWTCreator:     userAccessTokenJWTCreator,
+			UserAccessTokenJWTVerifier:    userAccessTokenJWTVerifier,
+			OAuth2LoginFlowStateGenerator: &proc.IDGeneratorImpl{},
+			UserIDGenerator:               &proc.IDGeneratorImpl{},
+		},
+		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
+			nil,
+			userAccessTokenJWTVerifier,
+		),
 		L: l,
 		OAuth2ProviderLINE: &oauth2loginflow.Provider{
 			ClientID:     "2005761043",

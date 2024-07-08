@@ -4,36 +4,28 @@ import (
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
+	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
+	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 )
 
 func Main(
 	e *gin.Engine,
 	l *slog.Logger,
-	adminAccessTokenJWTPublicKey string,
+	adminAccessTokenVerifier auth.JWTVerifier,
 ) error {
-	adminAccessTokenJWTPublicKeyBytes, err := jwt.ParseRSAPublicKeyFromPEM([]byte(adminAccessTokenJWTPublicKey))
-	if err != nil {
-		return terrors.Wrap(err)
-	}
-	b := businesslogic.Impl{
-		L: l,
-		AdminAccessTokenJWTVerifier: &auth.JWTVerifiers{
-			Verifiers: []auth.JWTVerifier{
-				&auth.JWTVerifierRS256{
-					PublicKey: adminAccessTokenJWTPublicKeyBytes,
-				},
-			},
-		},
-	}
 	u := usecase.Impl{
-		B: &b,
+		BusinessLogic: &businesslogic.Impl{
+			L: l,
+		},
+		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
+			adminAccessTokenVerifier,
+			nil,
+		),
 		L: l,
 	}
 	w := internal_web.Impl{
@@ -47,7 +39,7 @@ func Main(
 		admin.Use(w.MiddlewareAccessTokenAuthe)
 		admin.GET(
 			"init",
-			w.MiddlewareAccessTokenAutho(
+			common_web.MiddlewareAdminAccessTokenAutho(
 				`
 					permissions.exists(
 						p,
@@ -58,6 +50,7 @@ func Main(
 						p.resource == "PhotoStudioMember" && adminPrincipalPhotoStudioMemberId.matches(p.target) && "read".matches(p.action)
 					)
 					`,
+				w.P,
 			),
 			w.APIGetInit,
 		)
@@ -67,13 +60,14 @@ func Main(
 			{
 				photoStudio := photoStudios.Group(":photoStudioID")
 				photoStudio.Use(
-					w.MiddlewareAccessTokenAutho(
+					common_web.MiddlewareAdminAccessTokenAutho(
 						`
 							permissions.exists(
     							p,
 			                    p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)
 		                    )
 							`,
+						w.P,
 					),
 					w.APIMiddlewarePhotoStudio,
 				)

@@ -8,12 +8,11 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-func VerifyUserAccessToken(
+func (t *Impl) VerifyUserAccessToken(
 	ctx context.Context,
-	verifier auth.JWTVerifier,
 	accessToken string,
 ) (entity.UserPrincipalAccessToken, error) {
-	claims, err := verifier.VerifyJWTToken(ctx, accessToken, nil)
+	claims, err := t.UserAccessTokenJWTVerifier.VerifyJWTToken(ctx, accessToken, nil)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
