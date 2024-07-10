@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pbrbac;
+
+option go_package = "photodx/internal/entity/pbrbac";
+
+message Permission {
+    string resource = 1;
+    string target = 2;
+    string action = 3;
+}
