@@ -22,8 +22,6 @@ spec:
           env:
             - name: ENV
               value: prd
-            - name: PORT
-              value: 8080
             - name: LOG_LEVEL
               value: DEBUG
             - name: DB_NAME
