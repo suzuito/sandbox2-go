@@ -28,4 +28,9 @@ type Usecase interface {
 	SuperPostInit(
 		ctx context.Context,
 	) (*DTOSuperPostInit, error)
+
+	AuthGetInit(
+		ctx context.Context,
+		principal entity.AdminPrincipalAccessToken,
+	) (*DTOAuthGetInit, error)
 }
