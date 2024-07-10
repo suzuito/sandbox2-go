@@ -9,7 +9,7 @@ spec:
         autoscaling.knative.dev/minScale: 0
         autoscaling.knative.dev/maxScale: 1
         run.googleapis.com/cloudsql-instances: products-common-common-202406:asia-northeast1:sandbox-instance
-        # run.googleapis.com/secrets: secret-alias-2:projects/1010894990875/secrets/mysql_sandbox_instance_user_password_app
+        run.googleapis.com/secrets: secret-alias-1:projects/1010894990875/secrets/mysql_sandbox_instance_user_password_app
     spec:
       serviceAccountName: photodx-bff-sa@photodx-prd-20240419.iam.gserviceaccount.com
       timeoutSeconds: 60
@@ -34,7 +34,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: "1"
-                  name: projects/1010894990875/secrets/mysql_sandbox_instance_user_password_app
+                  name: secret-alias-1
             - name: DB_INSTANCE_UNIX_SOCKET
               value: /cloudsql/products-common-common-202406:asia-northeast1:sandbox-instance
             - name: CORS_ALLOW_ORIGINS
