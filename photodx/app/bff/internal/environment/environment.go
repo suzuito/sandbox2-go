@@ -1,8 +1,8 @@
 package environment
 
 type Environment struct {
-	Port     int    `required:"true" split_words:"true"`
 	Env      string `required:"true" split_words:"true"`
+	Port     int    `required:"true" split_words:"true"`
 	LogLevel string `required:"false" split_words:"true"`
 
 	DBName string `required:"false" split_words:"true"`
