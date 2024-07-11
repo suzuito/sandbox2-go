@@ -31,8 +31,8 @@ func (t *Impl) AuthPostLogin(ctx *gin.Context) {
 			return
 		}
 		t.L.Error("", "err", err)
-		t.P.JSON(ctx, http.StatusInternalServerError, common_web.ResponseError{
-			Message: "internal server error",
+		t.P.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+			Message: "email or password is invalid",
 		})
 		return
 	}
