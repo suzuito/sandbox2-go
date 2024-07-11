@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/golang-cz/devslog"
 	"github.com/suzuito/sandbox2-go/common/cusecase/clog"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
@@ -17,7 +16,7 @@ import (
 	gorm_logger "gorm.io/gorm/logger"
 )
 
-func setLocalResource(
+func setPrdResource(
 	env *environment.Environment,
 	resource *Resource,
 ) error {
@@ -27,12 +26,19 @@ func setLocalResource(
 		fmt.Printf("use LogLevel 'DEBUG' because cannot parse LOG_LEVEL : %s", env.LogLevel)
 		level = slog.LevelDebug
 	}
-	slogHandler := devslog.NewHandler(os.Stdout, &devslog.Options{
-		HandlerOptions: &slog.HandlerOptions{
+	slogHandler := slog.NewJSONHandler(
+		os.Stdout,
+		&slog.HandlerOptions{
 			Level:     level,
 			AddSource: true,
+			ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+				if a.Key == slog.LevelKey {
+					a.Key = "severity"
+				}
+				return a
+			},
 		},
-	})
+	)
 	slogCustomHandler := clog.CustomHandler{
 		Handler: slogHandler,
 	}
@@ -41,8 +47,9 @@ func setLocalResource(
 	mysqlConfig := mysql.Config{
 		DBName:               env.DBName,
 		User:                 env.DBUser,
-		Net:                  "tcp",
-		Addr:                 "127.0.0.1:3308",
+		Passwd:               env.DBPassword,
+		Net:                  "unix",
+		Addr:                 env.DBInstanceUnixSocket,
 		ParseTime:            true,
 		AllowNativePasswords: true,
 	}
@@ -52,8 +59,8 @@ func setLocalResource(
 			Logger: gorm_logger.New(
 				log.New(os.Stdout, "\r\n", log.LstdFlags),
 				gorm_logger.Config{
-					Colorful:      true,
-					LogLevel:      gorm_logger.Info,
+					Colorful:      false,
+					LogLevel:      gorm_logger.Error,
 					SlowThreshold: time.Second,
 				},
 			),

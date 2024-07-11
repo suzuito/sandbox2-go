@@ -5,8 +5,10 @@ type Environment struct {
 	Port     int    `required:"true" split_words:"true"`
 	LogLevel string `required:"false" split_words:"true"`
 
-	DBName string `required:"false" split_words:"true"`
-	DBUser string `required:"false" split_words:"true"`
+	DBName               string `required:"false" split_words:"true"`
+	DBUser               string `required:"false" split_words:"true"`
+	DBPassword           string `required:"false" split_words:"true"`
+	DBInstanceUnixSocket string `required:"false" split_words:"true"`
 
 	CorsAllowOrigins  []string `required:"false" split_words:"true"`
 	CorsAllowMethods  []string `required:"false" split_words:"true"`
