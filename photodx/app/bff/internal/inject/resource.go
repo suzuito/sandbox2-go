@@ -36,9 +36,13 @@ func NewResource(
 	resource := Resource{}
 	switch env.Env {
 	case "local":
-		setLocalResource(env, &resource)
+		if err := setLocalResource(env, &resource); err != nil {
+			return nil, terrors.Wrap(err)
+		}
 	case "prd":
-		setPrdResource(env, &resource)
+		if err := setPrdResource(env, &resource); err != nil {
+			return nil, terrors.Wrap(err)
+		}
 	default:
 		return nil, terrors.Wrapf("undefined env resource : %s", env.Env)
 	}
