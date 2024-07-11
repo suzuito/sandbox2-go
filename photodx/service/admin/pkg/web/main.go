@@ -74,5 +74,10 @@ func Main(
 			}
 		}
 	}
+	// Webhooks
+	{
+		wh := admin.Group("wh")
+		wh.POST("line_messaging_api_webhook", w.APIPostLineMessagingAPIWebhook)
+	}
 	return nil
 }
