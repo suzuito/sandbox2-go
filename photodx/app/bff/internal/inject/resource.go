@@ -46,7 +46,9 @@ func NewResource(
 	default:
 		return nil, terrors.Wrapf("undefined env resource : %s", env.Env)
 	}
-	setJWTResource(env, &resource)
+	if err := setJWTResource(env, &resource); err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	return &resource, nil
 }
 
