@@ -1,7 +1,6 @@
 package web
 
 import (
-	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
@@ -127,16 +126,14 @@ func (t *Impl) APIPostLineMessagingAPIWebhook(ctx *gin.Context) {
 	}
 	// Verify header
 	channelSecret := "213c14c37f5f4ef0d6ba3ec7daee6585"
-	encodedExpectedHMacValue := []byte{}
-	base64.StdEncoding.Encode(
-		encodedExpectedHMacValue,
+	encodedExpectedHMacValue := base64.StdEncoding.EncodeToString(
 		hmac.New(sha256.New, []byte(channelSecret)).Sum(body),
 	)
 	t.L.Info(
 		"Verify header",
 		"signature", ctx.GetHeader("x-line-signature"),
-		"hashValue", string(encodedExpectedHMacValue),
-		"matched", bytes.Equal([]byte(ctx.GetHeader("x-line-signature")), encodedExpectedHMacValue),
+		"hashValue", encodedExpectedHMacValue,
+		"matched", ctx.GetHeader("x-line-signature") == encodedExpectedHMacValue,
 	)
 	ctx.Status(200)
 }
