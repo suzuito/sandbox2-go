@@ -1,6 +1,7 @@
 package web
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,7 @@ import (
 )
 
 func MiddlewareAdminAccessTokenAutho(
+	logger *slog.Logger,
 	policyString string,
 	presenter presenter.Presenter,
 ) gin.HandlerFunc {
@@ -27,6 +29,7 @@ func MiddlewareAdminAccessTokenAutho(
 			ctx,
 		)
 		if err != nil {
+			logger.Error("", "err", err)
 			presenter.JSON(ctx, http.StatusInternalServerError, ResponseError{
 				Message: "internal server error",
 			})

@@ -1,16 +1,6 @@
 package web
 
-import (
-	"errors"
-	"fmt"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
-	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
-)
-
+/*
 func (t *Impl) APIMiddlewarePhotoStudio(
 	ctx *gin.Context,
 ) {
@@ -26,6 +16,7 @@ func (t *Impl) APIMiddlewarePhotoStudio(
 				Message: fmt.Sprintf("PhotoStudioID '%s' is not found", photoStudioID),
 			})
 		} else {
+			t.L.Error("", "err", err)
 			t.P.JSON(ctx, http.StatusInternalServerError, common_web.ResponseError{
 				Message: "internal server error",
 			})
@@ -36,3 +27,4 @@ func (t *Impl) APIMiddlewarePhotoStudio(
 	common_web.CtxSet(ctx, common_web.CtxPhotoStudio, dto.PhotoStudio)
 	ctx.Next()
 }
+*/

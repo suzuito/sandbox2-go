@@ -24,6 +24,7 @@ func (t *Impl) APIGetLINELink(ctx *gin.Context) {
 			)
 			return
 		}
+		t.L.Error("", "err", err)
 		t.P.JSON(
 			ctx,
 			http.StatusInternalServerError,
@@ -36,9 +37,9 @@ func (t *Impl) APIGetLINELink(ctx *gin.Context) {
 	t.P.JSON(ctx, http.StatusOK, dto)
 }
 
-func (t *Impl) APIPostLINELink(ctx *gin.Context) {
+func (t *Impl) APIPutLINELinkActivate(ctx *gin.Context) {
 	principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-	dto, err := t.U.APIPostLINELink(ctx, principal)
+	dto, err := t.U.APIPutLINELinkActivate(ctx, principal)
 	if err != nil {
 		var errDupEntry *common_repository.DuplicateEntryError
 		if errors.As(err, &errDupEntry) {
@@ -63,9 +64,10 @@ func (t *Impl) APIPostLINELink(ctx *gin.Context) {
 	t.P.JSON(ctx, http.StatusOK, dto)
 }
 
-func (t *Impl) APIDeleteLINELink(ctx *gin.Context) {
+func (t *Impl) APIPutLINELinkDeactivate(ctx *gin.Context) {
 	principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-	if err := t.U.APIDeleteLINELink(ctx, principal); err != nil {
+	dto, err := t.U.APIPutLINELinkDeactivate(ctx, principal)
+	if err != nil {
 		t.P.JSON(
 			ctx,
 			http.StatusInternalServerError,
@@ -75,7 +77,7 @@ func (t *Impl) APIDeleteLINELink(ctx *gin.Context) {
 		)
 		return
 	}
-	t.P.JSON(ctx, http.StatusOK, struct{}{})
+	t.P.JSON(ctx, http.StatusOK, dto)
 }
 
 func (t *Impl) APIPutLINELinkMessagingAPIChannelSecret(ctx *gin.Context) {

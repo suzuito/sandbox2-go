@@ -8,7 +8,7 @@ import (
 )
 
 type BusinessLogic interface {
-	GetLineLink(
+	GetActiveLineLink(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
 	) (*entity.LineLinkInfo, error)
@@ -19,7 +19,7 @@ type BusinessLogic interface {
 	DeactivateLineLink(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
-	) error
+	) (*entity.LineLinkInfo, error)
 	SetLineLinkInfoMessagingAPIChannelSecret(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,

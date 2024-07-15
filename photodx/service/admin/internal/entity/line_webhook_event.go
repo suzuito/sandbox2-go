@@ -1,14 +1,50 @@
-package web
+package entity
 
-import (
-	"io"
-	"net/http"
+type LINEWebhookEventType string
 
-	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
-	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
+const (
+	LINEWebhookEventTypeFollow   LINEWebhookEventType = "follow"
+	LINEWebhookEventTypeUnfollow LINEWebhookEventType = "unfollow"
+	LINEWebhookEventTypeMessage  LINEWebhookEventType = "message"
 )
 
+type LINEWebhookEventMode string
+
+const (
+	LINEWebhookEventModeActive  LINEWebhookEventMode = "active"
+	LINEWebhookEventModeStandby LINEWebhookEventMode = "standby"
+)
+
+type LINEWebhookEvent struct {
+	WebhookEventID  string               `json:"webhookEventId"`
+	Type            LINEWebhookEventType `json:"type"`
+	Mode            LINEWebhookEventMode `json:"mode"`
+	Timestamp       int64                `json:"timestamp"`
+	DeliveryContext *struct {
+		IsRedelivery bool `json:"isRedelivery"`
+	} `json:"deliveryContext"`
+	Source *struct {
+		Type    string `json:"type"`
+		UserID  string `json:"userId"`
+		GroupID string `json:"groupId"`
+		RoomID  string `json:"roomId"`
+	} `json:"source"`
+}
+
+type LINEWebhookEventFollow struct {
+	LINEWebhookEvent
+	ReplyToken string `json:"replyToken"`
+	Follow     *struct {
+		IsUnblocked bool `json:"isUnblocked"`
+	} `json:"follow"`
+}
+
+type LINEWebhookEventMessage struct {
+	LINEWebhookEvent
+	ReplyToken string `json:"replyToken"`
+}
+
+/*
 // https://developers.line.biz/ja/reference/messaging-api
 type LineWebhookMessage struct {
 	Destination string `json:"destination"`
@@ -105,21 +141,4 @@ type LineWebhookMessage struct {
 		} `json:"message"`
 	} `json:"events"`
 }
-
-func (t *Impl) APIPostLineMessagingAPIWebhook(ctx *gin.Context) {
-	photoStudioID := entity.PhotoStudioID(ctx.Param("photoStudioID"))
-	body, err := io.ReadAll(ctx.Request.Body)
-	if err != nil {
-		t.P.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-			Message: "%+v",
-		})
-		return
-	}
-	if err := t.U.APIPostLineMessagingAPIWebhook(ctx, photoStudioID, body, ctx.GetHeader("x-line-signature")); err != nil {
-		t.P.JSON(ctx, http.StatusInternalServerError, common_web.ResponseError{
-			Message: "%+v",
-		})
-		return
-	}
-	ctx.Status(200)
-}
+*/

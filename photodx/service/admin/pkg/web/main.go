@@ -9,6 +9,7 @@ import (
 	internal_infra_repository "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/web"
+	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
@@ -21,6 +22,7 @@ func Main(
 	l *slog.Logger,
 	db *gorm.DB,
 	adminAccessTokenVerifier auth.JWTVerifier,
+	authUserBusinessLogic authuser_businesslogic.ExposedBusinessLogic,
 ) error {
 	repository := internal_infra_repository.Impl{
 		GormDB:  db,
@@ -35,7 +37,8 @@ func Main(
 			adminAccessTokenVerifier,
 			nil,
 		),
-		L: l,
+		AuthUserBusinessLogic: authUserBusinessLogic,
+		L:                     l,
 	}
 	w := internal_web.Impl{
 		U: &u,
@@ -49,6 +52,7 @@ func Main(
 		admin.GET(
 			"init",
 			common_web.MiddlewareAdminAccessTokenAutho(
+				l,
 				`
 					permissions.exists(
 						p,
@@ -69,21 +73,22 @@ func Main(
 				photoStudio := photoStudios.Group(":photoStudioID")
 				photoStudio.Use(
 					common_web.MiddlewareAdminAccessTokenAutho(
+						l,
 						`
 							permissions.exists(
     							p,
 			                    p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)
-		                    )
+		                    ) && pathParams["photoStudioID"] == adminPrincipalPhotoStudioId
 							`,
 						w.P,
 					),
-					w.APIMiddlewarePhotoStudio,
 				)
 				{
 					lineLink := photoStudio.Group("line_link")
-					lineLink.POST(
-						"",
+					lineLink.PUT(
+						"activate",
 						common_web.MiddlewareAdminAccessTokenAutho(
+							l,
 							`
 								permissions.exists(
 									p,
@@ -92,11 +97,26 @@ func Main(
 								`,
 							w.P,
 						),
-						w.APIPostLINELink,
+						w.APIPutLINELinkActivate,
+					)
+					lineLink.PUT(
+						"deactivate",
+						common_web.MiddlewareAdminAccessTokenAutho(
+							l,
+							`
+								permissions.exists(
+									p,
+									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
+								)
+								`,
+							w.P,
+						),
+						w.APIPutLINELinkDeactivate,
 					)
 					lineLink.GET(
 						"",
 						common_web.MiddlewareAdminAccessTokenAutho(
+							l,
 							`
 								permissions.exists(
 									p,
@@ -107,22 +127,10 @@ func Main(
 						),
 						w.APIGetLINELink,
 					)
-					lineLink.DELETE(
-						"",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
-								)
-								`,
-							w.P,
-						),
-						w.APIDeleteLINELink,
-					)
 					lineLink.PUT(
 						"messaging_api_channel_secret",
 						common_web.MiddlewareAdminAccessTokenAutho(
+							l,
 							`
 								permissions.exists(
 									p,
@@ -140,7 +148,7 @@ func Main(
 	// Webhooks
 	{
 		wh := admin.Group("wh")
-		wh.POST("line_messaging_api_webhook", w.APIPostLineMessagingAPIWebhook)
+		wh.POST("line_messaging_api_webhook/:photoStudioID", w.APIPostLineMessagingAPIWebhook)
 	}
 	return nil
 }

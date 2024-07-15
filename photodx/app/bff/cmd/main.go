@@ -12,6 +12,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/inject"
 	admin_web "github.com/suzuito/sandbox2-go/photodx/service/admin/pkg/web"
 	auth_web "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/web"
+	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
 	authuser_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/web"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	user_web "github.com/suzuito/sandbox2-go/photodx/service/user/pkg/web"
@@ -49,7 +50,9 @@ func setUp(
 	if err := admin_web.Main(
 		engine,
 		resource.Logger,
+		resource.GormDB,
 		resource.AdminAccessTokenJWTVerifier,
+		authuser_businesslogic.Main(resource.GormDB),
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}

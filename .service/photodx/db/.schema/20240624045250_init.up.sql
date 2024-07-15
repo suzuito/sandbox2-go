@@ -46,6 +46,7 @@ CREATE TABLE `photo_studio_member_password_hash_values` (
 CREATE TABLE `line_link_infos` (
     `photo_studio_id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `messaging_api_channel_secret` VARCHAR(128),
+    `active` BOOLEAN DEFAULT false,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -64,6 +65,8 @@ CREATE TABLE `users` (
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `name` VARCHAR(128),
     `profile_image_url` VARCHAR(512) NOT NULL,
+    `initialized_by_user` BOOLEAN NOT NULL,
+    `active` BOOLEAN NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
 );

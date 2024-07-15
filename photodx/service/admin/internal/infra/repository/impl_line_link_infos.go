@@ -52,7 +52,11 @@ func (t *Impl) DeleteLineLinkInfo(ctx context.Context, photoStudioID common_enti
 	return nil
 }
 
-func (t *Impl) SetLineLinkInfoMessagingAPIChannelSecret(ctx context.Context, photoStudioID common_entity.PhotoStudioID, secret string) (*entity.LineLinkInfo, error) {
+func (t *Impl) setLineLinkInfo(
+	ctx context.Context,
+	photoStudioID common_entity.PhotoStudioID,
+	f func(m *modelLineLinkInfo),
+) (*entity.LineLinkInfo, error) {
 	if err := t.GormDB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		mLineLinkInfo := modelLineLinkInfo{}
 		if err := tx.Where("photo_studio_id = ?", photoStudioID).First(&mLineLinkInfo).Error; err != nil {
@@ -64,7 +68,8 @@ func (t *Impl) SetLineLinkInfoMessagingAPIChannelSecret(ctx context.Context, pho
 			}
 			return terrors.Wrap(err)
 		}
-		mLineLinkInfo.MessagingAPIChannelSecret = secret
+		f(&mLineLinkInfo)
+		mLineLinkInfo.UpdatedAt = t.NowFunc()
 		if err := tx.Save(&mLineLinkInfo).Error; err != nil {
 			return terrors.Wrap(err)
 		}
@@ -73,4 +78,16 @@ func (t *Impl) SetLineLinkInfoMessagingAPIChannelSecret(ctx context.Context, pho
 		return nil, terrors.Wrap(err)
 	}
 	return t.GetLineLinkInfo(ctx, photoStudioID)
+}
+
+func (t *Impl) SetLineLinkInfoActive(ctx context.Context, photoStudioID common_entity.PhotoStudioID, active bool) (*entity.LineLinkInfo, error) {
+	return t.setLineLinkInfo(ctx, photoStudioID, func(m *modelLineLinkInfo) {
+		m.Active = active
+	})
+}
+
+func (t *Impl) SetLineLinkInfoMessagingAPIChannelSecret(ctx context.Context, photoStudioID common_entity.PhotoStudioID, secret string) (*entity.LineLinkInfo, error) {
+	return t.setLineLinkInfo(ctx, photoStudioID, func(m *modelLineLinkInfo) {
+		m.MessagingAPIChannelSecret = secret
+	})
 }

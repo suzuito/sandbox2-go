@@ -16,7 +16,7 @@ func (t *Impl) APIGetLINELink(
 	ctx context.Context,
 	principal common_entity.AdminPrincipalAccessToken,
 ) (*DTOAPIGetLINELink, error) {
-	info, err := t.BusinessLogic.GetLineLink(ctx, principal.GetPhotoStudioID())
+	info, err := t.BusinessLogic.GetActiveLineLink(ctx, principal.GetPhotoStudioID())
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -25,31 +25,38 @@ func (t *Impl) APIGetLINELink(
 	}, nil
 }
 
-type DTOAPIPostLINELink struct {
+type DTOAPIPutLINELinkActivate struct {
 	LineLinkInfo *entity.LineLinkInfo `json:"lineLinkInfo"`
 }
 
-func (t *Impl) APIPostLINELink(
+func (t *Impl) APIPutLINELinkActivate(
 	ctx context.Context,
 	principal common_entity.AdminPrincipalAccessToken,
-) (*DTOAPIPostLINELink, error) {
+) (*DTOAPIPutLINELinkActivate, error) {
 	info, err := t.BusinessLogic.ActivateLineLink(ctx, principal.GetPhotoStudioID())
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return &DTOAPIPostLINELink{
+	return &DTOAPIPutLINELinkActivate{
 		LineLinkInfo: info,
 	}, nil
 }
 
-func (t *Impl) APIDeleteLINELink(
+type DTOAPIPutLINELinkDeactivate struct {
+	LineLinkInfo *entity.LineLinkInfo `json:"lineLinkInfo"`
+}
+
+func (t *Impl) APIPutLINELinkDeactivate(
 	ctx context.Context,
 	principal common_entity.AdminPrincipalAccessToken,
-) error {
-	if err := t.BusinessLogic.DeactivateLineLink(ctx, principal.GetPhotoStudioID()); err != nil {
-		return terrors.Wrap(err)
+) (*DTOAPIPutLINELinkDeactivate, error) {
+	info, err := t.BusinessLogic.DeactivateLineLink(ctx, principal.GetPhotoStudioID())
+	if err != nil {
+		return nil, terrors.Wrap(err)
 	}
-	return nil
+	return &DTOAPIPutLINELinkDeactivate{
+		LineLinkInfo: info,
+	}, nil
 }
 
 type DTOAPIPutLINELinkMessagingAPIChannelSecret struct {

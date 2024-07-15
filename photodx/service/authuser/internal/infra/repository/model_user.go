@@ -7,11 +7,13 @@ import (
 )
 
 type modelUser struct {
-	ID              entity.UserID `gorm:"primaryKey;not null"`
-	Name            string
-	ProfileImageURL string
-	CreatedAt       time.Time `gorm:"not null"`
-	UpdatedAt       time.Time `gorm:"not null"`
+	ID                entity.UserID `gorm:"primaryKey;not null"`
+	Name              string
+	ProfileImageURL   string
+	Active            bool      `gorm:"not null"`
+	InitializedByUser bool      `gorm:"not null"`
+	CreatedAt         time.Time `gorm:"not null"`
+	UpdatedAt         time.Time `gorm:"not null"`
 }
 
 func (t *modelUser) TableName() string {
@@ -20,16 +22,20 @@ func (t *modelUser) TableName() string {
 
 func (t *modelUser) ToEntity() *entity.User {
 	return &entity.User{
-		ID:              t.ID,
-		Name:            t.Name,
-		ProfileImageURL: t.ProfileImageURL,
+		ID:                t.ID,
+		Name:              t.Name,
+		ProfileImageURL:   t.ProfileImageURL,
+		Active:            t.Active,
+		InitializedByUser: t.InitializedByUser,
 	}
 }
 
 func NewModelUser(s *entity.User) *modelUser {
 	return &modelUser{
-		ID:              s.ID,
-		Name:            s.Name,
-		ProfileImageURL: s.ProfileImageURL,
+		ID:                s.ID,
+		Name:              s.Name,
+		ProfileImageURL:   s.ProfileImageURL,
+		Active:            s.Active,
+		InitializedByUser: s.InitializedByUser,
 	}
 }

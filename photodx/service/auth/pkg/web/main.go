@@ -73,6 +73,7 @@ func Main(
 			"init",
 			w.MiddlewareAccessTokenAuthe,
 			common_web.MiddlewareAdminAccessTokenAutho(
+				l,
 				`permissions.exists(
     				p,
 			        p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)

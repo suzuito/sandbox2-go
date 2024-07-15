@@ -25,17 +25,24 @@ type Usecase interface {
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
 	) (*DTOAPIGetLINELink, error)
-	APIPostLINELink(
+	APIPutLINELinkActivate(
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
-	) (*DTOAPIPostLINELink, error)
-	APIDeleteLINELink(
+	) (*DTOAPIPutLINELinkActivate, error)
+	APIPutLINELinkDeactivate(
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
-	) error
+	) (*DTOAPIPutLINELinkDeactivate, error)
 	APIPutLINELinkMessagingAPIChannelSecret(
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
 		secret string,
 	) (*DTOAPIPutLINELinkMessagingAPIChannelSecret, error)
+
+	APIPostLineMessagingAPIWebhook(
+		ctx context.Context,
+		photoStudioID entity.PhotoStudioID,
+		body []byte,
+		xLINESignature string,
+	) error
 }
