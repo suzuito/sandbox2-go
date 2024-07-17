@@ -10,9 +10,10 @@ import (
 type modelLineLinkInfo struct {
 	PhotoStudioID             common_entity.PhotoStudioID `gorm:"primaryKey;not null"`
 	MessagingAPIChannelSecret string                      `gorm:"column:messaging_api_channel_secret;not null"`
-	Active                    bool                        `gorm:"not null"`
-	CreatedAt                 time.Time                   `gorm:"not null"`
-	UpdatedAt                 time.Time                   `gorm:"not null"`
+	LongAccessToken           string
+	Active                    bool      `gorm:"not null"`
+	CreatedAt                 time.Time `gorm:"not null"`
+	UpdatedAt                 time.Time `gorm:"not null"`
 }
 
 func (t *modelLineLinkInfo) TableName() string {
@@ -23,6 +24,7 @@ func (t *modelLineLinkInfo) ToEntity() *entity.LineLinkInfo {
 	return &entity.LineLinkInfo{
 		PhotoStudioID:             t.PhotoStudioID,
 		MessagingAPIChannelSecret: t.MessagingAPIChannelSecret,
+		LongAccessToken:           t.LongAccessToken,
 		Active:                    t.Active,
 	}
 }
@@ -31,6 +33,7 @@ func newModelLineLinkInfo(s *entity.LineLinkInfo) *modelLineLinkInfo {
 	return &modelLineLinkInfo{
 		PhotoStudioID:             s.PhotoStudioID,
 		MessagingAPIChannelSecret: s.MessagingAPIChannelSecret,
+		LongAccessToken:           s.LongAccessToken,
 		Active:                    s.Active,
 	}
 }

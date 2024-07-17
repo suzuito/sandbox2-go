@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
@@ -16,10 +17,6 @@ type Usecase interface {
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
 	) (*DTOAPIMiddlewarePhotoStudio, error)
-	APIGetInit(
-		ctx context.Context,
-		principal entity.AdminPrincipalAccessToken,
-	) (*DTOAPIGetInit, error)
 
 	APIGetLINELink(
 		ctx context.Context,
@@ -33,10 +30,10 @@ type Usecase interface {
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
 	) (*DTOAPIPutLINELinkDeactivate, error)
-	APIPutLINELinkMessagingAPIChannelSecret(
+	APIPutLINELink(
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
-		secret string,
+		arg *repository.SetLineLinkInfoArgument,
 	) (*DTOAPIPutLINELinkMessagingAPIChannelSecret, error)
 
 	APIPostLineMessagingAPIWebhook(

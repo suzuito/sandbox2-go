@@ -2,11 +2,13 @@ package web
 
 import (
 	"log/slog"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/businesslogic"
 	internal_infra_repository "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/infra/repository"
+	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/web"
 	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
@@ -24,13 +26,13 @@ func Main(
 	adminAccessTokenVerifier auth.JWTVerifier,
 	authUserBusinessLogic authuser_businesslogic.ExposedBusinessLogic,
 ) error {
-	repository := internal_infra_repository.Impl{
+	r := internal_infra_repository.Impl{
 		GormDB:  db,
 		NowFunc: time.Now,
 	}
 	u := usecase.Impl{
 		BusinessLogic: &businesslogic.Impl{
-			Repository: &repository,
+			Repository: &r,
 			L:          l,
 		},
 		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
@@ -40,33 +42,26 @@ func Main(
 		AuthUserBusinessLogic: authUserBusinessLogic,
 		L:                     l,
 	}
+	p := presenter.Impl{}
 	w := internal_web.Impl{
 		U: &u,
 		L: l,
-		P: &presenter.Impl{},
+		P: &p,
+	}
+	res := func(ctx *gin.Context, r any, err error) {
+		common_web.Response(
+			ctx,
+			l,
+			&p,
+			r,
+			err,
+			&common_web.DefaultWebResponseOption,
+		)
 	}
 	// スタジオ管理画面向けAPI
 	admin := e.Group("admin")
 	{
 		admin.Use(w.MiddlewareAccessTokenAuthe)
-		admin.GET(
-			"init",
-			common_web.MiddlewareAdminAccessTokenAutho(
-				l,
-				`
-					permissions.exists(
-						p,
-						p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)
-					) &&
-					permissions.exists(
-						p,
-						p.resource == "PhotoStudioMember" && adminPrincipalPhotoStudioMemberId.matches(p.target) && "read".matches(p.action)
-					)
-					`,
-				w.P,
-			),
-			w.APIGetInit,
-		)
 		{
 			photoStudios := admin.Group("photo_studios")
 			{
@@ -97,7 +92,11 @@ func Main(
 								`,
 							w.P,
 						),
-						w.APIPutLINELinkActivate,
+						func(ctx *gin.Context) {
+							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
+							dto, err := u.APIPutLINELinkActivate(ctx, principal)
+							res(ctx, dto, err)
+						},
 					)
 					lineLink.PUT(
 						"deactivate",
@@ -111,7 +110,11 @@ func Main(
 								`,
 							w.P,
 						),
-						w.APIPutLINELinkDeactivate,
+						func(ctx *gin.Context) {
+							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
+							dto, err := u.APIPutLINELinkDeactivate(ctx, principal)
+							res(ctx, dto, err)
+						},
 					)
 					lineLink.GET(
 						"",
@@ -125,10 +128,14 @@ func Main(
 								`,
 							w.P,
 						),
-						w.APIGetLINELink,
+						func(ctx *gin.Context) {
+							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
+							dto, err := u.APIGetLINELink(ctx, principal)
+							res(ctx, dto, err)
+						},
 					)
 					lineLink.PUT(
-						"messaging_api_channel_secret",
+						"",
 						common_web.MiddlewareAdminAccessTokenAutho(
 							l,
 							`
@@ -139,7 +146,22 @@ func Main(
 								`,
 							w.P,
 						),
-						w.APIPutLINELinkMessagingAPIChannelSecret,
+						func(ctx *gin.Context) {
+							message := repository.SetLineLinkInfoArgument{}
+							if err := ctx.BindJSON(&message); err != nil {
+								p.JSON(
+									ctx,
+									http.StatusBadRequest,
+									common_web.ResponseError{
+										Message: err.Error(),
+									},
+								)
+								return
+							}
+							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
+							dto, err := u.APIPutLINELink(ctx, principal, &message)
+							res(ctx, dto, err)
+						},
 					)
 				}
 			}

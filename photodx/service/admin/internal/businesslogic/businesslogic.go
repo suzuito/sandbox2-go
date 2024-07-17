@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -20,9 +21,9 @@ type BusinessLogic interface {
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
 	) (*entity.LineLinkInfo, error)
-	SetLineLinkInfoMessagingAPIChannelSecret(
+	SetLineLinkInfo(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
-		secret string,
+		arg *repository.SetLineLinkInfoArgument,
 	) (*entity.LineLinkInfo, error)
 }

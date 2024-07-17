@@ -6,6 +6,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	common_repository "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
 )
@@ -60,12 +61,12 @@ func (t *Impl) DeactivateLineLink(
 	return info, nil
 }
 
-func (t *Impl) SetLineLinkInfoMessagingAPIChannelSecret(
+func (t *Impl) SetLineLinkInfo(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
-	secret string,
+	arg *repository.SetLineLinkInfoArgument,
 ) (*entity.LineLinkInfo, error) {
-	updated, err := t.Repository.SetLineLinkInfoMessagingAPIChannelSecret(ctx, photoStudioID, secret)
+	updated, err := t.Repository.SetLineLinkInfo(ctx, photoStudioID, arg)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

@@ -45,10 +45,21 @@ CREATE TABLE `photo_studio_member_password_hash_values` (
 -- Admin
 CREATE TABLE `line_link_infos` (
     `photo_studio_id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    -- コンソール > チャネル基本設定 > チャネルシークレット
     `messaging_api_channel_secret` VARCHAR(128),
+    -- コンソール > Messaging API設定 > チャネルアクセストークン
+    `long_access_token` VARCHAR(256),
     `active` BOOLEAN DEFAULT false,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `photo_studio_users` (
+    `photo_studio_id` VARCHAR(128) NOT NULL,
+    `user_id` VARCHAR(128) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`photo_studio_id`, `user_id`)
 );
 
 -- User auth

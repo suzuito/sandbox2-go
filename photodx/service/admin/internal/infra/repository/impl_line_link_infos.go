@@ -6,6 +6,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	common_repository "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
 	"gorm.io/gorm"
@@ -86,8 +87,17 @@ func (t *Impl) SetLineLinkInfoActive(ctx context.Context, photoStudioID common_e
 	})
 }
 
-func (t *Impl) SetLineLinkInfoMessagingAPIChannelSecret(ctx context.Context, photoStudioID common_entity.PhotoStudioID, secret string) (*entity.LineLinkInfo, error) {
+func (t *Impl) SetLineLinkInfo(
+	ctx context.Context,
+	photoStudioID common_entity.PhotoStudioID,
+	arg *repository.SetLineLinkInfoArgument,
+) (*entity.LineLinkInfo, error) {
 	return t.setLineLinkInfo(ctx, photoStudioID, func(m *modelLineLinkInfo) {
-		m.MessagingAPIChannelSecret = secret
+		if arg.MessagingAPIChannelSecret != nil {
+			m.MessagingAPIChannelSecret = *arg.MessagingAPIChannelSecret
+		}
+		if arg.LongAccessToken != nil {
+			m.LongAccessToken = *arg.LongAccessToken
+		}
 	})
 }
