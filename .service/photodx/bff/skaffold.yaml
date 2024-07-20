@@ -1,0 +1,13 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+profiles:
+  #   - name: stg
+  #     manifests:
+  #       rawYaml:
+  #         - run-service-stg.yaml
+  - name: prd
+    manifests:
+      rawYaml:
+        - run-service-prd.yaml
+deploy:
+  cloudrun: {}

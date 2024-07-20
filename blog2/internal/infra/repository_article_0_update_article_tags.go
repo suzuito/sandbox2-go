@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
@@ -18,12 +19,12 @@ func (t *RepositoryArticle) UpdateArticleTags(
 		return nil, terrors.Wrapf("must set at least one entity.TagID")
 	}
 	var article *entity.Article
-	err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
+	err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
 		if len(delete) > 0 {
 			for i := range delete {
 				query := "DELETE FROM `mapping_articles_tags` WHERE `article_id` = ? AND `tag_id` = ?"
 				args := []any{articleID, delete[i]}
-				_, err := execContext(ctx, tx, query, args...)
+				_, err := csql.ExecContext(ctx, tx, query, args...)
 				if err != nil {
 					return terrors.Wrap(err)
 				}
@@ -39,7 +40,7 @@ func (t *RepositoryArticle) UpdateArticleTags(
 					query += ","
 				}
 			}
-			_, err := execContext(ctx, tx, query, args...)
+			_, err := csql.ExecContext(ctx, tx, query, args...)
 			if err != nil {
 				return terrors.Wrap(err)
 			}

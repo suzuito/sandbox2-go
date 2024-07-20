@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
@@ -11,8 +12,8 @@ func (t *RepositoryArticle) PutFileThumbnail(
 	ctx context.Context,
 	file *entity.FileThumbnail,
 ) error {
-	if err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
-		if _, err := execContext(
+	if err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
+		if _, err := csql.ExecContext(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
@@ -35,8 +36,8 @@ func (t *RepositoryArticle) DeleteFileThumbnail(
 	ctx context.Context,
 	fileID entity.FileID,
 ) error {
-	if err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
-		if _, err := execContext(
+	if err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
+		if _, err := csql.ExecContext(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
@@ -57,7 +58,7 @@ func (t *RepositoryArticle) GetFileThumbnail(
 	fileID entity.FileID,
 ) (*entity.FileThumbnail, error) {
 	// Get tags
-	row := queryRowContext(
+	row := csql.QueryRowContext(
 		ctx,
 		t.Pool,
 		"SELECT `id`,`file_id`,`media_type` FROM `file_thumbnails` WHERE id = ?",

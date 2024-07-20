@@ -1,0 +1,6 @@
+[build]
+cmd = "make photodx/bff-build"
+bin = "./photodx-bff.out"
+exclude_dir = [
+]
+stop_on_error = true
