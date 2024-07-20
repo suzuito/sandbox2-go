@@ -20,7 +20,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sethvargo/go-password v0.3.1
 	github.com/stretchr/testify v1.9.0
-	github.com/yuin/goldmark v1.6.0
+	github.com/yuin/goldmark v1.7.4
 	github.com/yuin/goldmark-emoji v1.0.2
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	github.com/yuin/goldmark-meta v1.1.0
