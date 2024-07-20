@@ -25,8 +25,8 @@ func (t *Impl) CreateUserAccessToken(
 			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
-		Roles: []*rbac.Role{
-			&rbac.RoleUser,
+		Roles: []rbac.RoleID{
+			rbac.RoleUser.ID,
 		},
 	}
 	tokenString, err := t.UserAccessTokenJWTCreator.CreateJWTToken(

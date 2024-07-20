@@ -12,15 +12,11 @@ type DTOGetAuthorizeLINE struct {
 	AuthorizeURL *url.URL
 }
 
-// var clientID = "2005761043"
-// var clientSecret = "3250327d6ab0c0f92938d37e6ff87750"
-
 func (t *Impl) GetAuthorizeURLLINE(
 	ctx context.Context,
-	callbackURL *url.URL,
 	oauth2RedirectURL *url.URL,
 ) (*DTOGetAuthorizeLINE, error) {
-	state, err := t.BusinessLogic.CreateOAuth2State(ctx, oauth2loginflow.ProviderLINE, callbackURL, oauth2RedirectURL)
+	state, err := t.BusinessLogic.CreateOAuth2State(ctx, oauth2loginflow.ProviderLINE, oauth2RedirectURL)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

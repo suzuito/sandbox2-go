@@ -17,7 +17,7 @@ func (t *Impl) SuperPostInit(ctx context.Context) (*DTOSuperPostInit, error) {
 	photoStudio, err := t.BusinessLogic.CreatePhotoStudio(
 		ctx,
 		"godzilla",
-		"サービス管理",
+		"XXX Photo Studio",
 	)
 	if err != nil {
 		return nil, terrors.Wrap(err)

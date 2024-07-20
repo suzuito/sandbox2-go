@@ -11,5 +11,10 @@ type ExposedBusinessLogic interface {
 		ctx context.Context,
 		providerID string,
 		resourceOwnerID string,
+		user *entity.User,
 	) (*entity.User, error)
+	GetUsers(
+		ctx context.Context,
+		userIDs []entity.UserID,
+	) ([]*entity.User, error)
 }

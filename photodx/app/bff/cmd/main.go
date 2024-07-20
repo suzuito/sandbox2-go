@@ -11,6 +11,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/inject"
 	admin_web "github.com/suzuito/sandbox2-go/photodx/service/admin/pkg/web"
+	auth_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/businesslogic"
 	auth_web "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/web"
 	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
 	authuser_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/web"
@@ -53,6 +54,7 @@ func setUp(
 		resource.GormDB,
 		resource.AdminAccessTokenJWTVerifier,
 		authuser_businesslogic.Main(resource.GormDB),
+		env.Env == "local",
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
@@ -71,6 +73,7 @@ func setUp(
 		engine,
 		resource.Logger,
 		resource.UserAccessTokenJWTVerifier,
+		auth_businesslogic.Main(resource.GormDB),
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
@@ -82,6 +85,12 @@ func setUp(
 		resource.UserRefreshTokenJWTVerifier,
 		resource.UserAccessTokenJWTCreator,
 		resource.UserAccessTokenJWTVerifier,
+		env.OAuth2ProviderLINEClientID,
+		env.OAuth2ProviderLINEClientSecret,
+		env.OAuth2ProviderLINERedirectURL,
+		env.FrontBaseURL,
+		env.WebPushAPIUserVAPIDPrivateKey,
+		env.WebPushAPIUserVAPIDPublicKey,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}

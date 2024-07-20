@@ -68,7 +68,6 @@ CREATE TABLE `oauth2_loginflow_states` (
     `code` VARCHAR(128) PRIMARY KEY NOT NULL,
     `provider_id` VARCHAR(128) NOT NULL,
     `redirect_url` VARCHAR(512) NOT NULL,
-    `callback_url` VARCHAR(512) NOT NULL,
     `expires_at` TIMESTAMP NOT NULL
 );
 
@@ -90,6 +89,16 @@ CREATE TABLE `provider_resource_owners_users_mappings` (
     PRIMARY KEY (`provider_id`, `resource_owner_id`),
     UNIQUE KEY (`user_id`, `provider_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE `users_web_push_subscriptions` (
+    -- Not master data table
+    `endpoint` VARCHAR(512) PRIMARY KEY NOT NULL,
+    `user_id` VARCHAR(128) NOT NULL,
+    `expiration_time` TIMESTAMP,
+    `value` TEXT,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 -- Unused tables

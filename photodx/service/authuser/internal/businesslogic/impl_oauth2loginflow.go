@@ -18,7 +18,6 @@ import (
 func (t *Impl) CreateOAuth2State(
 	ctx context.Context,
 	providerID oauth2loginflow.ProviderID,
-	callbackURL *url.URL,
 	oauth2RedirectURL *url.URL,
 ) (*oauth2loginflow.State, error) {
 	stateCode, err := t.OAuth2LoginFlowStateGenerator.Gen()
@@ -29,7 +28,6 @@ func (t *Impl) CreateOAuth2State(
 		Code:        oauth2loginflow.StateCode(stateCode),
 		ProviderID:  oauth2loginflow.ProviderLINE,
 		RedirectURL: oauth2RedirectURL.String(),
-		CallbackURL: callbackURL.String(),
 		ExpiresAt:   t.NowFunc().Add(time.Second * 600),
 	}
 	created, err := t.Repository.CreateOAuth2State(ctx, &state)

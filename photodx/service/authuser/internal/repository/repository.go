@@ -3,8 +3,9 @@ package repository
 import (
 	"context"
 
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
 type Repository interface {
@@ -19,13 +20,30 @@ type Repository interface {
 
 	CreateUserByResourceOwnerID(
 		ctx context.Context,
-		user *entity.User,
+		user *common_entity.User,
 		providerID oauth2loginflow.ProviderID,
 		resourceOwnerID oauth2loginflow.ResourceOwnerID,
-	) (*entity.User, error)
+	) (*common_entity.User, error)
 	GetUserByResourceOwnerID(
 		ctx context.Context,
 		providerID oauth2loginflow.ProviderID,
 		resourceOwnerID oauth2loginflow.ResourceOwnerID,
-	) (*entity.User, error)
+	) (*common_entity.User, error)
+	GetUsers(
+		ctx context.Context,
+		userIDs []common_entity.UserID,
+	) ([]*common_entity.User, error)
+	GetUser(
+		ctx context.Context,
+		userID common_entity.UserID,
+	) (*common_entity.User, error)
+
+	UpdateOrCreateUserWebPushSubscription(
+		ctx context.Context,
+		s *entity.UserWebPushSubscription,
+	) (*entity.UserWebPushSubscription, error)
+	GetLatestUserWebPushSubscriptions(
+		ctx context.Context,
+		userID common_entity.UserID,
+	) ([]*entity.UserWebPushSubscription, error)
 }

@@ -12,7 +12,7 @@ func (t *Impl) VerifyUserAccessToken(
 	ctx context.Context,
 	accessToken string,
 ) (entity.UserPrincipalAccessToken, error) {
-	claims, err := t.UserAccessTokenJWTVerifier.VerifyJWTToken(ctx, accessToken, nil)
+	claims, err := t.UserAccessTokenJWTVerifier.VerifyJWTToken(ctx, accessToken, &auth.JWTClaimsUserAccessToken{})
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

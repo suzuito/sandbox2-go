@@ -11,4 +11,5 @@ type Impl struct {
 	U                 usecase.Usecase
 	P                 presenter.Presenter
 	OAuth2RedirectURL url.URL
+	FrontBaseURL      url.URL
 }

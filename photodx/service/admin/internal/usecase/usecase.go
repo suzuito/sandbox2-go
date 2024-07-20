@@ -13,10 +13,6 @@ type Usecase interface {
 		ctx context.Context,
 		accessToken string,
 	) (*DTOMiddlewareAccessTokenAuthe, error)
-	APIMiddlewarePhotoStudio(
-		ctx context.Context,
-		photoStudioID entity.PhotoStudioID,
-	) (*DTOAPIMiddlewarePhotoStudio, error)
 
 	APIGetLINELink(
 		ctx context.Context,
@@ -41,5 +37,6 @@ type Usecase interface {
 		photoStudioID entity.PhotoStudioID,
 		body []byte,
 		xLINESignature string,
+		skipVerifySignagure bool,
 	) error
 }

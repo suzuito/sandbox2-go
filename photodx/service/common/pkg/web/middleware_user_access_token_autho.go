@@ -1,6 +1,7 @@
 package web
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,8 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 )
 
-func MiddlewareAccessTokenAutho(
+func MiddlewareUserAccessTokenAutho(
+	l *slog.Logger,
 	policyString string,
 	p presenter.Presenter,
 ) gin.HandlerFunc {

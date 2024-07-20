@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/entity"
 )
 
 func (t *Impl) procLINEMessagingAPIWebhook_Message(
 	ctx context.Context,
-	photoStudioID common_entity.PhotoStudioID,
+	lineLinkInfo *entity.LineLinkInfo,
 	messageBytes []byte,
 ) error {
 	return fmt.Errorf("not impl")

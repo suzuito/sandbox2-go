@@ -15,6 +15,7 @@ func (t *Impl) CreateUserIfNotExistsFromResourceOwnerID(
 	ctx context.Context,
 	providerID string,
 	resourceOwnerID string,
+	user *entity.User,
 ) (*entity.User, error) {
 	existingUser, err := t.Repository.GetUserByResourceOwnerID(
 		ctx,
@@ -28,17 +29,14 @@ func (t *Impl) CreateUserIfNotExistsFromResourceOwnerID(
 	if !errors.As(err, &noEntryError) {
 		return nil, terrors.Wrap(err)
 	}
-	user := common_entity.User{}
 	userID, err := t.UserIDGenerator.Gen()
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	user.ID = entity.UserID(userID)
-	user.Active = true
-	user.InitializedByUser = false
 	createdUser, err := t.Repository.CreateUserByResourceOwnerID(
 		ctx,
-		&user,
+		user,
 		oauth2loginflow.ProviderID(providerID),
 		oauth2loginflow.ResourceOwnerID(resourceOwnerID),
 	)
@@ -46,4 +44,18 @@ func (t *Impl) CreateUserIfNotExistsFromResourceOwnerID(
 		return nil, terrors.Wrap(err)
 	}
 	return createdUser, nil
+}
+
+func (t *Impl) GetUsers(
+	ctx context.Context,
+	userIDs []entity.UserID,
+) ([]*entity.User, error) {
+	return t.Repository.GetUsers(ctx, userIDs)
+}
+
+func (t *Impl) GetUser(
+	ctx context.Context,
+	userID common_entity.UserID,
+) (*common_entity.User, error) {
+	return t.Repository.GetUser(ctx, userID)
 }
