@@ -18,7 +18,6 @@ import (
 func (t *Impl) CreateOAuth2State(
 	ctx context.Context,
 	providerID oauth2loginflow.ProviderID,
-	callbackURL *url.URL,
 	oauth2RedirectURL *url.URL,
 ) (*oauth2loginflow.State, error) {
 	stateCode, err := t.OAuth2LoginFlowStateGenerator.Gen()
@@ -29,7 +28,6 @@ func (t *Impl) CreateOAuth2State(
 		Code:        oauth2loginflow.StateCode(stateCode),
 		ProviderID:  oauth2loginflow.ProviderLINE,
 		RedirectURL: oauth2RedirectURL.String(),
-		CallbackURL: callbackURL.String(),
 		ExpiresAt:   t.NowFunc().Add(time.Second * 600),
 	}
 	created, err := t.Repository.CreateOAuth2State(ctx, &state)
@@ -102,17 +100,23 @@ func (t *Impl) FetchProfileAndCreateUserIfNotExists(
 	}
 	existingUser, err := t.Repository.GetUserByResourceOwnerID(ctx, providerID, resourceOwnerID)
 	if err == nil {
-		return existingUser, nil
+		if existingUser.InitializedByUser {
+			return existingUser, nil
+		}
+		user.ID = existingUser.ID
+	} else {
+		var noEntryError *repository.NoEntryError
+		if !errors.As(err, &noEntryError) {
+			return nil, terrors.Wrap(err)
+		}
+		userID, err := t.UserIDGenerator.Gen()
+		if err != nil {
+			return nil, terrors.Wrap(err)
+		}
+		user.ID = entity.UserID(userID)
 	}
-	var noEntryError *repository.NoEntryError
-	if !errors.As(err, &noEntryError) {
-		return nil, terrors.Wrap(err)
-	}
-	userID, err := t.UserIDGenerator.Gen()
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	user.ID = entity.UserID(userID)
+	user.Active = true
+	user.InitializedByUser = true
 	createdUser, err := t.Repository.CreateUserByResourceOwnerID(
 		ctx, user, providerID, resourceOwnerID,
 	)

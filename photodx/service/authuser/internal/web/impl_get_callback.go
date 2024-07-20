@@ -31,6 +31,11 @@ func (t *Impl) GetCallback(ctx *gin.Context) {
 		})
 		return
 	}
-	// TODO 後でkaeru
-	t.P.JSON(ctx, http.StatusOK, dto)
+	redirectURL := t.FrontBaseURL
+	query := redirectURL.Query()
+	query.Set("refreshToken", dto.RefreshToken)
+	redirectURL.RawQuery = query.Encode()
+	fmt.Println(t.FrontBaseURL.String())
+	fmt.Println(redirectURL.String())
+	ctx.Redirect(http.StatusFound, redirectURL.String())
 }

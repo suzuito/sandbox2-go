@@ -8,6 +8,5 @@ type State struct {
 	Code        StateCode
 	ProviderID  ProviderID
 	RedirectURL string
-	CallbackURL string
 	ExpiresAt   time.Time
 }

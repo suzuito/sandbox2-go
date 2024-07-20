@@ -17,4 +17,6 @@ type Impl struct {
 	UserAccessTokenJWTVerifier    auth.JWTVerifier
 	OAuth2LoginFlowStateGenerator proc.RandomStringGenerator
 	UserIDGenerator               proc.RandomStringGenerator
+	WebPushVAPIDPublicKey         string
+	WebPushVAPIDPrivateKey        string
 }

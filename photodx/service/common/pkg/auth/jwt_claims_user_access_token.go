@@ -9,7 +9,7 @@ import (
 
 type JWTClaimsUserAccessToken struct {
 	jwt.RegisteredClaims
-	Roles []*rbac.Role `json:"roles"`
+	Roles []rbac.RoleID `json:"roles"`
 }
 
 func (t *JWTClaimsUserAccessToken) GetUserID() entity.UserID {
@@ -18,7 +18,8 @@ func (t *JWTClaimsUserAccessToken) GetUserID() entity.UserID {
 
 func (t *JWTClaimsUserAccessToken) GetPermissions() []*pbrbac.Permission {
 	permissions := []*pbrbac.Permission{}
-	for _, role := range t.Roles {
+	roles := rbac.GetAvailablePredefinedRolesFromRoleID(t.Roles)
+	for _, role := range roles {
 		permissions = append(permissions, role.Permissions...)
 	}
 	return permissions

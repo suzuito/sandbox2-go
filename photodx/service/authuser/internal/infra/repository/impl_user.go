@@ -87,3 +87,18 @@ func (t *Impl) GetUser(
 	}
 	return mUser.ToEntity(), nil
 }
+
+func (t *Impl) GetUsers(
+	ctx context.Context,
+	userIDs []entity.UserID,
+) ([]*entity.User, error) {
+	mUsers := []*modelUser{}
+	if err := t.GormDB.WithContext(ctx).Where("id in ?", userIDs).Find(&mUsers).Error; err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	ret := []*entity.User{}
+	for _, u := range mUsers {
+		ret = append(ret, u.ToEntity())
+	}
+	return ret, nil
+}
