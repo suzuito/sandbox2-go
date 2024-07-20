@@ -1,0 +1,38 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "build",
+        "-t",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/photodx/bff:${TAG_NAME}",
+        "-f",
+        ".service/photodx/bff/Dockerfile",
+        ".",
+      ]
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "push",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/photodx/bff:${TAG_NAME}",
+      ]
+  - name: gcr.io/cloud-builders/gcloud
+    dir: .service/photodx/bff
+    args:
+      [
+        "deploy",
+        "releases",
+        "create",
+        "commit-${SHORT_SHA}",
+        "--delivery-pipeline",
+        "${_DELIVERY_PIPELINE}",
+        "--region",
+        "asia-northeast1",
+        "--images",
+        "app-image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/photodx/bff:${TAG_NAME}",
+      ]
+images:
+  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/photodx/bff:${TAG_NAME}"
+options:
+  logging: CLOUD_LOGGING_ONLY
+  pool:
+    name: projects/$PROJECT_ID/locations/asia-northeast1/workerPools/minimum

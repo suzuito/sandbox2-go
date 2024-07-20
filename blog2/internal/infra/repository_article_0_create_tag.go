@@ -5,14 +5,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
 func (t *RepositoryArticle) CreateTag(ctx context.Context, name string) (*entity.Tag, error) {
 	tag := entity.Tag{}
 	tagID := uuid.New().String()
-	err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
-		_, err := execContext(
+	err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
+		_, err := csql.ExecContext(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
@@ -23,7 +24,7 @@ func (t *RepositoryArticle) CreateTag(ctx context.Context, name string) (*entity
 		if err != nil {
 			return terrors.Wrap(err)
 		}
-		rows, err := queryContext(
+		rows, err := csql.QueryContext(
 			ctx, tx,
 			"SELECT `id`, `name` FROM `tags` WHERE `name` = ?",
 			name,

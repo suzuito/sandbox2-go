@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/suzuito/sandbox2-go/blog2/internal/entity"
+	"github.com/suzuito/sandbox2-go/common/csql"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 )
 
@@ -12,8 +13,8 @@ func (t *RepositoryArticle) PutFile(
 	ctx context.Context,
 	file *entity.File,
 ) error {
-	if err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
-		if _, err := execContext(
+	if err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
+		if _, err := csql.ExecContext(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
@@ -36,8 +37,8 @@ func (t *RepositoryArticle) DeleteFile(
 	ctx context.Context,
 	fileID entity.FileID,
 ) error {
-	if err := withTransaction(ctx, t.Pool, func(tx TxOrDB) error {
-		if _, err := execContext(
+	if err := csql.WithTransaction(ctx, t.Pool, func(tx csql.TxOrDB) error {
+		if _, err := csql.ExecContext(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
@@ -46,7 +47,7 @@ func (t *RepositoryArticle) DeleteFile(
 		); err != nil {
 			return terrors.Wrap(err)
 		}
-		if _, err := execContext(
+		if _, err := csql.ExecContext(
 			ctx,
 			tx,
 			// 既存のタグがある場合IGNOREする
@@ -67,7 +68,7 @@ func (t *RepositoryArticle) GetFile(
 	fileID entity.FileID,
 ) (*entity.File, error) {
 	// Get tags
-	row := queryRowContext(
+	row := csql.QueryRowContext(
 		ctx,
 		t.Pool,
 		"SELECT `id`,`type`,`media_type` FROM `files` WHERE id = ?",
@@ -104,7 +105,7 @@ func (t *RepositoryArticle) SearchFiles(
 	args = append(args, limit, offset)
 	query += " LIMIT ? OFFSET ?"
 	// Get files
-	rowsFiles, err := queryContext(
+	rowsFiles, err := csql.QueryContext(
 		ctx,
 		t.Pool,
 		query,
@@ -133,14 +134,14 @@ func (t *RepositoryArticle) SearchFiles(
 	// Get thumbnails
 	thumbnailMap := map[entity.FileID]*entity.FileThumbnail{}
 	if len(fileIDs) > 0 {
-		rowsThumbnails, err := queryContext(
+		rowsThumbnails, err := csql.QueryContext(
 			ctx,
 			t.Pool,
 			fmt.Sprintf(
 				"SELECT `id`,`file_id`,`media_type` FROM `file_thumbnails` WHERE %s",
-				sqlIn("file_id", fileIDs),
+				csql.SqlIn("file_id", fileIDs),
 			),
-			toAnySlice(fileIDs)...,
+			csql.ToAnySlice(fileIDs)...,
 		)
 		if err != nil {
 			return nil, terrors.Wrap(err)
