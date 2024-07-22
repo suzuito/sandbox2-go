@@ -25,9 +25,6 @@ type Usecase interface {
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
 	) (*DTOAuthPostRefresh, error)
-	SuperPostInit(
-		ctx context.Context,
-	) (*DTOSuperPostInit, error)
 
 	AuthGetInit(
 		ctx context.Context,

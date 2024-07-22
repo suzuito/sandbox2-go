@@ -88,7 +88,5 @@ func Main(
 			w.AuthGetInit,
 		)
 	}
-	// TODO 後で消す
-	auth.POST("super_init", w.SuperPostInit)
 	return nil
 }

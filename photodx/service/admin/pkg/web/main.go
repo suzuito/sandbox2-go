@@ -12,6 +12,7 @@ import (
 	internal_infra_repository "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/usecase"
+	auth_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/businesslogic"
 	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
@@ -48,6 +49,7 @@ func Main(
 	db *gorm.DB,
 	adminAccessTokenVerifier auth.JWTVerifier,
 	authUserBusinessLogic authuser_businesslogic.ExposedBusinessLogic,
+	authBusinessLogic auth_businesslogic.ExposedBusinessLogic,
 	skipVerifyLINEWebhook bool,
 ) error {
 	r := internal_infra_repository.Impl{
@@ -67,6 +69,7 @@ func Main(
 			nil,
 		),
 		AuthUserBusinessLogic: authUserBusinessLogic,
+		AuthBusinessLogic:     authBusinessLogic,
 		L:                     l,
 	}
 	p := presenter.Impl{}
@@ -269,5 +272,11 @@ func Main(
 			},
 		)
 	}
+
+	// TODO 後で消す
+	admin.POST("super_init", func(ctx *gin.Context) {
+		dto, err := u.APIPostSuperInit(ctx)
+		res(ctx, dto, err)
+	})
 	return nil
 }

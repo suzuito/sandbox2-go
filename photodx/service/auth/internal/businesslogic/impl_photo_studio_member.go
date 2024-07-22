@@ -19,6 +19,13 @@ func (t *Impl) GetPhotoStudioMember(
 	return member, roles, photoStudio, nil
 }
 
+func (t *Impl) GetPhotoStudioMembers(
+	ctx context.Context,
+	photoStudioMemberIDs []entity.PhotoStudioMemberID,
+) ([]*entity.PhotoStudioMemberWrapper, error) {
+	return t.Repository.GetPhotoStudioMembers(ctx, photoStudioMemberIDs)
+}
+
 func (t *Impl) CreatePhotoStudioMember(
 	ctx context.Context,
 	photoStudioID entity.PhotoStudioID,

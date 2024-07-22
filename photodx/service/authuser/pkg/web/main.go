@@ -91,12 +91,15 @@ func Main(
 	// authuser.POST("login", func(ctx *gin.Context) {}) // Password login
 	// ==== Debug START ====
 	authuser.GET("a", func(ctx *gin.Context) {
-		b.PushNotification(
+		err := b.PushNotification(
 			ctx,
 			l,
-			entity.UserID("0190c45e-8abd-74c6-b59e-2f7f5090181e"),
+			entity.UserID(ctx.Query("userId")),
 			"hoge",
 		)
+		if err != nil {
+			l.Error("", "err", err)
+		}
 	})
 	// ==== Debug END ====
 	{

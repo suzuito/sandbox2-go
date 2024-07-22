@@ -42,26 +42,6 @@ CREATE TABLE `photo_studio_member_password_hash_values` (
     FOREIGN KEY (`photo_studio_member_id`) REFERENCES `photo_studio_members` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
--- Admin
-CREATE TABLE `line_link_infos` (
-    `photo_studio_id` VARCHAR(128) PRIMARY KEY NOT NULL,
-    -- コンソール > チャネル基本設定 > チャネルシークレット
-    `messaging_api_channel_secret` VARCHAR(128),
-    -- コンソール > Messaging API設定 > チャネルアクセストークン
-    `long_access_token` VARCHAR(256),
-    `active` BOOLEAN DEFAULT false,
-    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE `photo_studio_users` (
-    `photo_studio_id` VARCHAR(128) NOT NULL,
-    `user_id` VARCHAR(128) NOT NULL,
-    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`photo_studio_id`, `user_id`)
-);
-
 -- User auth
 CREATE TABLE `oauth2_loginflow_states` (
     -- Not master data table
@@ -99,6 +79,46 @@ CREATE TABLE `users_web_push_subscriptions` (
     `value` TEXT,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+);
+
+-- Admin
+CREATE TABLE `line_link_infos` (
+    `photo_studio_id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    -- コンソール > チャネル基本設定 > チャネルシークレット
+    `messaging_api_channel_secret` VARCHAR(128),
+    -- コンソール > Messaging API設定 > チャネルアクセストークン
+    `long_access_token` VARCHAR(256),
+    `active` BOOLEAN DEFAULT false,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `photo_studio_users` (
+    `photo_studio_id` VARCHAR(128) NOT NULL,
+    `user_id` VARCHAR(128) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`photo_studio_id`, `user_id`)
+);
+
+CREATE TABLE `chat_rooms` (
+    `id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `photo_studio_id` VARCHAR(128) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `chat_messages` (
+    `id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `chat_room_id` VARCHAR(128) NOT NULL,
+    `type` VARCHAR(128) NOT NULL,
+    `text` TEXT NOT NULL,
+    `posted_by` VARCHAR(128) NOT NULL,
+    `posted_by_type` VARCHAR(128) NOT NULL,
+    `posted_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`chat_room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 -- Unused tables

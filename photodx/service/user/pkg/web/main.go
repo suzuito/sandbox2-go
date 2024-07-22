@@ -2,10 +2,15 @@ package web
 
 import (
 	"log/slog"
+	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/suzuito/sandbox2-go/common/cgorm"
+	admin_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/admin/pkg/businesslogic"
 	auth_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/businesslogic"
+	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
@@ -21,15 +26,20 @@ func Main(
 	l *slog.Logger,
 	userAccessTokenJWTVerifier auth.JWTVerifier,
 	authBusinessLogic auth_businesslogic.ExposedBusinessLogic,
+	authUserBusinessLogic authuser_businesslogic.ExposedBusinessLogic,
+	adminBusinessLogic admin_businesslogic.ExposedBusinessLogic,
 ) error {
 	var u usecase.Usecase = &usecase.Impl{
+		NowFunc:       time.Now,
 		BusinessLogic: &businesslogic.Impl{},
 		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
 			nil,
 			userAccessTokenJWTVerifier,
 		),
-		AuthBusinessLogic: authBusinessLogic,
-		L:                 l,
+		AuthBusinessLogic:     authBusinessLogic,
+		AuthUserBusinessLogic: authUserBusinessLogic,
+		AdminBusinessLogic:    adminBusinessLogic,
+		L:                     l,
 	}
 	p := presenter.Impl{}
 	res := func(ctx *gin.Context, r any, err error) {
@@ -78,6 +88,64 @@ func Main(
 			photoStudio.GET("", func(ctx *gin.Context) {
 				res(ctx, internal_web.CtxGetPhotoStudio(ctx), nil)
 			})
+			{
+				chatMessages := photoStudio.Group("messages")
+				chatMessages.POST(
+					"",
+					common_web.MiddlewareUserAccessTokenAutho(
+						l,
+						`
+						permissions.exists(
+							p,
+							p.resource == "PhotoStudio" && "read".matches(p.action)
+						)
+					`,
+						&p,
+					),
+					func(ctx *gin.Context) {
+						photoStudioID := common_entity.PhotoStudioID(ctx.Param("photoStudioID"))
+						message := usecase.InputAPIPostPhotoStudioMessages{}
+						if err := ctx.BindJSON(&message); err != nil {
+							p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+								Message: err.Error(),
+							})
+							return
+						}
+						dto, err := u.APIPostPhotoStudioMessages(
+							ctx,
+							common_web.CtxGetUserPrincipalAccessToken(ctx),
+							photoStudioID,
+							&message,
+						)
+						res(ctx, dto, err)
+					},
+				)
+				chatMessages.GET(
+					"",
+					common_web.MiddlewareUserAccessTokenAutho(
+						l,
+						`
+						permissions.exists(
+							p,
+							p.resource == "PhotoStudio" && "read".matches(p.action)
+						)
+					`,
+						&p,
+					),
+					func(ctx *gin.Context) {
+						photoStudioID := common_entity.PhotoStudioID(ctx.Param("photoStudioID"))
+						listQuery := cgorm.ListQuery{}
+						if err := ctx.BindQuery(&listQuery); err != nil {
+							p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+								Message: err.Error(),
+							})
+							return
+						}
+						dto, err := u.APIGetPhotoStudioMessages(ctx, photoStudioID, &listQuery)
+						res(ctx, dto, err)
+					},
+				)
+			}
 		}
 	}
 	app.GET(

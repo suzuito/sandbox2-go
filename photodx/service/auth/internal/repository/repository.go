@@ -21,6 +21,10 @@ type Repository interface {
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
 	) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error)
+	GetPhotoStudioMembers(
+		ctx context.Context,
+		photoStudioMemberIDs []entity.PhotoStudioMemberID,
+	) ([]*entity.PhotoStudioMemberWrapper, error)
 	GetPhotoStudioMemberByEmail(
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
