@@ -59,7 +59,6 @@ func setUp(
 		resource.AdminAccessTokenJWTVerifier,
 		authUserBusinessLogic,
 		authBusinessLogic,
-		env.Env == "local",
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}

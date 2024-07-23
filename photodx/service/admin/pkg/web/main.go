@@ -1,7 +1,6 @@
 package web
 
 import (
-	"io"
 	"log/slog"
 	"net/http"
 	"time"
@@ -10,7 +9,6 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/gateway/line/messaging"
 	internal_infra_repository "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/infra/repository"
-	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/usecase"
 	auth_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/businesslogic"
 	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
@@ -50,7 +48,6 @@ func Main(
 	adminAccessTokenVerifier auth.JWTVerifier,
 	authUserBusinessLogic authuser_businesslogic.ExposedBusinessLogic,
 	authBusinessLogic auth_businesslogic.ExposedBusinessLogic,
-	skipVerifyLINEWebhook bool,
 ) error {
 	r := internal_infra_repository.Impl{
 		GormDB:  db,
@@ -103,92 +100,6 @@ func Main(
 						&p,
 					),
 				)
-				{
-					lineLink := photoStudio.Group("line_link")
-					lineLink.PUT(
-						"activate",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIPutLINELinkActivate(ctx, principal)
-							res(ctx, dto, err)
-						},
-					)
-					lineLink.PUT(
-						"deactivate",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIPutLINELinkDeactivate(ctx, principal)
-							res(ctx, dto, err)
-						},
-					)
-					lineLink.GET(
-						"",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIGetLINELink(ctx, principal)
-							res(ctx, dto, err)
-						},
-					)
-					lineLink.PUT(
-						"",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							message := repository.SetLineLinkInfoArgument{}
-							if err := ctx.BindJSON(&message); err != nil {
-								p.JSON(
-									ctx,
-									http.StatusBadRequest,
-									common_web.ResponseError{
-										Message: err.Error(),
-									},
-								)
-								return
-							}
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIPutLINELink(ctx, principal, &message)
-							res(ctx, dto, err)
-						},
-					)
-				}
 				{
 					users := photoStudio.Group("users")
 					users.GET(
@@ -246,31 +157,6 @@ func Main(
 				}
 			}
 		}
-	}
-	// Webhooks
-	{
-		wh := admin.Group("wh")
-		wh.POST(
-			"line_messaging_api_webhook/:photoStudioID",
-			func(ctx *gin.Context) {
-				photoStudioID := entity.PhotoStudioID(ctx.Param("photoStudioID"))
-				body, err := io.ReadAll(ctx.Request.Body)
-				if err != nil {
-					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-						Message: "%+v",
-					})
-					return
-				}
-				err = u.APIPostLineMessagingAPIWebhook(
-					ctx,
-					photoStudioID,
-					body,
-					ctx.GetHeader("x-line-signature"),
-					skipVerifyLINEWebhook,
-				)
-				res(ctx, struct{}{}, err)
-			},
-		)
 	}
 
 	// TODO 後で消す
