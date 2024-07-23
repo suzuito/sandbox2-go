@@ -42,6 +42,16 @@ CREATE TABLE `photo_studio_member_password_hash_values` (
     FOREIGN KEY (`photo_studio_member_id`) REFERENCES `photo_studio_members` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
+CREATE TABLE `photo_studio_members_web_push_subscriptions` (
+    -- Not master data table
+    `endpoint` VARCHAR(512) PRIMARY KEY NOT NULL,
+    `photo_studio_member_id` VARCHAR(128) NOT NULL,
+    `expiration_time` TIMESTAMP,
+    `value` TEXT,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`photo_studio_member_id`) REFERENCES `photo_studio_members` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+);
+
 -- User auth
 CREATE TABLE `oauth2_loginflow_states` (
     -- Not master data table
