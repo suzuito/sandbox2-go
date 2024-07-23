@@ -15,6 +15,7 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 	"gorm.io/gorm"
@@ -59,8 +60,9 @@ func Main(
 			LINEMessagingAPIClient: &messaging.Impl{
 				Cli: http.DefaultClient,
 			},
-			Repository: &r,
-			L:          l,
+			Repository:            &r,
+			GenerateChatMessageID: &proc.IDGeneratorImpl{},
+			L:                     l,
 		},
 		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
 			adminAccessTokenVerifier,

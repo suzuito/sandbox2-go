@@ -2,8 +2,10 @@ package web
 
 import (
 	"log/slog"
+	"net/http"
 	"time"
 
+	"github.com/SherClockHolmes/webpush-go"
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/businesslogic"
 	infra_repository "github.com/suzuito/sandbox2-go/photodx/service/auth/internal/infra/repository"
@@ -26,6 +28,8 @@ func Main(
 	adminRefreshTokenJWTVerifier auth.JWTVerifier,
 	adminAccessTokenJWTCreator auth.JWTCreator,
 	adminAccessTokenJWTVerifier auth.JWTVerifier,
+	webPushVAPIDPrivateKey string,
+	webPushVAPIDPublicKey string,
 ) error {
 	u := usecase.Impl{
 		BusinessLogic: &businesslogic.Impl{
@@ -42,6 +46,8 @@ func Main(
 			AdminRefreshTokenJWTVerifier: adminRefreshTokenJWTVerifier,
 			AdminAccessTokenJWTCreator:   adminAccessTokenJWTCreator,
 			AdminAccessTokenJWTVerifier:  adminAccessTokenJWTVerifier,
+			WebPushVAPIDPrivateKey:       webPushVAPIDPrivateKey,
+			WebPushVAPIDPublicKey:        webPushVAPIDPublicKey,
 		},
 		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
 			adminAccessTokenJWTVerifier,
@@ -49,10 +55,21 @@ func Main(
 		),
 		L: l,
 	}
+	p := presenter.Impl{}
 	w := internal_web.Impl{
 		U: &u,
 		L: l,
-		P: &presenter.Impl{},
+		P: &p,
+	}
+	res := func(ctx *gin.Context, r any, err error) {
+		common_web.Response(
+			ctx,
+			l,
+			&p,
+			r,
+			err,
+			&common_web.DefaultWebResponseOption,
+		)
 	}
 	// Authを担うAPI
 	auth := e.Group("auth")
@@ -87,6 +104,23 @@ func Main(
 			),
 			w.AuthGetInit,
 		)
+		{
+			pushAPI := y.Group("push_api")
+			pushAPI.PUT(
+				"push_subscription",
+				func(ctx *gin.Context) {
+					subscription := webpush.Subscription{}
+					if err := ctx.BindJSON(&subscription); err != nil {
+						p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+							Message: err.Error(),
+						})
+						return
+					}
+					dto, err := u.AuthPutPushSubscription(ctx, common_web.CtxGetAdminPrincipalAccessToken(ctx), &subscription)
+					res(ctx, dto, err)
+				},
+			)
+		}
 	}
 	return nil
 }

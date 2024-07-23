@@ -8,20 +8,12 @@ import (
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-type DTOAPIGetPhotoStudioChatMessages struct {
-	Results    []*common_entity.ChatMessageWrapper
-	HasNext    bool
-	HasPrev    bool
-	NextOffset int
-	PrevOffset int
-}
-
 func (t *Impl) APIGetPhotoStudioChatMessages(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
 	userID common_entity.UserID,
 	offset int,
-) (*DTOAPIGetPhotoStudioChatMessages, error) {
+) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error) {
 	listQuery := cgorm.ListQuery{
 		Offset: offset,
 		Limit:  30,
@@ -44,7 +36,7 @@ func (t *Impl) APIGetPhotoStudioChatMessages(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return &DTOAPIGetPhotoStudioChatMessages{
+	return &common_entity.ListResponse[*common_entity.ChatMessageWrapper]{
 		Results:    chatMessageWrappers,
 		HasNext:    hasNext,
 		HasPrev:    listQuery.HasPrev(),
@@ -75,6 +67,12 @@ func (t *Impl) APIPostPhotoStudioChatMessages(
 	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
+	}
+	if err := t.AuthUserBusinessLogic.PushNotification(ctx, t.L, userID, chatMessage.Text); err != nil {
+		t.L.Warn("", "err", err)
+	}
+	if err := t.AuthBusinessLogic.PushNotificationToAllMembers(ctx, t.L, photoStudioID, chatMessage.Text); err != nil {
+		t.L.Warn("", "err", err)
 	}
 	chatMessageWrappers, err := common_entity.BuildChatMessageWrapper(
 		ctx,

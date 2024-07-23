@@ -8,19 +8,11 @@ import (
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-type DTOAPIGetPhotoStudioChats struct {
-	Results    []*common_entity.ChatRoomWrapper
-	HasNext    bool
-	HasPrev    bool
-	NextOffset int
-	PrevOffset int
-}
-
 func (t *Impl) APIGetPhotoStudioChats(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
 	offset int,
-) (*DTOAPIGetPhotoStudioChats, error) {
+) (*common_entity.ListResponse[*common_entity.ChatRoomWrapper], error) {
 	if offset < 0 {
 		offset = 0
 	}
@@ -45,7 +37,7 @@ func (t *Impl) APIGetPhotoStudioChats(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return &DTOAPIGetPhotoStudioChats{
+	return &common_entity.ListResponse[*common_entity.ChatRoomWrapper]{
 		Results:    chatRoomWrappers,
 		HasNext:    hasNext,
 		HasPrev:    listQuery.HasPrev(),

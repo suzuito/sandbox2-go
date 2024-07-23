@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"context"
+	"log/slog"
 
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
@@ -31,4 +32,16 @@ type ExposedBusinessLogic interface {
 		email string,
 		name string,
 	) (*common_entity.PhotoStudioMember, []*rbac.Role, *common_entity.PhotoStudio, string, error)
+	PushNotification(
+		ctx context.Context,
+		l *slog.Logger,
+		photoStudioMemberID common_entity.PhotoStudioMemberID,
+		message string,
+	) error
+	PushNotificationToAllMembers(
+		ctx context.Context,
+		l *slog.Logger,
+		photoStudioID common_entity.PhotoStudioID,
+		message string,
+	) error
 }

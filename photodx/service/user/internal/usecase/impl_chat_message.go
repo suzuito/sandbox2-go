@@ -44,6 +44,9 @@ func (t *Impl) APIPostPhotoStudioMessages(
 	if err := t.AuthUserBusinessLogic.PushNotification(ctx, t.L, principal.GetUserID(), created.Text); err != nil {
 		t.L.Warn("", "err", err)
 	}
+	if err := t.AuthBusinessLogic.PushNotificationToAllMembers(ctx, t.L, photoStudioID, created.Text); err != nil {
+		t.L.Warn("", "err", err)
+	}
 	a, err := common_entity.BuildChatMessageWrapper(
 		ctx,
 		[]*common_entity.ChatMessage{created},

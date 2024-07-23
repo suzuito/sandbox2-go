@@ -29,6 +29,8 @@ type Environment struct {
 
 	FrontBaseURL string `required:"true" split_words:"true"`
 
-	WebPushAPIUserVAPIDPrivateKey string `envconfig:"WEB_PUSH_API_USER_VAPID_PRIVATE_KEY" required:"true"`
-	WebPushAPIUserVAPIDPublicKey  string `envconfig:"WEB_PUSH_API_USER_VAPID_PUBLIC_KEY" required:"true"`
+	WebPushAPIUserVAPIDPrivateKey  string `envconfig:"WEB_PUSH_API_USER_VAPID_PRIVATE_KEY" required:"true"`
+	WebPushAPIUserVAPIDPublicKey   string `envconfig:"WEB_PUSH_API_USER_VAPID_PUBLIC_KEY" required:"true"`
+	WebPushAPIAdminVAPIDPrivateKey string `envconfig:"WEB_PUSH_API_ADMIN_VAPID_PRIVATE_KEY" required:"true"`
+	WebPushAPIAdminVAPIDPublicKey  string `envconfig:"WEB_PUSH_API_ADMIN_VAPID_PUBLIC_KEY" required:"true"`
 }

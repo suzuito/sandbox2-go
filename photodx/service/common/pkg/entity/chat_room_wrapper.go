@@ -37,14 +37,14 @@ func BuildChatRoomWrappers(
 			var photoStudio *PhotoStudio
 			{
 				photoStudios, exists := photoStudiosMap[chatRoom.PhotoStudioID]
-				if !exists {
+				if exists {
 					photoStudio = photoStudios[0]
 				}
 			}
 			var user *User
 			{
 				users, exists := usersMap[chatRoom.UserID]
-				if !exists {
+				if exists {
 					user = users[0]
 				}
 			}

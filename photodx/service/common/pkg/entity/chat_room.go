@@ -10,6 +10,6 @@ type ChatRoom struct {
 
 type ChatRoomWrapper struct {
 	*ChatRoom
-	PhotoStudio *PhotoStudio
-	User        *User
+	PhotoStudio *PhotoStudio `json:"photoStudio"`
+	User        *User        `json:"user"`
 }

@@ -12,6 +12,8 @@ import (
 
 func Main(
 	gormDB *gorm.DB,
+	webPushVAPIDPrivateKey string,
+	webPushVAPIDPublicKey string,
 ) ExposedBusinessLogic {
 	return &businesslogic.Impl{
 		Repository: &infra_repository.Impl{
@@ -22,6 +24,8 @@ func Main(
 		PasswordHasher:                            &proc.PasswordHasherMD5{},
 		PhotoStudioMemberIDGenerator:              &proc.IDGeneratorImpl{},
 		PhotoStudioMemberInitialPasswordGenerator: &proc.InitialPasswordGeneratorImpl{},
-		NowFunc: time.Now,
+		WebPushVAPIDPrivateKey:                    webPushVAPIDPrivateKey,
+		WebPushVAPIDPublicKey:                     webPushVAPIDPublicKey,
+		NowFunc:                                   time.Now,
 	}
 }
