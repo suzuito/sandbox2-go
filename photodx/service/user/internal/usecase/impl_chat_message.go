@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 
-	"github.com/suzuito/sandbox2-go/common/arrayutil"
 	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
@@ -45,7 +44,12 @@ func (t *Impl) APIPostPhotoStudioMessages(
 	if err := t.AuthUserBusinessLogic.PushNotification(ctx, t.L, principal.GetUserID(), created.Text); err != nil {
 		t.L.Warn("", "err", err)
 	}
-	a, err := t.attachPostedBy(ctx, []*common_entity.ChatMessage{created})
+	a, err := common_entity.BuildChatMessageWrapper(
+		ctx,
+		[]*common_entity.ChatMessage{created},
+		t.AuthUserBusinessLogic.GetUsers,
+		t.AuthBusinessLogic.GetPhotoStudioMembers,
+	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -82,7 +86,12 @@ func (t *Impl) APIGetPhotoStudioMessages(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	wmessages, err := t.attachPostedBy(ctx, messages)
+	wmessages, err := common_entity.BuildChatMessageWrapper(
+		ctx,
+		messages,
+		t.AuthUserBusinessLogic.GetUsers,
+		t.AuthBusinessLogic.GetPhotoStudioMembers,
+	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
@@ -93,84 +102,4 @@ func (t *Impl) APIGetPhotoStudioMessages(
 		NextOffset: listQuery.NextOffset(),
 		PrevOffset: listQuery.PrevOffset(),
 	}, nil
-}
-
-func (t *Impl) attachPostedBy(
-	ctx context.Context,
-	messages []*common_entity.ChatMessage,
-) ([]*common_entity.ChatMessageWrapper, error) {
-	usersMap := map[common_entity.UserID][]*common_entity.User{}
-	{
-		userIDs := arrayutil.Map(
-			arrayutil.Filter(
-				messages,
-				func(message *common_entity.ChatMessage) bool {
-					return message.PostedByType == common_entity.ChatMessagePostedByTypeUser
-				},
-			),
-			func(message *common_entity.ChatMessage) common_entity.UserID {
-				return common_entity.UserID(message.PostedBy)
-			},
-		)
-		userIDs = arrayutil.Uniq(userIDs)
-		if len(userIDs) > 0 {
-			users, err := t.AuthUserBusinessLogic.GetUsers(ctx, userIDs)
-			if err != nil {
-				return nil, terrors.Wrap(err)
-			}
-			usersMap = arrayutil.ListToMap(users, func(u *common_entity.User) common_entity.UserID {
-				return u.ID
-			})
-		}
-	}
-	photoStudioMembersMap := map[common_entity.PhotoStudioMemberID][]*common_entity.PhotoStudioMemberWrapper{}
-	{
-		photoStudioMemberIDs := arrayutil.Map(
-			arrayutil.Filter(
-				messages,
-				func(message *common_entity.ChatMessage) bool {
-					return message.PostedByType == common_entity.ChatMessagePostedByTypePhotoStudioMember
-				},
-			),
-			func(message *common_entity.ChatMessage) common_entity.PhotoStudioMemberID {
-				return common_entity.PhotoStudioMemberID(message.PostedBy)
-			},
-		)
-		photoStudioMemberIDs = arrayutil.Uniq(photoStudioMemberIDs)
-		if len(photoStudioMemberIDs) > 0 {
-			photoStudioMembers, err := t.AuthBusinessLogic.GetPhotoStudioMembers(ctx, photoStudioMemberIDs)
-			if err != nil {
-				return nil, terrors.Wrap(err)
-			}
-			photoStudioMembersMap = arrayutil.ListToMap(photoStudioMembers, func(m *common_entity.PhotoStudioMemberWrapper) common_entity.PhotoStudioMemberID {
-				return m.ID
-			})
-		}
-	}
-	wmessages := arrayutil.Map(
-		messages,
-		func(m *common_entity.ChatMessage) *common_entity.ChatMessageWrapper {
-			var user *common_entity.User
-			var photoStudioMember *common_entity.PhotoStudioMember
-			switch m.PostedByType {
-			case common_entity.ChatMessagePostedByTypeUser:
-				users := usersMap[common_entity.UserID(m.PostedBy)]
-				if len(users) > 0 {
-					user = users[0]
-				}
-			case common_entity.ChatMessagePostedByTypePhotoStudioMember:
-				photoStudioMembers := photoStudioMembersMap[common_entity.PhotoStudioMemberID(m.PostedBy)]
-				if len(photoStudioMembers) > 0 {
-					photoStudioMember = photoStudioMembers[0].PhotoStudioMember
-				}
-			default:
-			}
-			return common_entity.NewChatMessageWrapper(
-				m,
-				user,
-				photoStudioMember,
-			)
-		},
-	)
-	return wmessages, nil
 }

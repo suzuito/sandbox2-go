@@ -7,3 +7,9 @@ type ChatRoom struct {
 	PhotoStudioID PhotoStudioID `json:"photoStudioId"`
 	UserID        UserID        `json:"userId"`
 }
+
+type ChatRoomWrapper struct {
+	*ChatRoom
+	PhotoStudio *PhotoStudio
+	User        *User
+}

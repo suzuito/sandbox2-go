@@ -12,6 +12,10 @@ type ExposedBusinessLogic interface {
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
 	) (*common_entity.PhotoStudio, error)
+	GetPhotoStudios(
+		ctx context.Context,
+		photoStudioIDs []common_entity.PhotoStudioID,
+	) ([]*common_entity.PhotoStudio, error)
 	GetPhotoStudioMembers(
 		ctx context.Context,
 		photoStudioMemberIDs []common_entity.PhotoStudioMemberID,

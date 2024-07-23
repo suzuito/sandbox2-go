@@ -12,6 +12,10 @@ type Repository interface {
 		ctx context.Context,
 		photoStudioID entity.PhotoStudioID,
 	) (*entity.PhotoStudio, error)
+	GetPhotoStudios(
+		ctx context.Context,
+		photoStudioIDs []entity.PhotoStudioID,
+	) ([]*entity.PhotoStudio, error)
 	CreatePhotoStudio(
 		ctx context.Context,
 		photoStudio *entity.PhotoStudio,

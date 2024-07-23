@@ -39,6 +39,11 @@ type Repository interface {
 		photoStudioID common_entity.PhotoStudioID,
 		userID common_entity.UserID,
 	) (*common_entity.ChatRoom, error)
+	GetPhotoStudioChats(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		listQuery *cgorm.ListQuery,
+	) ([]*common_entity.ChatRoom, bool, error)
 
 	CreateChatMessage(
 		ctx context.Context,

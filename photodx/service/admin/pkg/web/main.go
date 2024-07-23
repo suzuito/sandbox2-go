@@ -53,7 +53,8 @@ func Main(
 		GormDB:  db,
 		NowFunc: time.Now,
 	}
-	u := usecase.Impl{
+	var u usecase.Usecase = &usecase.Impl{
+		NowFunc: time.Now,
 		BusinessLogic: &businesslogic.Impl{
 			LINEMessagingAPIClient: &messaging.Impl{
 				Cli: http.DefaultClient,
@@ -83,7 +84,7 @@ func Main(
 	// スタジオ管理画面向けAPI
 	admin := e.Group("admin")
 	{
-		admin.Use(MiddlewareAccessTokenAuthe(l, &u))
+		admin.Use(MiddlewareAccessTokenAuthe(l, u))
 		{
 			photoStudios := admin.Group("photo_studios")
 			{
@@ -153,6 +154,91 @@ func Main(
 								res(ctx, dto, err)
 							},
 						)
+					}
+				}
+				{
+					chats := photoStudio.Group("chats")
+					chats.GET(
+						"",
+						func(ctx *gin.Context) {
+							query := struct {
+								Offset int `form:"query"`
+							}{}
+							if err := ctx.BindQuery(&query); err != nil {
+								p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{Message: err.Error()})
+								return
+							}
+							dto, err := u.APIGetPhotoStudioChats(
+								ctx,
+								common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID(),
+								query.Offset,
+							)
+							res(ctx, dto, err)
+						},
+					)
+					{
+						chat := chats.Group(":userID")
+						chat.GET(
+							"",
+							func(ctx *gin.Context) {
+								dto, err := u.APIGetPhotoStudioChat(
+									ctx,
+									common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID(),
+									entity.UserID(ctx.Param("userID")),
+								)
+								res(ctx, dto, err)
+							},
+						)
+						{
+							chatMessages := chat.Group("messages")
+							chatMessages.GET(
+								"",
+								func(ctx *gin.Context) {
+									userID := entity.UserID(ctx.Param("userID"))
+									photoStudioID := common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID()
+									query := struct {
+										Offset int `form:"offset"`
+									}{}
+									if err := ctx.BindQuery(&query); err != nil {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: err.Error(),
+										})
+										return
+									}
+									dto, err := u.APIGetPhotoStudioChatMessages(
+										ctx,
+										photoStudioID,
+										userID,
+										query.Offset,
+									)
+									res(ctx, dto, err)
+								},
+							)
+							chatMessages.POST(
+								"",
+								func(ctx *gin.Context) {
+									userID := entity.UserID(ctx.Param("userID"))
+									principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
+									message := struct {
+										Text string `json:"text"`
+									}{}
+									if err := ctx.BindJSON(&message); err != nil {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: err.Error(),
+										})
+										return
+									}
+									dto, err := u.APIPostPhotoStudioChatMessages(
+										ctx,
+										principal.GetPhotoStudioID(),
+										userID,
+										principal.GetPhotoStudioMemberID(),
+										message.Text,
+									)
+									res(ctx, dto, err)
+								},
+							)
+						}
 					}
 				}
 			}
