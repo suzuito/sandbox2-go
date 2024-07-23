@@ -26,6 +26,7 @@ func (t *Impl) GetCallback(ctx *gin.Context) {
 		oauth2loginflow.StateCode(state),
 	)
 	if err != nil {
+		t.L.Error("", "err", err)
 		t.P.JSON(ctx, http.StatusInternalServerError, common_web.ResponseError{
 			Message: fmt.Sprintf("internal server error because %s", err.Error()),
 		})

@@ -11,13 +11,17 @@ import (
 
 func Main(
 	gormDB *gorm.DB,
+	webPushVAPIDPrivateKey string,
+	webPushVAPIDPublicKey string,
 ) ExposedBusinessLogic {
 	return &businesslogic.Impl{
 		Repository: &infra_repository.Impl{
 			GormDB:  gormDB,
 			NowFunc: time.Now,
 		},
-		NowFunc:         time.Now,
-		UserIDGenerator: &proc.IDGeneratorImpl{},
+		NowFunc:                time.Now,
+		UserIDGenerator:        &proc.IDGeneratorImpl{},
+		WebPushVAPIDPrivateKey: webPushVAPIDPrivateKey,
+		WebPushVAPIDPublicKey:  webPushVAPIDPublicKey,
 	}
 }

@@ -42,7 +42,7 @@ func setUp(
 	defer resource.Close()
 	engine := gin.Default()
 	authBusinessLogic := auth_businesslogic.Main(resource.GormDB)
-	authUserBusinessLogic := authuser_businesslogic.Main(resource.GormDB)
+	authUserBusinessLogic := authuser_businesslogic.Main(resource.GormDB, env.WebPushAPIUserVAPIDPrivateKey, env.WebPushAPIUserVAPIDPublicKey)
 	adminBusinessLogic := admin_businesslogic.Main(resource.Logger, resource.GormDB)
 	common_web.Main(
 		engine,

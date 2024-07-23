@@ -82,6 +82,7 @@ func Main(
 		)
 	}
 	w := internal_web.Impl{
+		L:                 l,
 		U:                 &u,
 		P:                 &p,
 		OAuth2RedirectURL: *oauth2RedirectURL,

@@ -46,7 +46,7 @@ func (t *Impl) PushNotification(
 		return terrors.Wrap(err)
 	}
 	if len(pushSubscriptions) <= 0 {
-		return terrors.Wrap(err)
+		return nil
 	}
 	for _, s := range pushSubscriptions {
 		_, err := webpush.SendNotificationWithContext(
