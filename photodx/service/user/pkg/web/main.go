@@ -141,7 +141,12 @@ func Main(
 							})
 							return
 						}
-						dto, err := u.APIGetPhotoStudioMessages(ctx, photoStudioID, &listQuery)
+						dto, err := u.APIGetPhotoStudioMessages(
+							ctx,
+							common_web.CtxGetUserPrincipalAccessToken(ctx),
+							photoStudioID,
+							&listQuery,
+						)
 						res(ctx, dto, err)
 					},
 				)

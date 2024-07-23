@@ -24,6 +24,7 @@ type Usecase interface {
 	) (*common_entity.ChatMessageWrapper, error)
 	APIGetPhotoStudioMessages(
 		ctx context.Context,
+		principal common_entity.UserPrincipalAccessToken,
 		photoStudioID common_entity.PhotoStudioID,
 		listQuery *cgorm.ListQuery,
 	) (*DTOAPIGetPhotoStudioMessages, error)

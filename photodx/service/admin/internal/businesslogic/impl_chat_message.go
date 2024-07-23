@@ -2,7 +2,6 @@ package businesslogic
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
@@ -12,24 +11,16 @@ import (
 func (t *Impl) CreateChatMessage(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
+	userID common_entity.UserID,
 	message *common_entity.ChatMessage,
 ) (*common_entity.ChatMessage, error) {
-	rooms, _, err := t.Repository.GetChatRooms(
+	room, err := t.Repository.GetChatRoomByPhotoStudioIDANDUserID(
 		ctx,
 		photoStudioID,
-		&cgorm.ListQuery{
-			Offset: 0,
-			Limit:  100,
-			SortColumns: []cgorm.SortColumn{
-				{Name: "created_at", Type: cgorm.Desc},
-			},
-		},
+		userID,
 	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
-	}
-	if len(rooms) != 1 {
-		return nil, terrors.Wrap(fmt.Errorf("invalid chat room state"))
 	}
 	messageID, err := t.GenerateChatMessageID.Gen()
 	if err != nil {
@@ -38,7 +29,7 @@ func (t *Impl) CreateChatMessage(
 	message.ID = common_entity.ChatMessageID(messageID)
 	return t.Repository.CreateChatMessage(
 		ctx,
-		rooms[0].ID,
+		room.ID,
 		message,
 	)
 }
@@ -46,28 +37,20 @@ func (t *Impl) CreateChatMessage(
 func (t *Impl) GetChatMessages(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
+	userID common_entity.UserID,
 	listQuery *cgorm.ListQuery,
 ) ([]*common_entity.ChatMessage, bool, error) {
-	rooms, _, err := t.Repository.GetChatRooms(
+	room, err := t.Repository.GetChatRoomByPhotoStudioIDANDUserID(
 		ctx,
 		photoStudioID,
-		&cgorm.ListQuery{
-			Offset: 0,
-			Limit:  100,
-			SortColumns: []cgorm.SortColumn{
-				{Name: "created_at", Type: cgorm.Desc},
-			},
-		},
+		userID,
 	)
 	if err != nil {
 		return nil, false, terrors.Wrap(err)
 	}
-	if len(rooms) != 1 {
-		return nil, false, terrors.Wrap(fmt.Errorf("invalid chat room state"))
-	}
 	return t.Repository.GetChatMessages(
 		ctx,
-		rooms[0].ID,
+		room.ID,
 		listQuery,
 	)
 }

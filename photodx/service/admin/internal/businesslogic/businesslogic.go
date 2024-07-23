@@ -29,10 +29,4 @@ type BusinessLogic interface {
 		photoStudioID common_entity.PhotoStudioID,
 		userID common_entity.UserID,
 	) (*entity.PhotoStudioUser, error)
-
-	CreateChatRoom(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-		chatRoomID common_entity.ChatRoomID,
-	) (*common_entity.ChatRoom, error)
 }

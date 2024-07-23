@@ -8,14 +8,21 @@ import (
 )
 
 type ExposedBusinessLogic interface {
+	CreatePhotoStudioUserChatRoomIFNotExists(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+	) (*common_entity.ChatRoom, error)
 	CreateChatMessage(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
 		message *common_entity.ChatMessage,
 	) (*common_entity.ChatMessage, error)
 	GetChatMessages(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
 		listQuery *cgorm.ListQuery,
 	) ([]*common_entity.ChatMessage, bool, error)
 }

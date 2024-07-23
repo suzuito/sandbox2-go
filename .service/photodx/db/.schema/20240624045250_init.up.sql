@@ -82,17 +82,6 @@ CREATE TABLE `users_web_push_subscriptions` (
 );
 
 -- Admin
-CREATE TABLE `line_link_infos` (
-    `photo_studio_id` VARCHAR(128) PRIMARY KEY NOT NULL,
-    -- コンソール > チャネル基本設定 > チャネルシークレット
-    `messaging_api_channel_secret` VARCHAR(128),
-    -- コンソール > Messaging API設定 > チャネルアクセストークン
-    `long_access_token` VARCHAR(256),
-    `active` BOOLEAN DEFAULT false,
-    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE `photo_studio_users` (
     `photo_studio_id` VARCHAR(128) NOT NULL,
     `user_id` VARCHAR(128) NOT NULL,
@@ -104,8 +93,10 @@ CREATE TABLE `photo_studio_users` (
 CREATE TABLE `chat_rooms` (
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `photo_studio_id` VARCHAR(128) NOT NULL,
+    `user_id` VARCHAR(128) NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY (`photo_studio_id`, `user_id`)
 );
 
 CREATE TABLE `chat_messages` (

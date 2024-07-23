@@ -30,15 +30,15 @@ type Repository interface {
 		userID common_entity.UserID,
 	) (*entity.PhotoStudioUser, error)
 
-	CreateChatRoom(
+	CreatePhotoStudioUserChatRoomIFNotExists(
 		ctx context.Context,
 		room *common_entity.ChatRoom,
 	) (*common_entity.ChatRoom, error)
-	GetChatRooms(
+	GetChatRoomByPhotoStudioIDANDUserID(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
-		q *cgorm.ListQuery,
-	) ([]*common_entity.ChatRoom, bool, error)
+		userID common_entity.UserID,
+	) (*common_entity.ChatRoom, error)
 
 	CreateChatMessage(
 		ctx context.Context,

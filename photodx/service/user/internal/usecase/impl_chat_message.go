@@ -26,9 +26,17 @@ func (t *Impl) APIPostPhotoStudioMessages(
 		PostedByType: common_entity.ChatMessagePostedByTypeUser,
 		PostedAt:     common_entity.WTime(t.NowFunc()),
 	}
+	if _, err := t.AdminBusinessLogic.CreatePhotoStudioUserChatRoomIFNotExists(
+		ctx,
+		photoStudioID,
+		principal.GetUserID(),
+	); err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	created, err := t.AdminBusinessLogic.CreateChatMessage(
 		ctx,
 		photoStudioID,
+		principal.GetUserID(),
 		&msg,
 	)
 	if err != nil {
@@ -54,6 +62,7 @@ type DTOAPIGetPhotoStudioMessages struct {
 
 func (t *Impl) APIGetPhotoStudioMessages(
 	ctx context.Context,
+	principal common_entity.UserPrincipalAccessToken,
 	photoStudioID common_entity.PhotoStudioID,
 	listQuery *cgorm.ListQuery,
 ) (*DTOAPIGetPhotoStudioMessages, error) {
@@ -64,7 +73,12 @@ func (t *Impl) APIGetPhotoStudioMessages(
 	listQuery.SortColumns = []cgorm.SortColumn{
 		{Name: "posted_at", Type: cgorm.Asc},
 	}
-	messages, hasNext, err := t.AdminBusinessLogic.GetChatMessages(ctx, photoStudioID, listQuery)
+	messages, hasNext, err := t.AdminBusinessLogic.GetChatMessages(
+		ctx,
+		photoStudioID,
+		principal.GetUserID(),
+		listQuery,
+	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
