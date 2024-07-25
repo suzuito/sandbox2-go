@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"context"
+	"encoding/json"
 	"log/slog"
 	"time"
 
@@ -39,8 +40,15 @@ func (t *Impl) PushNotification(
 	ctx context.Context,
 	l *slog.Logger,
 	userID common_entity.UserID,
-	message string,
+	notification *common_entity.Notification,
 ) error {
+	if notification == nil {
+		return terrors.Wrapf("notification is nil")
+	}
+	notificationBytes, err := json.Marshal(notification)
+	if err != nil {
+		return terrors.Wrap(err)
+	}
 	pushSubscriptions, err := t.Repository.GetLatestUserWebPushSubscriptions(ctx, userID)
 	if err != nil {
 		return terrors.Wrap(err)
@@ -51,7 +59,7 @@ func (t *Impl) PushNotification(
 	for _, s := range pushSubscriptions {
 		_, err := webpush.SendNotificationWithContext(
 			ctx,
-			[]byte(message),
+			notificationBytes,
 			s.Value,
 			&webpush.Options{
 				VAPIDPublicKey:  t.WebPushVAPIDPublicKey,

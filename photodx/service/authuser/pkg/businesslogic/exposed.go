@@ -22,6 +22,6 @@ type ExposedBusinessLogic interface {
 		ctx context.Context,
 		l *slog.Logger,
 		userID common_entity.UserID,
-		message string,
+		notification *common_entity.Notification,
 	) error
 }

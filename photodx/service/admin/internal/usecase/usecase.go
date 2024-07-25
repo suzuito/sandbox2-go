@@ -46,7 +46,14 @@ type Usecase interface {
 		userID common_entity.UserID,
 		photoStudioMemberID common_entity.PhotoStudioMemberID,
 		text string,
+		skipPushMessage bool,
 	) (*common_entity.ChatMessageWrapper, error)
+	APIGetOlderPhotoStudioChatMessages(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		offset int,
+	) (*common_entity.ListResponse2[*common_entity.ChatMessageWrapper], error)
 
 	APIPostSuperInit(ctx context.Context) (*DTOAPIPostSuperInit, error)
 }

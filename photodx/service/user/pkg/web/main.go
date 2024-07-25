@@ -111,11 +111,13 @@ func Main(
 							})
 							return
 						}
+						_, skipPushMessage := ctx.GetQuery("skipPushMessage")
 						dto, err := u.APIPostPhotoStudioMessages(
 							ctx,
 							common_web.CtxGetUserPrincipalAccessToken(ctx),
 							photoStudioID,
 							&message,
+							skipPushMessage,
 						)
 						res(ctx, dto, err)
 					},
@@ -145,7 +147,7 @@ func Main(
 							ctx,
 							common_web.CtxGetUserPrincipalAccessToken(ctx),
 							photoStudioID,
-							&listQuery,
+							listQuery.Offset,
 						)
 						res(ctx, dto, err)
 					},

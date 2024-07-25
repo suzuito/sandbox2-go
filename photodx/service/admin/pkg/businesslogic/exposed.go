@@ -25,4 +25,11 @@ type ExposedBusinessLogic interface {
 		userID common_entity.UserID,
 		listQuery *cgorm.ListQuery,
 	) ([]*common_entity.ChatMessage, bool, error)
+	GetOlderChatMessages(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		offset int,
+		limit int,
+	) ([]*common_entity.ChatMessage, bool, int, error)
 }

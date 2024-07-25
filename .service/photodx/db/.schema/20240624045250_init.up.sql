@@ -119,6 +119,7 @@ CREATE TABLE `chat_messages` (
     `posted_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX `chat_messages_idx1` (`chat_room_id`) USING BTREE,
     FOREIGN KEY (`chat_room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 

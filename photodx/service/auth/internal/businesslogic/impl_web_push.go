@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"context"
+	"encoding/json"
 	"log/slog"
 	"time"
 
@@ -40,8 +41,15 @@ func (t *Impl) PushNotification(
 	ctx context.Context,
 	l *slog.Logger,
 	photoStudioMemberID common_entity.PhotoStudioMemberID,
-	message string,
+	notification *common_entity.Notification,
 ) error {
+	if notification == nil {
+		return terrors.Wrapf("notification is nil")
+	}
+	notificationBytes, err := json.Marshal(notification)
+	if err != nil {
+		return terrors.Wrap(err)
+	}
 	pushSubscriptions, err := t.Repository.GetLatestPhotoStudioMemberWebPushSubscriptions(ctx, photoStudioMemberID)
 	if err != nil {
 		return terrors.Wrap(err)
@@ -52,7 +60,7 @@ func (t *Impl) PushNotification(
 	for _, s := range pushSubscriptions {
 		_, err := webpush.SendNotificationWithContext(
 			ctx,
-			[]byte(message),
+			notificationBytes,
 			s.Value,
 			&webpush.Options{
 				VAPIDPublicKey:  t.WebPushVAPIDPublicKey,
@@ -71,7 +79,7 @@ func (t *Impl) PushNotificationToAllMembers(
 	ctx context.Context,
 	l *slog.Logger,
 	photoStudioID common_entity.PhotoStudioID,
-	message string,
+	notification *common_entity.Notification,
 ) error {
 	listQuery := cgorm.ListQuery{
 		Offset: 0,
@@ -83,7 +91,7 @@ func (t *Impl) PushNotificationToAllMembers(
 			return terrors.Wrap(err)
 		}
 		for _, member := range members {
-			t.PushNotification(ctx, l, member.ID, message)
+			t.PushNotification(ctx, l, member.ID, notification)
 		}
 		if !hasNext {
 			break

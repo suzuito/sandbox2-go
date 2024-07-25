@@ -55,3 +55,61 @@ func (t *ListQuery) PrevOffset() int {
 func (t *ListQuery) HasPrev() bool {
 	return t.PrevOffset() >= 0
 }
+
+type ListQuery2KeyDirection string
+
+const (
+	ListQuery2KeyDirectionAsc  ListQuery2KeyDirection = "asc"
+	ListQuery2KeyDirectionDesc ListQuery2KeyDirection = "desc"
+)
+
+type ListQuery2BoundType string
+
+const (
+	ListQuery2BoundTypeLower ListQuery2BoundType = "lower"
+	ListQuery2BoundTypeUpper ListQuery2BoundType = "upper"
+	ListQuery2BoundTypeOnly  ListQuery2BoundType = "only"
+)
+
+type ListQuery2Bound struct {
+	Type      ListQuery2BoundType
+	KeyName   string
+	Direction ListQuery2KeyDirection
+	Open      bool
+	Value     any
+}
+
+type ListQuery2KeyRange struct {
+	Bounds []ListQuery2Bound
+}
+
+type ListQuery2 struct {
+	Range ListQuery2KeyRange
+	Limit int
+}
+
+func (t *ListQuery2) Set(db *gorm.DB) *gorm.DB {
+	for _, bound := range t.Range.Bounds {
+		o := "="
+		switch bound.Type {
+		case ListQuery2BoundTypeLower:
+			o = "<"
+			if !bound.Open {
+				o = o + "="
+			}
+		case ListQuery2BoundTypeUpper:
+			o = ">"
+			if !bound.Open {
+				o = o + "="
+			}
+		case ListQuery2BoundTypeOnly:
+			o = "="
+		}
+		db = db.Where(fmt.Sprintf("%s %s ?", bound.KeyName, o), bound.Value)
+	}
+	db = db.Limit(t.Limit)
+	for _, bound := range t.Range.Bounds {
+		db = db.Order(fmt.Sprintf("%s %s", bound.KeyName, bound.Direction))
+	}
+	return db
+}

@@ -55,4 +55,17 @@ type Repository interface {
 		roomID common_entity.ChatRoomID,
 		listQuery *cgorm.ListQuery,
 	) ([]*common_entity.ChatMessage, bool, error)
+	GetChatMessagesByTimeRange(
+		ctx context.Context,
+		roomID common_entity.ChatRoomID,
+		offset *common_entity.ChatMessageOffset,
+		limit int,
+		isGetOlder bool,
+	) ([]*common_entity.ChatMessage, bool, error)
+	GetOlderChatMessages(
+		ctx context.Context,
+		roomID common_entity.ChatRoomID,
+		offset int,
+		limit int,
+	) ([]*common_entity.ChatMessage, bool, int, error)
 }

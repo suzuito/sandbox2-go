@@ -44,3 +44,85 @@ func (t *Impl) GetChatMessages(
 	})
 	return messages, hasNext, nil
 }
+
+func (t *Impl) GetOlderChatMessages(
+	ctx context.Context,
+	roomID common_entity.ChatRoomID,
+	offset int,
+	limit int,
+) ([]*common_entity.ChatMessage, bool, int, error) {
+	listQuery := cgorm.ListQuery{
+		Offset: offset,
+		Limit:  limit,
+		SortColumns: []cgorm.SortColumn{
+			{Name: "posted_at", Type: cgorm.Desc},
+			{Name: "id", Type: cgorm.Desc},
+		},
+	}
+	db := t.GormDB.WithContext(ctx)
+	db = db.Where(
+		"chat_room_id = ?",
+		roomID,
+	)
+	db = listQuery.Set(db)
+	mMessages := []*modelChatMessage{}
+	if err := db.Find(&mMessages).Error; err != nil {
+		return nil, false, 0, terrors.Wrap(err)
+	}
+	hasNext := len(mMessages) >= listQuery.Limit
+	messages := arrayutil.Map(mMessages, func(v *modelChatMessage) *common_entity.ChatMessage {
+		return v.ToEntity()
+	})
+	return messages, hasNext, listQuery.NextOffset(), nil
+}
+
+func (t *Impl) GetChatMessagesByTimeRange(
+	ctx context.Context,
+	roomID common_entity.ChatRoomID,
+	offset *common_entity.ChatMessageOffset,
+	limit int,
+	isGetOlder bool,
+) ([]*common_entity.ChatMessage, bool, error) {
+	boundType := cgorm.ListQuery2BoundTypeUpper
+	dir := cgorm.ListQuery2KeyDirectionAsc
+	if isGetOlder {
+		boundType = cgorm.ListQuery2BoundTypeLower
+		dir = cgorm.ListQuery2KeyDirectionDesc
+	}
+	listQuery := cgorm.ListQuery2{
+		Limit: limit,
+		Range: cgorm.ListQuery2KeyRange{
+			Bounds: []cgorm.ListQuery2Bound{
+				{
+					Type:      boundType,
+					KeyName:   "posted_at",
+					Direction: dir,
+					Open:      true,
+					Value:     offset.PostedAt,
+				},
+				{
+					Type:      boundType,
+					KeyName:   "id",
+					Direction: dir,
+					Open:      true,
+					Value:     offset.ID,
+				},
+			},
+		},
+	}
+	db := t.GormDB.WithContext(ctx)
+	db = db.Where(
+		"chat_room_id = ?",
+		roomID,
+	)
+	db = listQuery.Set(db)
+	mMessages := []*modelChatMessage{}
+	if err := db.Find(&mMessages).Error; err != nil {
+		return nil, false, terrors.Wrap(err)
+	}
+	hasNext := len(mMessages) >= listQuery.Limit
+	messages := arrayutil.Map(mMessages, func(v *modelChatMessage) *common_entity.ChatMessage {
+		return v.ToEntity()
+	})
+	return messages, hasNext, nil
+}

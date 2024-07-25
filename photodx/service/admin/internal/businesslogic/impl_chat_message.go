@@ -54,3 +54,26 @@ func (t *Impl) GetChatMessages(
 		listQuery,
 	)
 }
+
+func (t *Impl) GetOlderChatMessages(
+	ctx context.Context,
+	photoStudioID common_entity.PhotoStudioID,
+	userID common_entity.UserID,
+	offset int,
+	limit int,
+) ([]*common_entity.ChatMessage, bool, int, error) {
+	room, err := t.Repository.GetChatRoomByPhotoStudioIDANDUserID(
+		ctx,
+		photoStudioID,
+		userID,
+	)
+	if err != nil {
+		return nil, false, 0, terrors.Wrap(err)
+	}
+	return t.Repository.GetOlderChatMessages(
+		ctx,
+		room.ID,
+		offset,
+		limit,
+	)
+}

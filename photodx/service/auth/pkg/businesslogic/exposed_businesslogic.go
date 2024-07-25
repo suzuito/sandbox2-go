@@ -36,12 +36,12 @@ type ExposedBusinessLogic interface {
 		ctx context.Context,
 		l *slog.Logger,
 		photoStudioMemberID common_entity.PhotoStudioMemberID,
-		message string,
+		notification *common_entity.Notification,
 	) error
 	PushNotificationToAllMembers(
 		ctx context.Context,
 		l *slog.Logger,
 		photoStudioID common_entity.PhotoStudioID,
-		message string,
+		notification *common_entity.Notification,
 	) error
 }

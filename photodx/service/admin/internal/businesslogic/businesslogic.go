@@ -41,6 +41,12 @@ type BusinessLogic interface {
 		userID common_entity.UserID,
 	) (*common_entity.ChatRoom, error)
 
+	CreatePhotoStudioUserChatRoomIFNotExists(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+	) (*common_entity.ChatRoom, error)
+
 	CreateChatMessage(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
@@ -53,4 +59,11 @@ type BusinessLogic interface {
 		userID common_entity.UserID,
 		listQuery *cgorm.ListQuery,
 	) ([]*common_entity.ChatMessage, bool, error)
+	GetOlderChatMessages(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		offset int,
+		limit int,
+	) ([]*common_entity.ChatMessage, bool, int, error)
 }

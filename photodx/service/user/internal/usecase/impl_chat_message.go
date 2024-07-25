@@ -6,6 +6,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	common_usecase "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/usecase"
 )
 
 type InputAPIPostPhotoStudioMessages struct {
@@ -17,46 +18,22 @@ func (t *Impl) APIPostPhotoStudioMessages(
 	principal common_entity.UserPrincipalAccessToken,
 	photoStudioID common_entity.PhotoStudioID,
 	input *InputAPIPostPhotoStudioMessages,
+	skipPushMessage bool,
 ) (*common_entity.ChatMessageWrapper, error) {
-	msg := common_entity.ChatMessage{
-		Type:         common_entity.ChatMessageTypeText,
-		Text:         input.Text,
-		PostedBy:     string(principal.GetUserID()),
-		PostedByType: common_entity.ChatMessagePostedByTypeUser,
-		PostedAt:     common_entity.WTime(t.NowFunc()),
-	}
-	if _, err := t.AdminBusinessLogic.CreatePhotoStudioUserChatRoomIFNotExists(
+	return common_usecase.PostChatMessage(
 		ctx,
+		t.L,
+		t.NowFunc,
+		t.AuthBusinessLogic,
+		t.AuthUserBusinessLogic,
+		t.AdminBusinessLogic,
+		string(principal.GetUserID()),
+		common_entity.ChatMessagePostedByTypeUser,
 		photoStudioID,
 		principal.GetUserID(),
-	); err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	created, err := t.AdminBusinessLogic.CreateChatMessage(
-		ctx,
-		photoStudioID,
-		principal.GetUserID(),
-		&msg,
+		input.Text,
+		!skipPushMessage,
 	)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	if err := t.AuthUserBusinessLogic.PushNotification(ctx, t.L, principal.GetUserID(), created.Text); err != nil {
-		t.L.Warn("", "err", err)
-	}
-	if err := t.AuthBusinessLogic.PushNotificationToAllMembers(ctx, t.L, photoStudioID, created.Text); err != nil {
-		t.L.Warn("", "err", err)
-	}
-	a, err := common_entity.BuildChatMessageWrapper(
-		ctx,
-		[]*common_entity.ChatMessage{created},
-		t.AuthUserBusinessLogic.GetUsers,
-		t.AuthBusinessLogic.GetPhotoStudioMembers,
-	)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	return a[0], nil
 }
 
 type DTOAPIGetPhotoStudioMessages struct {
@@ -71,20 +48,27 @@ func (t *Impl) APIGetPhotoStudioMessages(
 	ctx context.Context,
 	principal common_entity.UserPrincipalAccessToken,
 	photoStudioID common_entity.PhotoStudioID,
-	listQuery *cgorm.ListQuery,
+	offset int,
 ) (*DTOAPIGetPhotoStudioMessages, error) {
-	listQuery.Limit = 30
-	if listQuery.Offset < 0 {
-		listQuery.Offset = 0
-	}
-	listQuery.SortColumns = []cgorm.SortColumn{
-		{Name: "posted_at", Type: cgorm.Asc},
+	listQuery := cgorm.ListQuery{
+		Offset: offset,
+		Limit:  30,
+		SortColumns: []cgorm.SortColumn{
+			{
+				Name: "posted_at",
+				Type: cgorm.Desc,
+			},
+			{
+				Name: "id",
+				Type: cgorm.Desc,
+			},
+		},
 	}
 	messages, hasNext, err := t.AdminBusinessLogic.GetChatMessages(
 		ctx,
 		photoStudioID,
 		principal.GetUserID(),
-		listQuery,
+		&listQuery,
 	)
 	if err != nil {
 		return nil, terrors.Wrap(err)

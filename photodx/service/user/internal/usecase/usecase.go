@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 
-	"github.com/suzuito/sandbox2-go/common/cgorm"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -21,11 +20,12 @@ type Usecase interface {
 		principal common_entity.UserPrincipalAccessToken,
 		photoStudioID common_entity.PhotoStudioID,
 		input *InputAPIPostPhotoStudioMessages,
+		skipPushMessage bool,
 	) (*common_entity.ChatMessageWrapper, error)
 	APIGetPhotoStudioMessages(
 		ctx context.Context,
 		principal common_entity.UserPrincipalAccessToken,
 		photoStudioID common_entity.PhotoStudioID,
-		listQuery *cgorm.ListQuery,
+		offset int,
 	) (*DTOAPIGetPhotoStudioMessages, error)
 }

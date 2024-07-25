@@ -216,6 +216,32 @@ func Main(
 									res(ctx, dto, err)
 								},
 							)
+							chatMessages.GET(
+								"older",
+								func(ctx *gin.Context) {
+									userID := entity.UserID(ctx.Param("userID"))
+									photoStudioID := common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID()
+									query := struct {
+										Offset int `form:"offset"`
+									}{}
+									if err := ctx.BindQuery(&query); err != nil {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: err.Error(),
+										})
+										return
+									}
+									if query.Offset < 0 {
+										query.Offset = 0
+									}
+									dto, err := u.APIGetOlderPhotoStudioChatMessages(
+										ctx,
+										photoStudioID,
+										userID,
+										query.Offset,
+									)
+									res(ctx, dto, err)
+								},
+							)
 							chatMessages.POST(
 								"",
 								func(ctx *gin.Context) {
@@ -230,12 +256,14 @@ func Main(
 										})
 										return
 									}
+									_, skipPushMessage := ctx.GetQuery("skipPushMessage")
 									dto, err := u.APIPostPhotoStudioChatMessages(
 										ctx,
 										principal.GetPhotoStudioID(),
 										userID,
 										principal.GetPhotoStudioMemberID(),
 										message.Text,
+										skipPushMessage,
 									)
 									res(ctx, dto, err)
 								},
