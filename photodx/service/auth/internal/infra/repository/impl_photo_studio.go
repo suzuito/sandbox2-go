@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/suzuito/sandbox2-go/common/arrayutil"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
@@ -47,4 +48,18 @@ func (t *Impl) GetPhotoStudio(
 		return nil, terrors.Wrap(err)
 	}
 	return mPhotoStudio.ToEntity(), nil
+}
+
+func (t *Impl) GetPhotoStudios(
+	ctx context.Context,
+	photoStudioIDs []entity.PhotoStudioID,
+) ([]*entity.PhotoStudio, error) {
+	mPhotoStudios := []*modelPhotoStudio{}
+	db := t.GormDB.WithContext(ctx)
+	db = db.Where("id IN ?", photoStudioIDs)
+	db = db.Find(&mPhotoStudios)
+	if err := db.Error; err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return arrayutil.Map(mPhotoStudios, func(v *modelPhotoStudio) *entity.PhotoStudio { return v.ToEntity() }), nil
 }

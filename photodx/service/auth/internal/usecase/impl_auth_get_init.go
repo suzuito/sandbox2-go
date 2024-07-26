@@ -10,6 +10,7 @@ import (
 type DTOAuthGetInit struct {
 	PhotoStudio       *entity.PhotoStudio       `json:"photoStudio"`
 	PhotoStudioMember *entity.PhotoStudioMember `json:"photoStudioMember"`
+	VAPIDPublicKey    string                    `json:"vapidPublicKey"`
 }
 
 func (t *Impl) AuthGetInit(
@@ -20,8 +21,13 @@ func (t *Impl) AuthGetInit(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	key, err := t.BusinessLogic.GetWebPushVAPIDPublicKey(ctx, principal.GetPhotoStudioMemberID())
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
 	return &DTOAuthGetInit{
 		PhotoStudio:       photoStudio,
 		PhotoStudioMember: member,
+		VAPIDPublicKey:    key,
 	}, nil
 }
