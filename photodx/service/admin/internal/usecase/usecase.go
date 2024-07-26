@@ -34,12 +34,6 @@ type Usecase interface {
 		userID common_entity.UserID,
 	) (*common_entity.ChatRoomWrapper, error)
 
-	APIGetPhotoStudioChatMessages(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-		userID common_entity.UserID,
-		offset int,
-	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
 	APIPostPhotoStudioChatMessages(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
@@ -53,7 +47,13 @@ type Usecase interface {
 		photoStudioID common_entity.PhotoStudioID,
 		userID common_entity.UserID,
 		offset int,
-	) (*common_entity.ListResponse2[*common_entity.ChatMessageWrapper], error)
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
+	APIGetOlderPhotoStudioChatMessagesByID(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		chatMessageID common_entity.ChatMessageID,
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
 
 	APIPostSuperInit(ctx context.Context) (*DTOAPIPostSuperInit, error)
 }

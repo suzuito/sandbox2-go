@@ -3,7 +3,6 @@ package businesslogic
 import (
 	"context"
 
-	"github.com/suzuito/sandbox2-go/common/cgorm"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -19,17 +18,18 @@ type ExposedBusinessLogic interface {
 		userID common_entity.UserID,
 		message *common_entity.ChatMessage,
 	) (*common_entity.ChatMessage, error)
-	GetChatMessages(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-		userID common_entity.UserID,
-		listQuery *cgorm.ListQuery,
-	) ([]*common_entity.ChatMessage, bool, error)
-	GetOlderChatMessages(
+	GetOlderChatMessagesForFront(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
 		userID common_entity.UserID,
 		offset int,
 		limit int,
-	) ([]*common_entity.ChatMessage, bool, int, error)
+	) ([]*common_entity.ChatMessage, bool, int, bool, int, error)
+	GetOlderChatMessagesForFrontByID(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		chatMessageID common_entity.ChatMessageID,
+		limit int,
+	) ([]*common_entity.ChatMessage, bool, int, bool, int, error)
 }

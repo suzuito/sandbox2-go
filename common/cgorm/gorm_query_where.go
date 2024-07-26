@@ -23,21 +23,21 @@ type SortColumn struct {
 	Type SortColumnType `json:"type"`
 }
 
-type ListQuery struct {
-	Offset      int          `json:"offset"`
-	Limit       int          `json:"limit"`
-	SortColumns []SortColumn `json:"sortColumns"`
-}
+type SortColumns []SortColumn
 
-func (t *ListQuery) Set(db *gorm.DB) *gorm.DB {
-	for _, sortColumn := range t.SortColumns {
+func (t SortColumns) Set(db *gorm.DB) *gorm.DB {
+	for _, sortColumn := range t {
 		db = db.Order(
 			fmt.Sprintf("%s %s", sortColumn.Name, sortColumn.Type),
 		)
 	}
-	db = db.Offset(t.Offset)
-	db = db.Limit(t.Limit)
 	return db
+}
+
+type ListQuery struct {
+	Offset      int         `json:"offset"`
+	Limit       int         `json:"limit"`
+	SortColumns SortColumns `json:"sortColumns"`
 }
 
 func (t *ListQuery) NextOffset() int {
@@ -47,13 +47,20 @@ func (t *ListQuery) NextOffset() int {
 func (t *ListQuery) PrevOffset() int {
 	offset := t.Offset - t.Limit
 	if offset < 0 {
-		offset = 0
+		return 0
 	}
 	return offset
 }
 
 func (t *ListQuery) HasPrev() bool {
-	return t.PrevOffset() >= 0
+	return t.Offset > 0
+}
+
+func (t *ListQuery) Set(db *gorm.DB) *gorm.DB {
+	db = t.SortColumns.Set(db)
+	db = db.Offset(t.Offset)
+	db = db.Limit(t.Limit)
+	return db
 }
 
 type ListQuery2KeyDirection string

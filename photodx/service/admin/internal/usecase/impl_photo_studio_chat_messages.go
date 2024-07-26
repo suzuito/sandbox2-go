@@ -3,42 +3,57 @@ package usecase
 import (
 	"context"
 
-	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	common_usecase "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/usecase"
 )
 
-func (t *Impl) APIGetPhotoStudioChatMessages(
+func (t *Impl) APIGetOlderPhotoStudioChatMessages(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
 	userID common_entity.UserID,
 	offset int,
 ) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error) {
-	listQuery := cgorm.ListQuery{
-		Offset: offset,
-		// Limit:  30000,
-		Limit: 30, // debug
-		SortColumns: []cgorm.SortColumn{
-			{
-				Name: "posted_at",
-				Type: cgorm.Desc,
-			},
-			{
-				Name: "id",
-				Type: cgorm.Desc,
-			},
-		},
-	}
-	chatMessages, hasNext, err := t.BusinessLogic.GetChatMessages(
+	chatMessages, hasNext, nextOffset, hasPrev, prevOffset, err := t.BusinessLogic.GetOlderChatMessagesForFront(
 		ctx,
 		photoStudioID,
 		userID,
-		&listQuery,
+		offset,
+		30,
 	)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	return t.buildChatMessageWrapper(ctx, chatMessages, hasNext, nextOffset, hasPrev, prevOffset)
+}
+
+func (t *Impl) APIGetOlderPhotoStudioChatMessagesByID(
+	ctx context.Context,
+	photoStudioID common_entity.PhotoStudioID,
+	userID common_entity.UserID,
+	chatMessageID common_entity.ChatMessageID,
+) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error) {
+	chatMessages, hasNext, nextOffset, hasPrev, prevOffset, err := t.BusinessLogic.GetOlderChatMessagesForFrontByID(
+		ctx,
+		photoStudioID,
+		userID,
+		chatMessageID,
+		30,
+	)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return t.buildChatMessageWrapper(ctx, chatMessages, hasNext, nextOffset, hasPrev, prevOffset)
+}
+
+func (t *Impl) buildChatMessageWrapper(
+	ctx context.Context,
+	chatMessages []*common_entity.ChatMessage,
+	hasNext bool,
+	nextOffset int,
+	hasPrev bool,
+	prevOffset int,
+) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error) {
 	chatMessageWrappers, err := common_entity.BuildChatMessageWrapper(
 		ctx,
 		chatMessages,
@@ -51,41 +66,9 @@ func (t *Impl) APIGetPhotoStudioChatMessages(
 	return &common_entity.ListResponse[*common_entity.ChatMessageWrapper]{
 		Results:    chatMessageWrappers,
 		HasNext:    hasNext,
-		HasPrev:    listQuery.HasPrev(),
-		NextOffset: listQuery.NextOffset(),
-		PrevOffset: listQuery.PrevOffset(),
-	}, nil
-}
-
-func (t *Impl) APIGetOlderPhotoStudioChatMessages(
-	ctx context.Context,
-	photoStudioID common_entity.PhotoStudioID,
-	userID common_entity.UserID,
-	offset int,
-) (*common_entity.ListResponse2[*common_entity.ChatMessageWrapper], error) {
-	chatMessages, hasNext, nextOffset, err := t.BusinessLogic.GetOlderChatMessages(
-		ctx,
-		photoStudioID,
-		userID,
-		offset,
-		30,
-	)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	chatMessageWrappers, err := common_entity.BuildChatMessageWrapper(
-		ctx,
-		chatMessages,
-		t.AuthUserBusinessLogic.GetUsers,
-		t.AuthBusinessLogic.GetPhotoStudioMembers,
-	)
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	return &common_entity.ListResponse2[*common_entity.ChatMessageWrapper]{
-		Results:    chatMessageWrappers,
-		HasNext:    hasNext,
 		NextOffset: nextOffset,
+		HasPrev:    hasPrev,
+		PrevOffset: prevOffset,
 	}, nil
 }
 

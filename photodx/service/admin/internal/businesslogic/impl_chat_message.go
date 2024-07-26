@@ -3,7 +3,6 @@ package businesslogic
 import (
 	"context"
 
-	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
@@ -34,42 +33,62 @@ func (t *Impl) CreateChatMessage(
 	)
 }
 
-func (t *Impl) GetChatMessages(
-	ctx context.Context,
-	photoStudioID common_entity.PhotoStudioID,
-	userID common_entity.UserID,
-	listQuery *cgorm.ListQuery,
-) ([]*common_entity.ChatMessage, bool, error) {
-	room, err := t.Repository.GetChatRoomByPhotoStudioIDANDUserID(
-		ctx,
-		photoStudioID,
-		userID,
-	)
-	if err != nil {
-		return nil, false, terrors.Wrap(err)
+func beforeAndAfterRange(offset, limit int) (int, int) {
+	d := limit / 2
+	offset = offset - d
+	if offset < 0 {
+		offset = 0
 	}
-	return t.Repository.GetChatMessages(
-		ctx,
-		room.ID,
-		listQuery,
-	)
+	return offset, limit
 }
 
-func (t *Impl) GetOlderChatMessages(
+func (t *Impl) GetOlderChatMessagesForFront(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
 	userID common_entity.UserID,
 	offset int,
 	limit int,
-) ([]*common_entity.ChatMessage, bool, int, error) {
+) ([]*common_entity.ChatMessage, bool, int, bool, int, error) {
 	room, err := t.Repository.GetChatRoomByPhotoStudioIDANDUserID(
 		ctx,
 		photoStudioID,
 		userID,
 	)
 	if err != nil {
-		return nil, false, 0, terrors.Wrap(err)
+		return nil, false, 0, false, 0, terrors.Wrap(err)
 	}
+	return t.Repository.GetOlderChatMessages(
+		ctx,
+		room.ID,
+		offset,
+		limit,
+	)
+}
+
+func (t *Impl) GetOlderChatMessagesForFrontByID(
+	ctx context.Context,
+	photoStudioID common_entity.PhotoStudioID,
+	userID common_entity.UserID,
+	chatMessageID common_entity.ChatMessageID,
+	limit int,
+) ([]*common_entity.ChatMessage, bool, int, bool, int, error) {
+	room, err := t.Repository.GetChatRoomByPhotoStudioIDANDUserID(
+		ctx,
+		photoStudioID,
+		userID,
+	)
+	if err != nil {
+		return nil, false, 0, false, 0, terrors.Wrap(err)
+	}
+	offset, err := t.Repository.GetOlderChatMessagesOffsetByID(
+		ctx,
+		room.ID,
+		chatMessageID,
+	)
+	if err != nil {
+		return nil, false, 0, false, 0, terrors.Wrap(err)
+	}
+	offset, limit = beforeAndAfterRange(offset, limit)
 	return t.Repository.GetOlderChatMessages(
 		ctx,
 		room.ID,

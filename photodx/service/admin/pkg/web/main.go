@@ -194,29 +194,6 @@ func Main(
 						{
 							chatMessages := chat.Group("messages")
 							chatMessages.GET(
-								"",
-								func(ctx *gin.Context) {
-									userID := entity.UserID(ctx.Param("userID"))
-									photoStudioID := common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID()
-									query := struct {
-										Offset int `form:"offset"`
-									}{}
-									if err := ctx.BindQuery(&query); err != nil {
-										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-											Message: err.Error(),
-										})
-										return
-									}
-									dto, err := u.APIGetPhotoStudioChatMessages(
-										ctx,
-										photoStudioID,
-										userID,
-										query.Offset,
-									)
-									res(ctx, dto, err)
-								},
-							)
-							chatMessages.GET(
 								"older",
 								func(ctx *gin.Context) {
 									userID := entity.UserID(ctx.Param("userID"))
@@ -238,6 +215,35 @@ func Main(
 										photoStudioID,
 										userID,
 										query.Offset,
+									)
+									res(ctx, dto, err)
+								},
+							)
+							chatMessages.GET(
+								"older_by_id",
+								func(ctx *gin.Context) {
+									userID := entity.UserID(ctx.Param("userID"))
+									photoStudioID := common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID()
+									query := struct {
+										ID entity.ChatMessageID `form:"id"`
+									}{}
+									if err := ctx.BindQuery(&query); err != nil {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: err.Error(),
+										})
+										return
+									}
+									if query.ID == "" {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: "id is empty",
+										})
+										return
+									}
+									dto, err := u.APIGetOlderPhotoStudioChatMessagesByID(
+										ctx,
+										photoStudioID,
+										userID,
+										query.ID,
 									)
 									res(ctx, dto, err)
 								},
