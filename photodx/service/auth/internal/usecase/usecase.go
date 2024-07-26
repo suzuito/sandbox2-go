@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/SherClockHolmes/webpush-go"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -25,6 +26,12 @@ type Usecase interface {
 		ctx context.Context,
 		photoStudioMemberID entity.PhotoStudioMemberID,
 	) (*DTOAuthPostRefresh, error)
+
+	AuthPutPushSubscription(
+		ctx context.Context,
+		principal entity.AdminPrincipalAccessToken,
+		sub *webpush.Subscription,
+	) (*DTOAuthPutPushSubscription, error)
 
 	AuthGetInit(
 		ctx context.Context,

@@ -7,3 +7,8 @@ func Map[InputT any, OutputT any](input []InputT, converter func(InputT) OutputT
 	}
 	return returned
 }
+
+func MapUniq[InputT any, OutputT comparable](input []InputT, converter func(InputT) OutputT) []OutputT {
+	l := Map(input, converter)
+	return Uniq(l)
+}

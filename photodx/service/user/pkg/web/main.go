@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suzuito/sandbox2-go/common/cgorm"
 	admin_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/admin/pkg/businesslogic"
 	auth_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/businesslogic"
 	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
@@ -90,6 +89,61 @@ func Main(
 			})
 			{
 				chatMessages := photoStudio.Group("messages")
+				chatMessages.GET(
+					"older",
+					func(ctx *gin.Context) {
+						photoStudioID := common_entity.PhotoStudioID(ctx.Param("photoStudioID"))
+						userID := common_web.CtxGetUserPrincipalAccessToken(ctx).GetUserID()
+						query := struct {
+							Offset int `form:"offset"`
+						}{}
+						if err := ctx.BindQuery(&query); err != nil {
+							p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+								Message: err.Error(),
+							})
+							return
+						}
+						if query.Offset < 0 {
+							query.Offset = 0
+						}
+						dto, err := u.APIGetOlderPhotoStudioChatMessages(
+							ctx,
+							photoStudioID,
+							userID,
+							query.Offset,
+						)
+						res(ctx, dto, err)
+					},
+				)
+				chatMessages.GET(
+					"older_by_id",
+					func(ctx *gin.Context) {
+						photoStudioID := common_entity.PhotoStudioID(ctx.Param("photoStudioID"))
+						userID := common_web.CtxGetUserPrincipalAccessToken(ctx).GetUserID()
+						query := struct {
+							ID common_entity.ChatMessageID `form:"id"`
+						}{}
+						if err := ctx.BindQuery(&query); err != nil {
+							p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+								Message: err.Error(),
+							})
+							return
+						}
+						if query.ID == "" {
+							p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+								Message: "id is empty",
+							})
+							return
+						}
+						dto, err := u.APIGetOlderPhotoStudioChatMessagesByID(
+							ctx,
+							photoStudioID,
+							userID,
+							query.ID,
+						)
+						res(ctx, dto, err)
+					},
+				)
 				chatMessages.POST(
 					"",
 					common_web.MiddlewareUserAccessTokenAutho(
@@ -111,37 +165,14 @@ func Main(
 							})
 							return
 						}
+						_, skipPushMessage := ctx.GetQuery("skipPushMessage")
 						dto, err := u.APIPostPhotoStudioMessages(
 							ctx,
 							common_web.CtxGetUserPrincipalAccessToken(ctx),
 							photoStudioID,
 							&message,
+							skipPushMessage,
 						)
-						res(ctx, dto, err)
-					},
-				)
-				chatMessages.GET(
-					"",
-					common_web.MiddlewareUserAccessTokenAutho(
-						l,
-						`
-						permissions.exists(
-							p,
-							p.resource == "PhotoStudio" && "read".matches(p.action)
-						)
-					`,
-						&p,
-					),
-					func(ctx *gin.Context) {
-						photoStudioID := common_entity.PhotoStudioID(ctx.Param("photoStudioID"))
-						listQuery := cgorm.ListQuery{}
-						if err := ctx.BindQuery(&listQuery); err != nil {
-							p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-								Message: err.Error(),
-							})
-							return
-						}
-						dto, err := u.APIGetPhotoStudioMessages(ctx, photoStudioID, &listQuery)
 						res(ctx, dto, err)
 					},
 				)

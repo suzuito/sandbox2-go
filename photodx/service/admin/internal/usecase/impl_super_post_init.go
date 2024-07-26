@@ -31,10 +31,6 @@ func (t *Impl) APIPostSuperInit(ctx context.Context) (*DTOAPIPostSuperInit, erro
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	chatRoomID := common_entity.ChatRoomID(photoStudio.ID)
-	if _, err := t.BusinessLogic.CreateChatRoom(ctx, photoStudio.ID, chatRoomID); err != nil {
-		return nil, terrors.Wrap(err)
-	}
 	return &DTOAPIPostSuperInit{
 		PhotoStudio:     photoStudio,
 		SuperMember:     superMember,

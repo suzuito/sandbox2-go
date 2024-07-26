@@ -23,11 +23,11 @@ func (t *Impl) CreateChatMessage(
 	return mMessage.ToEntity(), nil
 }
 
-func (t *Impl) GetChatMessages(
+func (t *Impl) getChatMessages(
 	ctx context.Context,
 	roomID common_entity.ChatRoomID,
 	listQuery *cgorm.ListQuery,
-) ([]*common_entity.ChatMessage, bool, error) {
+) ([]*common_entity.ChatMessage, bool, int, bool, int, error) {
 	db := t.GormDB.WithContext(ctx)
 	db = db.Where(
 		"chat_room_id = ?",
@@ -36,11 +36,11 @@ func (t *Impl) GetChatMessages(
 	db = listQuery.Set(db)
 	mMessages := []*modelChatMessage{}
 	if err := db.Find(&mMessages).Error; err != nil {
-		return nil, false, terrors.Wrap(err)
+		return nil, false, 0, false, 0, terrors.Wrap(err)
 	}
-	hasNext := len(mMessages) >= listQuery.Limit
 	messages := arrayutil.Map(mMessages, func(v *modelChatMessage) *common_entity.ChatMessage {
 		return v.ToEntity()
 	})
-	return messages, hasNext, nil
+	hasNext := len(mMessages) >= listQuery.Limit
+	return messages, hasNext, listQuery.NextOffset(), listQuery.HasPrev(), listQuery.PrevOffset(), nil
 }

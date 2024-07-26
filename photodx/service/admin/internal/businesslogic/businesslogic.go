@@ -5,29 +5,10 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/entity"
-	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
 type BusinessLogic interface {
-	GetActiveLineLink(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-	) (*entity.LineLinkInfo, error)
-	ActivateLineLink(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-	) (*entity.LineLinkInfo, error)
-	DeactivateLineLink(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-	) (*entity.LineLinkInfo, error)
-	SetLineLinkInfo(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-		arg *repository.SetLineLinkInfoArgument,
-	) (*entity.LineLinkInfo, error)
-
 	GenerateUserFromLINEProfile(
 		ctx context.Context,
 		lineLinkInfo *entity.LineLinkInfo,
@@ -49,9 +30,41 @@ type BusinessLogic interface {
 		userID common_entity.UserID,
 	) (*entity.PhotoStudioUser, error)
 
-	CreateChatRoom(
+	GetPhotoStudioChats(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
-		chatRoomID common_entity.ChatRoomID,
+		listQuery *cgorm.ListQuery,
+	) ([]*common_entity.ChatRoom, bool, error)
+	GetPhotoStudioChat(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
 	) (*common_entity.ChatRoom, error)
+
+	CreatePhotoStudioUserChatRoomIFNotExists(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+	) (*common_entity.ChatRoom, error)
+
+	CreateChatMessage(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		message *common_entity.ChatMessage,
+	) (*common_entity.ChatMessage, error)
+	GetOlderChatMessagesForFront(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		offset int,
+		limit int,
+	) ([]*common_entity.ChatMessage, bool, int, bool, int, error)
+	GetOlderChatMessagesForFrontByID(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		chatMessageID common_entity.ChatMessageID,
+		limit int,
+	) ([]*common_entity.ChatMessage, bool, int, bool, int, error)
 }

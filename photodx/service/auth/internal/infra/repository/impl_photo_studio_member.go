@@ -149,6 +149,20 @@ func (t *Impl) GetPhotoStudioMembers(
 	return findPhotoStudioMembers(db)
 }
 
+func (t *Impl) ListPhotoStudioMembers(
+	ctx context.Context,
+	photoStudioID entity.PhotoStudioID,
+	listQuery *cgorm.ListQuery,
+) ([]*entity.PhotoStudioMemberWrapper, bool, error) {
+	db := t.GormDB.WithContext(ctx)
+	db = listQuery.Set(db)
+	members, err := findPhotoStudioMembers(db)
+	if err != nil {
+		return nil, false, terrors.Wrap(err)
+	}
+	return members, len(members) >= listQuery.Limit, nil
+}
+
 func findPhotoStudioMembers(
 	db *gorm.DB,
 ) ([]*entity.PhotoStudioMemberWrapper, error) {

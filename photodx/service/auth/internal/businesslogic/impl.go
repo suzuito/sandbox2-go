@@ -18,5 +18,7 @@ type Impl struct {
 	AdminRefreshTokenJWTVerifier              auth.JWTVerifier
 	AdminAccessTokenJWTCreator                auth.JWTCreator
 	AdminAccessTokenJWTVerifier               auth.JWTVerifier
+	WebPushVAPIDPublicKey                     string
+	WebPushVAPIDPrivateKey                    string
 	NowFunc                                   func() time.Time
 }

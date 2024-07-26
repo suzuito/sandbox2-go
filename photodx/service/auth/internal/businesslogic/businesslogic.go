@@ -3,6 +3,7 @@ package businesslogic
 import (
 	"context"
 
+	"github.com/SherClockHolmes/webpush-go"
 	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/entity"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
@@ -53,4 +54,15 @@ type BusinessLogic interface {
 		ctx context.Context,
 		refreshToken string,
 	) (entity.AdminPrincipalRefreshToken, error)
+
+	// impl_web_push.go
+	GetWebPushVAPIDPublicKey(
+		ctx context.Context,
+		photoStudioMemberID common_entity.PhotoStudioMemberID,
+	) (string, error)
+	CreateWebPushSubscription(
+		ctx context.Context,
+		subscription *webpush.Subscription,
+		photoStudioMemberID common_entity.PhotoStudioMemberID,
+	) error
 }

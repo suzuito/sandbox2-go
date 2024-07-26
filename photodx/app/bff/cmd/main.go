@@ -41,8 +41,16 @@ func setUp(
 	}
 	defer resource.Close()
 	engine := gin.Default()
-	authBusinessLogic := auth_businesslogic.Main(resource.GormDB)
-	authUserBusinessLogic := authuser_businesslogic.Main(resource.GormDB, env.WebPushAPIUserVAPIDPrivateKey, env.WebPushAPIUserVAPIDPublicKey)
+	authBusinessLogic := auth_businesslogic.Main(
+		resource.GormDB,
+		env.WebPushAPIAdminVAPIDPrivateKey,
+		env.WebPushAPIAdminVAPIDPublicKey,
+	)
+	authUserBusinessLogic := authuser_businesslogic.Main(
+		resource.GormDB,
+		env.WebPushAPIUserVAPIDPrivateKey,
+		env.WebPushAPIUserVAPIDPublicKey,
+	)
 	adminBusinessLogic := admin_businesslogic.Main(resource.Logger, resource.GormDB)
 	common_web.Main(
 		engine,
@@ -59,7 +67,6 @@ func setUp(
 		resource.AdminAccessTokenJWTVerifier,
 		authUserBusinessLogic,
 		authBusinessLogic,
-		env.Env == "local",
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
@@ -71,6 +78,8 @@ func setUp(
 		resource.AdminRefreshTokenJWTVerifier,
 		resource.AdminAccessTokenJWTCreator,
 		resource.AdminAccessTokenJWTVerifier,
+		env.WebPushAPIAdminVAPIDPrivateKey,
+		env.WebPushAPIAdminVAPIDPublicKey,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}

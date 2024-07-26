@@ -16,7 +16,6 @@ import (
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
@@ -91,17 +90,24 @@ func Main(
 	authuser := e.Group("authuser")
 	// authuser.POST("login", func(ctx *gin.Context) {}) // Password login
 	// ==== Debug START ====
-	authuser.GET("a", func(ctx *gin.Context) {
-		err := b.PushNotification(
-			ctx,
-			l,
-			entity.UserID(ctx.Query("userId")),
-			"hoge",
-		)
-		if err != nil {
-			l.Error("", "err", err)
-		}
-	})
+	// authuser.GET("a", func(ctx *gin.Context) {
+	// 	err := b.PushNotification(
+	// 		ctx,
+	// 		l,
+	// 		entity.UserID(ctx.Query("userId")),
+	// 		&entity.Notification{
+	// 			ID: fmt.Sprintf("test-%d", time.Now().Unix()),
+	// 			Type: entity.NotificationTypeChatMessage,
+	// 			ChatMessageWrapper: &entity.ChatMessageWrapper{
+	// 				ChatMessage: entity.ChatMessage{},
+	//
+	// 			},
+	// 		},
+	// 	)
+	// 	if err != nil {
+	// 		l.Error("", "err", err)
+	// 	}
+	// })
 	// ==== Debug END ====
 	{
 		x := authuser.Group("x")

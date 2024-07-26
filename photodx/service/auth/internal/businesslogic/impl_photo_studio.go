@@ -5,6 +5,7 @@ import (
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
 func (t *Impl) GetPhotoStudio(
@@ -12,6 +13,13 @@ func (t *Impl) GetPhotoStudio(
 	photoStudioID entity.PhotoStudioID,
 ) (*entity.PhotoStudio, error) {
 	return t.Repository.GetPhotoStudio(ctx, photoStudioID)
+}
+
+func (t *Impl) GetPhotoStudios(
+	ctx context.Context,
+	photoStudioIDs []common_entity.PhotoStudioID,
+) ([]*common_entity.PhotoStudio, error) {
+	return t.Repository.GetPhotoStudios(ctx, photoStudioIDs)
 }
 
 func (t *Impl) CreatePhotoStudio(

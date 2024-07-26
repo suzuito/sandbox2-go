@@ -2,13 +2,19 @@ package repository
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
+	"github.com/suzuito/sandbox2-go/common/arrayutil"
 	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	common_repository "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/repository"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
-func (t *Impl) CreateChatRoom(
+func (t *Impl) CreatePhotoStudioUserChatRoomIFNotExists(
 	ctx context.Context,
 	room *common_entity.ChatRoom,
 ) (*common_entity.ChatRoom, error) {
@@ -16,6 +22,9 @@ func (t *Impl) CreateChatRoom(
 	mRoom.CreatedAt = t.NowFunc()
 	mRoom.UpdatedAt = mRoom.CreatedAt
 	db := t.GormDB.WithContext(ctx)
+	db = db.Clauses(clause.OnConflict{
+		DoNothing: true,
+	})
 	db = db.Create(mRoom)
 	if err := db.Error; err != nil {
 		return nil, terrors.Wrap(err)
@@ -23,22 +32,38 @@ func (t *Impl) CreateChatRoom(
 	return mRoom.ToEntity(), nil
 }
 
-func (t *Impl) GetChatRooms(
+func (t *Impl) GetChatRoomByPhotoStudioIDANDUserID(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
-	q *cgorm.ListQuery,
-) ([]*common_entity.ChatRoom, bool, error) {
+	userID common_entity.UserID,
+) (*common_entity.ChatRoom, error) {
 	db := t.GormDB
 	db = db.WithContext(ctx)
+	db = db.Where("photo_studio_id = ? && user_id = ?", photoStudioID, userID)
+	mChatRoom := modelChatRoom{}
+	if err := db.First(&mChatRoom).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &common_repository.NoEntryError{
+				EntryType: "ChatRoom",
+				EntryID:   fmt.Sprintf("%s-%s", photoStudioID, userID),
+			}
+		}
+		return nil, terrors.Wrap(err)
+	}
+	return mChatRoom.ToEntity(), nil
+}
+
+func (t *Impl) GetPhotoStudioChats(
+	ctx context.Context,
+	photoStudioID common_entity.PhotoStudioID,
+	listQuery *cgorm.ListQuery,
+) ([]*common_entity.ChatRoom, bool, error) {
+	db := t.GormDB.WithContext(ctx)
 	db = db.Where("photo_studio_id = ?", photoStudioID)
-	db = q.Set(db)
-	mChatRooms := []modelChatRoom{}
+	db = listQuery.Set(db)
+	mChatRooms := []*modelChatRoom{}
 	if err := db.Find(&mChatRooms).Error; err != nil {
 		return nil, false, terrors.Wrap(err)
 	}
-	ret := []*common_entity.ChatRoom{}
-	for _, a := range mChatRooms {
-		ret = append(ret, a.ToEntity())
-	}
-	return ret, len(mChatRooms) >= q.Limit, nil
+	return arrayutil.Map(mChatRooms, func(v *modelChatRoom) *common_entity.ChatRoom { return v.ToEntity() }), len(mChatRooms) >= listQuery.Limit, nil
 }

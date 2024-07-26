@@ -8,40 +8,13 @@ import (
 	common_usecase "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/usecase"
 )
 
-type InputAPIPostPhotoStudioMessages struct {
-	Text string `json:"text"`
-}
-
-func (t *Impl) APIPostPhotoStudioMessages(
-	ctx context.Context,
-	principal common_entity.UserPrincipalAccessToken,
-	photoStudioID common_entity.PhotoStudioID,
-	input *InputAPIPostPhotoStudioMessages,
-	skipPushMessage bool,
-) (*common_entity.ChatMessageWrapper, error) {
-	return common_usecase.PostChatMessage(
-		ctx,
-		t.L,
-		t.NowFunc,
-		t.AuthBusinessLogic,
-		t.AuthUserBusinessLogic,
-		t.AdminBusinessLogic,
-		string(principal.GetUserID()),
-		common_entity.ChatMessagePostedByTypeUser,
-		photoStudioID,
-		principal.GetUserID(),
-		input.Text,
-		!skipPushMessage,
-	)
-}
-
 func (t *Impl) APIGetOlderPhotoStudioChatMessages(
 	ctx context.Context,
 	photoStudioID common_entity.PhotoStudioID,
 	userID common_entity.UserID,
 	offset int,
 ) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error) {
-	chatMessages, hasNext, nextOffset, hasPrev, prevOffset, err := t.AdminBusinessLogic.GetOlderChatMessagesForFront(
+	chatMessages, hasNext, nextOffset, hasPrev, prevOffset, err := t.BusinessLogic.GetOlderChatMessagesForFront(
 		ctx,
 		photoStudioID,
 		userID,
@@ -60,7 +33,7 @@ func (t *Impl) APIGetOlderPhotoStudioChatMessagesByID(
 	userID common_entity.UserID,
 	chatMessageID common_entity.ChatMessageID,
 ) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error) {
-	chatMessages, hasNext, nextOffset, hasPrev, prevOffset, err := t.AdminBusinessLogic.GetOlderChatMessagesForFrontByID(
+	chatMessages, hasNext, nextOffset, hasPrev, prevOffset, err := t.BusinessLogic.GetOlderChatMessagesForFrontByID(
 		ctx,
 		photoStudioID,
 		userID,
@@ -97,4 +70,28 @@ func (t *Impl) buildChatMessageWrapper(
 		HasPrev:    hasPrev,
 		PrevOffset: prevOffset,
 	}, nil
+}
+
+func (t *Impl) APIPostPhotoStudioChatMessages(
+	ctx context.Context,
+	photoStudioID common_entity.PhotoStudioID,
+	userID common_entity.UserID,
+	photoStudioMemberID common_entity.PhotoStudioMemberID,
+	text string,
+	skipPushMessage bool,
+) (*common_entity.ChatMessageWrapper, error) {
+	return common_usecase.PostChatMessage(
+		ctx,
+		t.L,
+		t.NowFunc,
+		t.AuthBusinessLogic,
+		t.AuthUserBusinessLogic,
+		t.BusinessLogic,
+		string(photoStudioMemberID),
+		common_entity.ChatMessagePostedByTypePhotoStudioMember,
+		photoStudioID,
+		userID,
+		text,
+		!skipPushMessage,
+	)
 }
