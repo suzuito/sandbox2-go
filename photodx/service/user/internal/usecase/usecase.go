@@ -22,4 +22,16 @@ type Usecase interface {
 		input *InputAPIPostPhotoStudioMessages,
 		skipPushMessage bool,
 	) (*common_entity.ChatMessageWrapper, error)
+	APIGetOlderPhotoStudioChatMessages(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		offset int,
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
+	APIGetOlderPhotoStudioChatMessagesByID(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		chatMessageID common_entity.ChatMessageID,
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
 }
