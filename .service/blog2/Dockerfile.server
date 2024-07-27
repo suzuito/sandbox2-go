@@ -2,7 +2,7 @@
 FROM node:22-alpine AS build1
 
 ARG NODE_ENV
-ENV NODE_ENV ${NODE_ENV}
+ENV NODE_ENV=${NODE_ENV}
 
 RUN apk add --no-cache make
 
