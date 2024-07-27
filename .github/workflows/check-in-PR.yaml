@@ -1,19 +1,24 @@
 name: check-in-PR
 on:
-    pull_request:
+  pull_request:
 
 env:
-    GO_VERSION: 1.22.x
+  GO_VERSION: 1.22.x
 
 jobs:
-    gotest:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-go@v5
-              with:
-                go-version: ${{ env.GO_VERSION }}
-            - run: sh test.sh ./...
-            - uses: codecov/codecov-action@v4
-              with:
-                token: ${{ secrets.CODECOV_TOKEN }}
+  gotest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - run: sh test.sh ./...
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+  blog2-build-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f .service/blog2/Dockerfile.server .
