@@ -38,7 +38,7 @@ spec:
             - name: CORS_ALLOW_ORIGINS
               value: https://pdx.tach.dev,https://photodx.tach.dev
             - name: CORS_ALLOW_METHODS
-              value: GET
+              value: GET,PUT,POST,DELETE
             - name: CORS_ALLOW_HEADERS
               value: Authorization
             - name: JWT_ADMIN_ACCESS_TOKEN_SIGNING_PRIVATE_KEY
