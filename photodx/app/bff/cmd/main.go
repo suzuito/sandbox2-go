@@ -10,6 +10,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/environment"
 	"github.com/suzuito/sandbox2-go/photodx/app/bff/internal/inject"
+	admin_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/admin/pkg/businesslogic"
 	admin_web "github.com/suzuito/sandbox2-go/photodx/service/admin/pkg/web"
 	auth_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/businesslogic"
 	auth_web "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/web"
@@ -40,6 +41,17 @@ func setUp(
 	}
 	defer resource.Close()
 	engine := gin.Default()
+	authBusinessLogic := auth_businesslogic.Main(
+		resource.GormDB,
+		env.WebPushAPIAdminVAPIDPrivateKey,
+		env.WebPushAPIAdminVAPIDPublicKey,
+	)
+	authUserBusinessLogic := authuser_businesslogic.Main(
+		resource.GormDB,
+		env.WebPushAPIUserVAPIDPrivateKey,
+		env.WebPushAPIUserVAPIDPublicKey,
+	)
+	adminBusinessLogic := admin_businesslogic.Main(resource.Logger, resource.GormDB)
 	common_web.Main(
 		engine,
 		resource.Logger,
@@ -53,8 +65,8 @@ func setUp(
 		resource.Logger,
 		resource.GormDB,
 		resource.AdminAccessTokenJWTVerifier,
-		authuser_businesslogic.Main(resource.GormDB),
-		env.Env == "local",
+		authUserBusinessLogic,
+		authBusinessLogic,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
@@ -66,6 +78,8 @@ func setUp(
 		resource.AdminRefreshTokenJWTVerifier,
 		resource.AdminAccessTokenJWTCreator,
 		resource.AdminAccessTokenJWTVerifier,
+		env.WebPushAPIAdminVAPIDPrivateKey,
+		env.WebPushAPIAdminVAPIDPublicKey,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}
@@ -73,7 +87,9 @@ func setUp(
 		engine,
 		resource.Logger,
 		resource.UserAccessTokenJWTVerifier,
-		auth_businesslogic.Main(resource.GormDB),
+		authBusinessLogic,
+		authUserBusinessLogic,
+		adminBusinessLogic,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}

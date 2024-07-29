@@ -14,16 +14,6 @@ type SetLineLinkInfoArgument struct {
 }
 
 type Repository interface {
-	GetLineLinkInfo(ctx context.Context, photoStudioID common_entity.PhotoStudioID) (*entity.LineLinkInfo, error)
-	CreateLineLinkInfo(ctx context.Context, info *entity.LineLinkInfo) (*entity.LineLinkInfo, error)
-	DeleteLineLinkInfo(ctx context.Context, photoStudioID common_entity.PhotoStudioID) error
-	SetLineLinkInfoActive(ctx context.Context, photoStudioID common_entity.PhotoStudioID, active bool) (*entity.LineLinkInfo, error)
-	SetLineLinkInfo(
-		ctx context.Context,
-		photoStudioID common_entity.PhotoStudioID,
-		arg *SetLineLinkInfoArgument,
-	) (*entity.LineLinkInfo, error)
-
 	CreatePhotoStudioUser(
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
@@ -39,4 +29,36 @@ type Repository interface {
 		photoStudioID common_entity.PhotoStudioID,
 		userID common_entity.UserID,
 	) (*entity.PhotoStudioUser, error)
+
+	CreatePhotoStudioUserChatRoomIFNotExists(
+		ctx context.Context,
+		room *common_entity.ChatRoom,
+	) (*common_entity.ChatRoom, error)
+	GetChatRoomByPhotoStudioIDANDUserID(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+	) (*common_entity.ChatRoom, error)
+	GetPhotoStudioChats(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		listQuery *cgorm.ListQuery,
+	) ([]*common_entity.ChatRoom, bool, error)
+
+	CreateChatMessage(
+		ctx context.Context,
+		roomID common_entity.ChatRoomID,
+		message *common_entity.ChatMessage,
+	) (*common_entity.ChatMessage, error)
+	GetOlderChatMessagesOffsetByID(
+		ctx context.Context,
+		roomID common_entity.ChatRoomID,
+		chatMessageID common_entity.ChatMessageID,
+	) (int, error)
+	GetOlderChatMessages(
+		ctx context.Context,
+		roomID common_entity.ChatRoomID,
+		offset int,
+		limit int,
+	) ([]*common_entity.ChatMessage, bool, int, bool, int, error)
 }

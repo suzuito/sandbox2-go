@@ -9,11 +9,16 @@ import (
 
 type JWTClaimsUserAccessToken struct {
 	jwt.RegisteredClaims
-	Roles []rbac.RoleID `json:"roles"`
+	Roles       []rbac.RoleID `json:"roles"`
+	IsGuestUser bool
 }
 
 func (t *JWTClaimsUserAccessToken) GetUserID() entity.UserID {
 	return entity.UserID(t.Subject)
+}
+
+func (t *JWTClaimsUserAccessToken) IsGuest() bool {
+	return t.IsGuestUser
 }
 
 func (t *JWTClaimsUserAccessToken) GetPermissions() []*pbrbac.Permission {

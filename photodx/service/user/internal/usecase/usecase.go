@@ -15,4 +15,23 @@ type Usecase interface {
 		ctx context.Context,
 		photoStudioID common_entity.PhotoStudioID,
 	) (*DTOMiddlewarePhotoStudio, error)
+	APIPostPhotoStudioMessages(
+		ctx context.Context,
+		principal common_entity.UserPrincipalAccessToken,
+		photoStudioID common_entity.PhotoStudioID,
+		input *InputAPIPostPhotoStudioMessages,
+		skipPushMessage bool,
+	) (*common_entity.ChatMessageWrapper, error)
+	APIGetOlderPhotoStudioChatMessages(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		offset int,
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
+	APIGetOlderPhotoStudioChatMessagesByID(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		chatMessageID common_entity.ChatMessageID,
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
 }

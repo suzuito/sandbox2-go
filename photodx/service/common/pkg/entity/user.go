@@ -6,5 +6,6 @@ type User struct {
 	Name              string `json:"name"`
 	ProfileImageURL   string `json:"profileImageUrl"`
 	Active            bool   `json:"active"`
+	Guest             bool   `json:"guest"`
 	InitializedByUser bool   `json:"initializeByUser"`
 }

@@ -58,8 +58,8 @@ func (t *Impl) APIGetPhotoStudioUsers(
 		Results:    dtoUsers,
 		HasNext:    hasNext,
 		HasPrev:    q.HasPrev(),
-		NextOffset: q.NextOffset(),
 		PrevOffset: q.PrevOffset(),
+		NextOffset: q.NextOffset(),
 	}, nil
 }
 

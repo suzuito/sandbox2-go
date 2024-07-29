@@ -1,4 +1,5 @@
 ```bash
+% mkdir -p /tmp/hoge && cd /tmp/hoge
 % npm install --save-dev web-push
 % npx web-push generate-vapid-keys
 

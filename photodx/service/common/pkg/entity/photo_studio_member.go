@@ -1,5 +1,7 @@
 package entity
 
+import "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity/rbac"
+
 type PhotoStudioMemberID string
 
 type PhotoStudioMember struct {
@@ -17,3 +19,9 @@ func (t *PhotoStudioMember) Validate() error {
 }
 
 const MaxRolesPerPhotoStudioMember = 10
+
+type PhotoStudioMemberWrapper struct {
+	*PhotoStudioMember
+	Roles       []*rbac.Role
+	PhotoStudio *PhotoStudio
+}

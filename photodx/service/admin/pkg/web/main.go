@@ -1,7 +1,6 @@
 package web
 
 import (
-	"io"
 	"log/slog"
 	"net/http"
 	"time"
@@ -10,12 +9,13 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/gateway/line/messaging"
 	internal_infra_repository "github.com/suzuito/sandbox2-go/photodx/service/admin/internal/infra/repository"
-	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/usecase"
+	auth_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/auth/pkg/businesslogic"
 	authuser_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
+	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 	"gorm.io/gorm"
@@ -48,25 +48,28 @@ func Main(
 	db *gorm.DB,
 	adminAccessTokenVerifier auth.JWTVerifier,
 	authUserBusinessLogic authuser_businesslogic.ExposedBusinessLogic,
-	skipVerifyLINEWebhook bool,
+	authBusinessLogic auth_businesslogic.ExposedBusinessLogic,
 ) error {
 	r := internal_infra_repository.Impl{
 		GormDB:  db,
 		NowFunc: time.Now,
 	}
-	u := usecase.Impl{
+	var u usecase.Usecase = &usecase.Impl{
+		NowFunc: time.Now,
 		BusinessLogic: &businesslogic.Impl{
 			LINEMessagingAPIClient: &messaging.Impl{
 				Cli: http.DefaultClient,
 			},
-			Repository: &r,
-			L:          l,
+			Repository:            &r,
+			GenerateChatMessageID: &proc.IDGeneratorImpl{},
+			L:                     l,
 		},
 		CommonBusinessLogic: common_businesslogic.NewBusinessLogic(
 			adminAccessTokenVerifier,
 			nil,
 		),
 		AuthUserBusinessLogic: authUserBusinessLogic,
+		AuthBusinessLogic:     authBusinessLogic,
 		L:                     l,
 	}
 	p := presenter.Impl{}
@@ -83,7 +86,7 @@ func Main(
 	// スタジオ管理画面向けAPI
 	admin := e.Group("admin")
 	{
-		admin.Use(MiddlewareAccessTokenAuthe(l, &u))
+		admin.Use(MiddlewareAccessTokenAuthe(l, u))
 		{
 			photoStudios := admin.Group("photo_studios")
 			{
@@ -100,92 +103,6 @@ func Main(
 						&p,
 					),
 				)
-				{
-					lineLink := photoStudio.Group("line_link")
-					lineLink.PUT(
-						"activate",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIPutLINELinkActivate(ctx, principal)
-							res(ctx, dto, err)
-						},
-					)
-					lineLink.PUT(
-						"deactivate",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIPutLINELinkDeactivate(ctx, principal)
-							res(ctx, dto, err)
-						},
-					)
-					lineLink.GET(
-						"",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "read".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIGetLINELink(ctx, principal)
-							res(ctx, dto, err)
-						},
-					)
-					lineLink.PUT(
-						"",
-						common_web.MiddlewareAdminAccessTokenAutho(
-							l,
-							`
-								permissions.exists(
-									p,
-									p.resource == "PhotoStudio" && adminPrincipalPhotoStudioId.matches(p.target) && "update".matches(p.action)
-								)
-								`,
-							&p,
-						),
-						func(ctx *gin.Context) {
-							message := repository.SetLineLinkInfoArgument{}
-							if err := ctx.BindJSON(&message); err != nil {
-								p.JSON(
-									ctx,
-									http.StatusBadRequest,
-									common_web.ResponseError{
-										Message: err.Error(),
-									},
-								)
-								return
-							}
-							principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
-							dto, err := u.APIPutLINELink(ctx, principal, &message)
-							res(ctx, dto, err)
-						},
-					)
-				}
 				{
 					users := photoStudio.Group("users")
 					users.GET(
@@ -241,33 +158,133 @@ func Main(
 						)
 					}
 				}
+				{
+					chats := photoStudio.Group("chats")
+					chats.GET(
+						"",
+						func(ctx *gin.Context) {
+							query := struct {
+								Offset int `form:"query"`
+							}{}
+							if err := ctx.BindQuery(&query); err != nil {
+								p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{Message: err.Error()})
+								return
+							}
+							dto, err := u.APIGetPhotoStudioChats(
+								ctx,
+								common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID(),
+								query.Offset,
+							)
+							res(ctx, dto, err)
+						},
+					)
+					{
+						chat := chats.Group(":userID")
+						chat.GET(
+							"",
+							func(ctx *gin.Context) {
+								dto, err := u.APIGetPhotoStudioChat(
+									ctx,
+									common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID(),
+									entity.UserID(ctx.Param("userID")),
+								)
+								res(ctx, dto, err)
+							},
+						)
+						{
+							chatMessages := chat.Group("messages")
+							chatMessages.GET(
+								"older",
+								func(ctx *gin.Context) {
+									userID := entity.UserID(ctx.Param("userID"))
+									photoStudioID := common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID()
+									query := struct {
+										Offset int `form:"offset"`
+									}{}
+									if err := ctx.BindQuery(&query); err != nil {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: err.Error(),
+										})
+										return
+									}
+									if query.Offset < 0 {
+										query.Offset = 0
+									}
+									dto, err := u.APIGetOlderPhotoStudioChatMessages(
+										ctx,
+										photoStudioID,
+										userID,
+										query.Offset,
+									)
+									res(ctx, dto, err)
+								},
+							)
+							chatMessages.GET(
+								"older_by_id",
+								func(ctx *gin.Context) {
+									userID := entity.UserID(ctx.Param("userID"))
+									photoStudioID := common_web.CtxGetAdminPrincipalAccessToken(ctx).GetPhotoStudioID()
+									query := struct {
+										ID entity.ChatMessageID `form:"id"`
+									}{}
+									if err := ctx.BindQuery(&query); err != nil {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: err.Error(),
+										})
+										return
+									}
+									if query.ID == "" {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: "id is empty",
+										})
+										return
+									}
+									dto, err := u.APIGetOlderPhotoStudioChatMessagesByID(
+										ctx,
+										photoStudioID,
+										userID,
+										query.ID,
+									)
+									res(ctx, dto, err)
+								},
+							)
+							chatMessages.POST(
+								"",
+								func(ctx *gin.Context) {
+									userID := entity.UserID(ctx.Param("userID"))
+									principal := common_web.CtxGetAdminPrincipalAccessToken(ctx)
+									message := struct {
+										Text string `json:"text"`
+									}{}
+									if err := ctx.BindJSON(&message); err != nil {
+										p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+											Message: err.Error(),
+										})
+										return
+									}
+									_, skipPushMessage := ctx.GetQuery("skipPushMessage")
+									dto, err := u.APIPostPhotoStudioChatMessages(
+										ctx,
+										principal.GetPhotoStudioID(),
+										userID,
+										principal.GetPhotoStudioMemberID(),
+										message.Text,
+										skipPushMessage,
+									)
+									res(ctx, dto, err)
+								},
+							)
+						}
+					}
+				}
 			}
 		}
 	}
-	// Webhooks
-	{
-		wh := admin.Group("wh")
-		wh.POST(
-			"line_messaging_api_webhook/:photoStudioID",
-			func(ctx *gin.Context) {
-				photoStudioID := entity.PhotoStudioID(ctx.Param("photoStudioID"))
-				body, err := io.ReadAll(ctx.Request.Body)
-				if err != nil {
-					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-						Message: "%+v",
-					})
-					return
-				}
-				err = u.APIPostLineMessagingAPIWebhook(
-					ctx,
-					photoStudioID,
-					body,
-					ctx.GetHeader("x-line-signature"),
-					skipVerifyLINEWebhook,
-				)
-				res(ctx, struct{}{}, err)
-			},
-		)
-	}
+
+	// TODO 後で消す
+	admin.POST("super_init", func(ctx *gin.Context) {
+		dto, err := u.APIPostSuperInit(ctx)
+		res(ctx, dto, err)
+	})
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/suzuito/sandbox2-go/common/arrayutil"
 	"github.com/suzuito/sandbox2-go/common/cgorm"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
@@ -135,4 +136,52 @@ func (t *Impl) getPhotoStudioMember(
 		mPhotoStudioMember.Roles.ToEntity(),
 		mPhotoStudioMember.PhotoStudio.ToEntity(),
 		nil
+}
+
+func (t *Impl) GetPhotoStudioMembers(
+	ctx context.Context,
+	photoStudioMemberIDs []entity.PhotoStudioMemberID,
+) ([]*entity.PhotoStudioMemberWrapper, error) {
+	if len(photoStudioMemberIDs) <= 0 {
+		return []*entity.PhotoStudioMemberWrapper{}, nil
+	}
+	db := t.GormDB.WithContext(ctx).Where("id IN (?)", photoStudioMemberIDs)
+	return findPhotoStudioMembers(db)
+}
+
+func (t *Impl) ListPhotoStudioMembers(
+	ctx context.Context,
+	photoStudioID entity.PhotoStudioID,
+	listQuery *cgorm.ListQuery,
+) ([]*entity.PhotoStudioMemberWrapper, bool, error) {
+	db := t.GormDB.WithContext(ctx)
+	db = listQuery.Set(db)
+	members, err := findPhotoStudioMembers(db)
+	if err != nil {
+		return nil, false, terrors.Wrap(err)
+	}
+	return members, len(members) >= listQuery.Limit, nil
+}
+
+func findPhotoStudioMembers(
+	db *gorm.DB,
+) ([]*entity.PhotoStudioMemberWrapper, error) {
+	mPhotoStudioMembers := []*modelPhotoStudioMember{}
+	db = db.
+		Preload("PhotoStudio").
+		Preload("Roles")
+	if err := db.Find(&mPhotoStudioMembers).Error; err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	wrappers := arrayutil.Map(
+		mPhotoStudioMembers,
+		func(m *modelPhotoStudioMember) *entity.PhotoStudioMemberWrapper {
+			return &entity.PhotoStudioMemberWrapper{
+				PhotoStudioMember: m.ToEntity(),
+				Roles:             m.Roles.ToEntity(),
+				PhotoStudio:       m.PhotoStudio.ToEntity(),
+			}
+		},
+	)
+	return wrappers, nil
 }

@@ -17,12 +17,14 @@ type BusinessLogic interface {
 	CreateUserAccessToken(
 		ctx context.Context,
 		userID common_entity.UserID,
+		isGuest bool,
 	) (string, error)
 
 	// impl_user_refresh_token.go
 	CreateUserRefreshToken(
 		ctx context.Context,
 		userID common_entity.UserID,
+		isGuest bool,
 	) (string, error)
 	VerifyUserRefreshToken(
 		ctx context.Context,
@@ -51,6 +53,9 @@ type BusinessLogic interface {
 	) (*common_entity.User, error)
 
 	// impl_user.go
+	CreateGuestUser(
+		ctx context.Context,
+	) (*common_entity.User, error)
 	GetUser(
 		ctx context.Context,
 		userID common_entity.UserID,
@@ -70,6 +75,6 @@ type BusinessLogic interface {
 		ctx context.Context,
 		l *slog.Logger,
 		userID common_entity.UserID,
-		message string,
+		notification *common_entity.Notification,
 	) error
 }

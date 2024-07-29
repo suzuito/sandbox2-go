@@ -16,7 +16,6 @@ import (
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
@@ -82,6 +81,7 @@ func Main(
 		)
 	}
 	w := internal_web.Impl{
+		L:                 l,
 		U:                 &u,
 		P:                 &p,
 		OAuth2RedirectURL: *oauth2RedirectURL,
@@ -90,15 +90,29 @@ func Main(
 	authuser := e.Group("authuser")
 	// authuser.POST("login", func(ctx *gin.Context) {}) // Password login
 	// ==== Debug START ====
-	authuser.GET("a", func(ctx *gin.Context) {
-		b.PushNotification(
-			ctx,
-			l,
-			entity.UserID("0190c45e-8abd-74c6-b59e-2f7f5090181e"),
-			"hoge",
-		)
-	})
+	// authuser.GET("a", func(ctx *gin.Context) {
+	// 	err := b.PushNotification(
+	// 		ctx,
+	// 		l,
+	// 		entity.UserID(ctx.Query("userId")),
+	// 		&entity.Notification{
+	// 			ID: fmt.Sprintf("test-%d", time.Now().Unix()),
+	// 			Type: entity.NotificationTypeChatMessage,
+	// 			ChatMessageWrapper: &entity.ChatMessageWrapper{
+	// 				ChatMessage: entity.ChatMessage{},
+	//
+	// 			},
+	// 		},
+	// 	)
+	// 	if err != nil {
+	// 		l.Error("", "err", err)
+	// 	}
+	// })
 	// ==== Debug END ====
+	authuser.POST("guest", func(ctx *gin.Context) {
+		dto, err := u.APIPostGuest(ctx)
+		res(ctx, dto, err)
+	})
 	{
 		x := authuser.Group("x")
 		x.GET("callback", w.GetCallback)
@@ -161,16 +175,16 @@ func Main(
 		})
 		z.GET(
 			"init",
-			common_web.MiddlewareUserAccessTokenAutho(
-				l,
-				`
-					permissions.exists(
-						p,
-						p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
-					)
-					`,
-				&p,
-			),
+			// common_web.MiddlewareUserAccessTokenAutho(
+			// 	l,
+			// 	`
+			// 		permissions.exists(
+			// 			p,
+			// 			p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
+			// 		)
+			// 		`,
+			// 	&p,
+			// ),
 			func(ctx *gin.Context) {
 				dto, err := u.APIGetInit(ctx, common_web.CtxGetUserPrincipalAccessToken(ctx))
 				res(ctx, dto, err)
@@ -180,16 +194,16 @@ func Main(
 			pushAPI := z.Group("push_api")
 			pushAPI.PUT(
 				"push_subscription",
-				common_web.MiddlewareUserAccessTokenAutho(
-					l,
-					`
-						permissions.exists(
-							p,
-							p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
-						)
-						`,
-					&p,
-				),
+				// common_web.MiddlewareUserAccessTokenAutho(
+				// 	l,
+				// 	`
+				// 		permissions.exists(
+				// 			p,
+				// 			p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
+				// 		)
+				// 		`,
+				// 	&p,
+				// ),
 				func(ctx *gin.Context) {
 					subscription := webpush.Subscription{}
 					if err := ctx.BindJSON(&subscription); err != nil {

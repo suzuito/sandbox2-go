@@ -3,8 +3,6 @@ package usecase
 import (
 	"context"
 
-	"github.com/suzuito/sandbox2-go/photodx/service/admin/internal/repository"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -14,29 +12,48 @@ type Usecase interface {
 		accessToken string,
 	) (*DTOMiddlewareAccessTokenAuthe, error)
 
-	APIGetLINELink(
+	APIGetPhotoStudioUsers(
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
-	) (*DTOAPIGetLINELink, error)
-	APIPutLINELinkActivate(
+		offset int,
+	) (*DTOAPIGetPhotoStudioUsers, error)
+	APIGetPhotoStudioUser(
 		ctx context.Context,
 		principal common_entity.AdminPrincipalAccessToken,
-	) (*DTOAPIPutLINELinkActivate, error)
-	APIPutLINELinkDeactivate(
-		ctx context.Context,
-		principal common_entity.AdminPrincipalAccessToken,
-	) (*DTOAPIPutLINELinkDeactivate, error)
-	APIPutLINELink(
-		ctx context.Context,
-		principal common_entity.AdminPrincipalAccessToken,
-		arg *repository.SetLineLinkInfoArgument,
-	) (*DTOAPIPutLINELinkMessagingAPIChannelSecret, error)
+		userID common_entity.UserID,
+	) (*DTOPhotoStudioUser, error)
 
-	APIPostLineMessagingAPIWebhook(
+	APIGetPhotoStudioChats(
 		ctx context.Context,
-		photoStudioID entity.PhotoStudioID,
-		body []byte,
-		xLINESignature string,
-		skipVerifySignagure bool,
-	) error
+		photoStudioID common_entity.PhotoStudioID,
+		offset int,
+	) (*common_entity.ListResponse[*common_entity.ChatRoomWrapper], error)
+	APIGetPhotoStudioChat(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+	) (*common_entity.ChatRoomWrapper, error)
+
+	APIPostPhotoStudioChatMessages(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		photoStudioMemberID common_entity.PhotoStudioMemberID,
+		text string,
+		skipPushMessage bool,
+	) (*common_entity.ChatMessageWrapper, error)
+	APIGetOlderPhotoStudioChatMessages(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		offset int,
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
+	APIGetOlderPhotoStudioChatMessagesByID(
+		ctx context.Context,
+		photoStudioID common_entity.PhotoStudioID,
+		userID common_entity.UserID,
+		chatMessageID common_entity.ChatMessageID,
+	) (*common_entity.ListResponse[*common_entity.ChatMessageWrapper], error)
+
+	APIPostSuperInit(ctx context.Context) (*DTOAPIPostSuperInit, error)
 }

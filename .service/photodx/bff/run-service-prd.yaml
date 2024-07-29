@@ -38,7 +38,7 @@ spec:
             - name: CORS_ALLOW_ORIGINS
               value: https://pdx.tach.dev,https://photodx.tach.dev
             - name: CORS_ALLOW_METHODS
-              value: GET
+              value: GET,PUT,POST,DELETE
             - name: CORS_ALLOW_HEADERS
               value: Authorization
             - name: JWT_ADMIN_ACCESS_TOKEN_SIGNING_PRIVATE_KEY
@@ -71,3 +71,34 @@ spec:
                 secretKeyRef:
                   key: "1"
                   name: user_refresh_token_signing_private_key
+            - name: OAUTH2_PROVIDER_LINE_CLIENT_ID
+              value: 2005761043
+            - name: OAUTH2_PROVIDER_LINE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: oauth2_provider_line_client_secret
+            - name: OAUTH2_PROVIDER_LINE_CLIENT_REDIRECT_URL
+              value: https://api-photodx.tach.dev/authuser/x/callback
+            - name: FRONT_BASE_URL
+              value: https://photodx.tach.dev
+            - name: WEB_PUSH_API_USER_VAPID_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: web_push_api_user_vapid_private_key
+            - name: WEB_PUSH_API_USER_VAPID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: web_push_api_user_vapid_public_key
+            - name: WEB_PUSH_API_ADMIN_VAPID_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: web_push_api_admin_vapid_private_key
+            - name: WEB_PUSH_API_ADMIN_VAPID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: web_push_api_admin_vapid_public_key
