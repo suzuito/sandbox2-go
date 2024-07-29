@@ -146,16 +146,16 @@ func Main(
 				)
 				chatMessages.POST(
 					"",
-					common_web.MiddlewareUserAccessTokenAutho(
-						l,
-						`
-						permissions.exists(
-							p,
-							p.resource == "PhotoStudio" && "read".matches(p.action)
-						)
-					`,
-						&p,
-					),
+					// common_web.MiddlewareUserAccessTokenAutho(
+					// 	l,
+					// 	`
+					// 	permissions.exists(
+					// 		p,
+					// 		p.resource == "PhotoStudio" && "read".matches(p.action)
+					// 	)
+					// `,
+					// 	&p,
+					// ),
 					func(ctx *gin.Context) {
 						photoStudioID := common_entity.PhotoStudioID(ctx.Param("photoStudioID"))
 						message := usecase.InputAPIPostPhotoStudioMessages{}

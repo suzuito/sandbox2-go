@@ -7,8 +7,13 @@ import (
 
 type JWTClaimsUserRefreshToken struct {
 	jwt.RegisteredClaims
+	IsGuest bool
 }
 
 func (t *JWTClaimsUserRefreshToken) GetUserID() entity.UserID {
 	return entity.UserID(t.Subject)
+}
+
+func (t *JWTClaimsUserRefreshToken) IsGuestUser() bool {
+	return t.IsGuest
 }
