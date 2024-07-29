@@ -8,6 +8,7 @@ import (
 
 	"github.com/SherClockHolmes/webpush-go"
 	"github.com/suzuito/sandbox2-go/common/cgorm"
+	"github.com/suzuito/sandbox2-go/common/cwebpush"
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/entity"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
@@ -58,16 +59,7 @@ func (t *Impl) PushNotification(
 		return nil
 	}
 	for _, s := range pushSubscriptions {
-		_, err := webpush.SendNotificationWithContext(
-			ctx,
-			notificationBytes,
-			s.Value,
-			&webpush.Options{
-				VAPIDPublicKey:  t.WebPushVAPIDPublicKey,
-				VAPIDPrivateKey: t.WebPushVAPIDPrivateKey,
-			},
-		)
-		if err != nil {
+		if err := cwebpush.SendNotificationWithContext(ctx, t.WebPushVAPIDPublicKey, t.WebPushVAPIDPrivateKey, notificationBytes, s.Value); err != nil {
 			l.Warn("failed to webpush.SendNotificationWithContext", "err", err)
 			continue
 		}
