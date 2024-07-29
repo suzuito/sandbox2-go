@@ -1,4 +1,6 @@
+--
 -- Admin auth
+--
 CREATE TABLE `photo_studios` (
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `name` VARCHAR(128) NOT NULL, -- TODO: Rethink MAX length
@@ -52,7 +54,9 @@ CREATE TABLE `photo_studio_members_web_push_subscriptions` (
     FOREIGN KEY (`photo_studio_member_id`) REFERENCES `photo_studio_members` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
+--
 -- User auth
+--
 CREATE TABLE `oauth2_loginflow_states` (
     -- Not master data table
     `code` VARCHAR(128) PRIMARY KEY NOT NULL,
@@ -72,6 +76,14 @@ CREATE TABLE `users` (
     `guest` BOOLEAN NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
+);
+
+CREATE TABLE `user_password_hash_values` (
+    `user_id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `value` VARCHAR(512) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 CREATE TABLE `provider_resource_owners_users_mappings` (
@@ -96,7 +108,9 @@ CREATE TABLE `users_web_push_subscriptions` (
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
+--
 -- Admin
+--
 CREATE TABLE `photo_studio_users` (
     `photo_studio_id` VARCHAR(128) NOT NULL,
     `user_id` VARCHAR(128) NOT NULL,
