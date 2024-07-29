@@ -24,6 +24,10 @@ type Repository interface {
 		providerID oauth2loginflow.ProviderID,
 		resourceOwnerID oauth2loginflow.ResourceOwnerID,
 	) (*common_entity.User, error)
+	CreateUser(
+		ctx context.Context,
+		user *common_entity.User,
+	) (*common_entity.User, error)
 	GetUserByResourceOwnerID(
 		ctx context.Context,
 		providerID oauth2loginflow.ProviderID,

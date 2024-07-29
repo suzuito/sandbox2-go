@@ -14,6 +14,7 @@ import (
 func (t *Impl) CreateUserRefreshToken(
 	ctx context.Context,
 	userID common_entity.UserID,
+	isGuest bool,
 ) (string, error) {
 	now := t.NowFunc()
 	ttlDays := 7
@@ -25,6 +26,7 @@ func (t *Impl) CreateUserRefreshToken(
 			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
+		IsGuest: isGuest,
 	}
 	tokenString, err := t.UserRefreshTokenJWTCreator.CreateJWTToken(
 		ctx,

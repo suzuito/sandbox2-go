@@ -11,6 +11,7 @@ type modelUser struct {
 	Name              string
 	ProfileImageURL   string
 	Active            bool      `gorm:"not null"`
+	Guest             bool      `gorm:"not null"`
 	InitializedByUser bool      `gorm:"not null"`
 	CreatedAt         time.Time `gorm:"not null"`
 	UpdatedAt         time.Time `gorm:"not null"`
@@ -26,6 +27,7 @@ func (t *modelUser) ToEntity() *entity.User {
 		Name:              t.Name,
 		ProfileImageURL:   t.ProfileImageURL,
 		Active:            t.Active,
+		Guest:             t.Guest,
 		InitializedByUser: t.InitializedByUser,
 	}
 }
@@ -36,6 +38,7 @@ func NewModelUser(s *entity.User) *modelUser {
 		Name:              s.Name,
 		ProfileImageURL:   s.ProfileImageURL,
 		Active:            s.Active,
+		Guest:             s.Guest,
 		InitializedByUser: s.InitializedByUser,
 	}
 }

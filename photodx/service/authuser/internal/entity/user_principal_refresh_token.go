@@ -6,4 +6,5 @@ import (
 
 type UserPrincipalRefreshToken interface {
 	GetUserID() common_entity.UserID
+	IsGuestUser() bool
 }

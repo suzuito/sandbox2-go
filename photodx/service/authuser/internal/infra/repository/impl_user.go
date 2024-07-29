@@ -12,6 +12,19 @@ import (
 	"gorm.io/gorm"
 )
 
+func (t *Impl) CreateUser(
+	ctx context.Context,
+	user *entity.User,
+) (*entity.User, error) {
+	mUser := NewModelUser(user)
+	mUser.CreatedAt = t.NowFunc()
+	mUser.UpdatedAt = t.NowFunc()
+	if err := t.GormDB.Create(mUser).Error; err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return mUser.ToEntity(), nil
+}
+
 func (t *Impl) CreateUserByResourceOwnerID(
 	ctx context.Context,
 	user *entity.User,

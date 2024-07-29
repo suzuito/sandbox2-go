@@ -62,11 +62,14 @@ CREATE TABLE `oauth2_loginflow_states` (
 );
 
 CREATE TABLE `users` (
+    -- TODO By allowing guest user, the number of rows of this table will be big size.
+    --      Must use nosql like firestore
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `name` VARCHAR(128),
     `profile_image_url` VARCHAR(512) NOT NULL,
     `initialized_by_user` BOOLEAN NOT NULL,
     `active` BOOLEAN NOT NULL,
+    `guest` BOOLEAN NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
 );
@@ -83,6 +86,8 @@ CREATE TABLE `provider_resource_owners_users_mappings` (
 
 CREATE TABLE `users_web_push_subscriptions` (
     -- Not master data table
+    -- TODO By allowing guest user, the number of rows of this table will be big size.
+    --      Must use nosql like firestore
     `endpoint` VARCHAR(512) PRIMARY KEY NOT NULL,
     `user_id` VARCHAR(128) NOT NULL,
     `expiration_time` TIMESTAMP,

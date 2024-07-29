@@ -109,6 +109,10 @@ func Main(
 	// 	}
 	// })
 	// ==== Debug END ====
+	authuser.POST("guest", func(ctx *gin.Context) {
+		dto, err := u.APIPostGuest(ctx)
+		res(ctx, dto, err)
+	})
 	{
 		x := authuser.Group("x")
 		x.GET("callback", w.GetCallback)
@@ -171,16 +175,16 @@ func Main(
 		})
 		z.GET(
 			"init",
-			common_web.MiddlewareUserAccessTokenAutho(
-				l,
-				`
-					permissions.exists(
-						p,
-						p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
-					)
-					`,
-				&p,
-			),
+			// common_web.MiddlewareUserAccessTokenAutho(
+			// 	l,
+			// 	`
+			// 		permissions.exists(
+			// 			p,
+			// 			p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
+			// 		)
+			// 		`,
+			// 	&p,
+			// ),
 			func(ctx *gin.Context) {
 				dto, err := u.APIGetInit(ctx, common_web.CtxGetUserPrincipalAccessToken(ctx))
 				res(ctx, dto, err)
@@ -190,16 +194,16 @@ func Main(
 			pushAPI := z.Group("push_api")
 			pushAPI.PUT(
 				"push_subscription",
-				common_web.MiddlewareUserAccessTokenAutho(
-					l,
-					`
-						permissions.exists(
-							p,
-							p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
-						)
-						`,
-					&p,
-				),
+				// common_web.MiddlewareUserAccessTokenAutho(
+				// 	l,
+				// 	`
+				// 		permissions.exists(
+				// 			p,
+				// 			p.resource == "PhotoStudio" && userPrincipalUserId.matches(p.target) && "read".matches(p.action)
+				// 		)
+				// 		`,
+				// 	&p,
+				// ),
 				func(ctx *gin.Context) {
 					subscription := webpush.Subscription{}
 					if err := ctx.BindJSON(&subscription); err != nil {
