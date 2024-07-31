@@ -100,7 +100,7 @@ func (t *Impl) FetchProfileAndCreateUserIfNotExists(
 	}
 	existingUser, err := t.Repository.GetUserByResourceOwnerID(ctx, providerID, resourceOwnerID)
 	if err == nil {
-		if existingUser.InitializedByUser {
+		if existingUser.Active {
 			return existingUser, nil
 		}
 		user.ID = existingUser.ID
@@ -116,7 +116,6 @@ func (t *Impl) FetchProfileAndCreateUserIfNotExists(
 		user.ID = entity.UserID(userID)
 	}
 	user.Active = true
-	user.InitializedByUser = true
 	createdUser, err := t.Repository.CreateUserByResourceOwnerID(
 		ctx, user, providerID, resourceOwnerID,
 	)

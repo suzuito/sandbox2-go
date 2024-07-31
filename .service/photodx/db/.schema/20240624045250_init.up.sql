@@ -73,7 +73,6 @@ CREATE TABLE `users` (
     `email_verified` BOOLEAN NOT NULL,
     `name` VARCHAR(128),
     `profile_image_url` VARCHAR(512) NOT NULL,
-    `initialized_by_user` BOOLEAN NOT NULL,
     `active` BOOLEAN NOT NULL,
     `guest` BOOLEAN NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

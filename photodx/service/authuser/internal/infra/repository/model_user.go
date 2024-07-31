@@ -25,26 +25,24 @@ func (t *modelUser) TableName() string {
 
 func (t *modelUser) ToEntity() *entity.User {
 	return &entity.User{
-		ID:                t.ID,
-		Name:              t.Name,
-		Email:             t.Email,
-		EmailVerified:     t.EmailVerified,
-		ProfileImageURL:   t.ProfileImageURL,
-		Active:            t.Active,
-		Guest:             t.Guest,
-		InitializedByUser: t.InitializedByUser,
+		ID:              t.ID,
+		Name:            t.Name,
+		Email:           t.Email,
+		EmailVerified:   t.EmailVerified,
+		ProfileImageURL: t.ProfileImageURL,
+		Active:          t.Active,
+		Guest:           t.Guest,
 	}
 }
 
 func NewModelUser(s *entity.User) *modelUser {
 	return &modelUser{
-		ID:                s.ID,
-		Name:              s.Name,
-		Email:             s.Email,
-		EmailVerified:     s.EmailVerified,
-		ProfileImageURL:   s.ProfileImageURL,
-		Active:            s.Active,
-		Guest:             s.Guest,
-		InitializedByUser: s.InitializedByUser,
+		ID:              s.ID,
+		Name:            s.Name,
+		Email:           s.Email,
+		EmailVerified:   s.EmailVerified,
+		ProfileImageURL: s.ProfileImageURL,
+		Active:          s.Active,
+		Guest:           s.Guest,
 	}
 }
