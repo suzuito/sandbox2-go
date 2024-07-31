@@ -69,13 +69,16 @@ CREATE TABLE `users` (
     -- TODO By allowing guest user, the number of rows of this table will be big size.
     --      Must use nosql like firestore
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `email` VARCHAR(128),
+    `email_verified` BOOLEAN NOT NULL,
     `name` VARCHAR(128),
     `profile_image_url` VARCHAR(512) NOT NULL,
     `initialized_by_user` BOOLEAN NOT NULL,
     `active` BOOLEAN NOT NULL,
     `guest` BOOLEAN NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY (`email`)
 );
 
 CREATE TABLE `user_password_hash_values` (
@@ -105,6 +108,17 @@ CREATE TABLE `users_web_push_subscriptions` (
     `expiration_time` TIMESTAMP,
     `value` TEXT,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+);
+
+CREATE TABLE `promote_guest_user_confirmation_codes` (
+    -- Not master data table
+    `user_id` VARCHAR(128) NOT NULL,
+    `email` VARCHAR(128) NOT NULL,
+    `code` VARCHAR(256) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `expired_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`user_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 

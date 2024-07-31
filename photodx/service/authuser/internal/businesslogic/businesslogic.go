@@ -61,6 +61,21 @@ type BusinessLogic interface {
 		userID common_entity.UserID,
 	) (*common_entity.User, error)
 
+	// impl_promote_guest_user.go
+	RequestPromoteGuestUser(
+		ctx context.Context,
+		frontURLBase url.URL,
+		userID common_entity.UserID,
+		email string,
+		ttlSeconds int,
+	) error
+	PromoteGuestUser(
+		ctx context.Context,
+		userID common_entity.UserID,
+		plainPassword string,
+		code string,
+	) (*common_entity.User, error)
+
 	// impl_web_push.go
 	GetWebPushVAPIDPublicKey(
 		ctx context.Context,

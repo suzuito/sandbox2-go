@@ -28,6 +28,14 @@ type Repository interface {
 		ctx context.Context,
 		user *common_entity.User,
 	) (*common_entity.User, error)
+	PromoteUser(
+		ctx context.Context,
+		userID common_entity.UserID,
+		email string,
+		emailVerified bool,
+		passwordHashValue string,
+		active bool,
+	) (*common_entity.User, error)
 	GetUserByResourceOwnerID(
 		ctx context.Context,
 		providerID oauth2loginflow.ProviderID,
@@ -50,4 +58,16 @@ type Repository interface {
 		ctx context.Context,
 		userID common_entity.UserID,
 	) ([]*entity.UserWebPushSubscription, error)
+
+	CreatePromoteGuestUserConfirmationCode(
+		ctx context.Context,
+		userID common_entity.UserID,
+		email string,
+		code string,
+		ttlSeconds int,
+	) error
+	GetPromoteGuestUserConfirmationCodeNotExpired(
+		ctx context.Context,
+		userID common_entity.UserID,
+	) (*common_entity.PromoteGuestUserConfirmationCode, error)
 }

@@ -217,6 +217,46 @@ func Main(
 				},
 			)
 		}
+		{
+			promote := z.Group("promote")
+			promote.POST("request", func(ctx *gin.Context) {
+				body := struct {
+					Email string `json:"email"`
+				}{}
+				if err := ctx.BindJSON(&body); err != nil {
+					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+						Message: err.Error(),
+					})
+					return
+				}
+				dto, err := u.APIPostRequestPromoteGuestUser(
+					ctx,
+					*frontURL,
+					common_web.CtxGetUserPrincipalAccessToken(ctx).GetUserID(),
+					body.Email,
+				)
+				res(ctx, dto, err)
+			})
+			promote.POST("approve", func(ctx *gin.Context) {
+				body := struct {
+					Code     string `form:"code"`
+					Password string `form:"password"`
+				}{}
+				if err := ctx.BindJSON(&body); err != nil {
+					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+						Message: err.Error(),
+					})
+					return
+				}
+				dto, err := u.APIPostApprovePromoteGuestUser(
+					ctx,
+					common_web.CtxGetUserPrincipalAccessToken(ctx),
+					body.Password,
+					body.Code,
+				)
+				res(ctx, dto, err)
+			})
+		}
 	}
 	return nil
 }
