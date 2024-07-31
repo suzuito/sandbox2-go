@@ -37,7 +37,7 @@ func (t *Impl) RequestPromoteGuestUser(
 		return terrors.Wrap(err)
 	}
 	frontURLBase.Path = fmt.Sprintf("/promote/%s", code)
-	if err := t.UserMailSender.SendUserCreationMail(ctx, email, &frontURLBase); err != nil {
+	if err := t.UserMailSender.SendUserCreationMail(ctx, user, &frontURLBase); err != nil {
 		return terrors.Wrap(err)
 	}
 	return nil

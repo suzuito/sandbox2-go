@@ -11,6 +11,7 @@ import (
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/businesslogic"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
+	infra_gmailsmtp "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/infra/gateway/mail/gmailsmtp"
 	infra_repository "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/infra/repository"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/web"
@@ -26,6 +27,7 @@ func Main(
 	e *gin.Engine,
 	l *slog.Logger,
 	gormDB *gorm.DB,
+	passwordSalt string,
 	userRefreshTokenJWTCreator auth.JWTCreator,
 	userRefreshTokenJWTVerifier auth.JWTVerifier,
 	userAccessTokenJWTCreator auth.JWTCreator,
@@ -36,18 +38,33 @@ func Main(
 	frontURLString string,
 	webPushVAPIDPrivateKey string,
 	webPushVAPIDPublicKey string,
+	userMailSenderGmailSmtpAccount string,
+	userMailSenderGmailSmtpPassword string,
+	userMailSenderGmailSmtpFromEmail string,
+	userMailSenderGmailSmtpFromName string,
 ) error {
 	b := businesslogic.Impl{
-		Repository:                    &infra_repository.Impl{GormDB: gormDB, NowFunc: time.Now},
-		NowFunc:                       time.Now,
-		UserRefreshTokenJWTCreator:    userRefreshTokenJWTCreator,
-		UserRefreshTokenJWTVerifier:   userRefreshTokenJWTVerifier,
-		UserAccessTokenJWTCreator:     userAccessTokenJWTCreator,
-		UserAccessTokenJWTVerifier:    userAccessTokenJWTVerifier,
-		OAuth2LoginFlowStateGenerator: &proc.IDGeneratorImpl{},
-		UserIDGenerator:               &proc.IDGeneratorImpl{},
-		WebPushVAPIDPrivateKey:        webPushVAPIDPrivateKey,
-		WebPushVAPIDPublicKey:         webPushVAPIDPublicKey,
+		Repository: &infra_repository.Impl{GormDB: gormDB, NowFunc: time.Now},
+		UserMailSender: &infra_gmailsmtp.UserMailSender{
+			Host:      "smtp.gmail.com",
+			Port:      587,
+			Account:   userMailSenderGmailSmtpAccount,
+			Password:  userMailSenderGmailSmtpPassword,
+			FromName:  userMailSenderGmailSmtpFromName,
+			FromEmail: userMailSenderGmailSmtpFromEmail,
+		},
+		NowFunc:                                   time.Now,
+		PasswordSalt:                              passwordSalt,
+		PasswordHasher:                            &proc.PasswordHasherMD5{},
+		UserRefreshTokenJWTCreator:                userRefreshTokenJWTCreator,
+		UserRefreshTokenJWTVerifier:               userRefreshTokenJWTVerifier,
+		UserAccessTokenJWTCreator:                 userAccessTokenJWTCreator,
+		UserAccessTokenJWTVerifier:                userAccessTokenJWTVerifier,
+		OAuth2LoginFlowStateGenerator:             &proc.IDGeneratorImpl{},
+		UserIDGenerator:                           &proc.IDGeneratorImpl{},
+		PromoteGuestUserConfirmationCodeGenerator: &proc.IDGeneratorImpl{},
+		WebPushVAPIDPrivateKey:                    webPushVAPIDPrivateKey,
+		WebPushVAPIDPublicKey:                     webPushVAPIDPublicKey,
 	}
 	u := usecase.Impl{
 		BusinessLogic: &b,

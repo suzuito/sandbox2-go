@@ -50,11 +50,7 @@ func (t *Impl) CreatePhotoStudioMember(
 	if err != nil {
 		return nil, nil, nil, "", terrors.Wrap(err)
 	}
-	salt, err := t.SaltRepository.Get(ctx)
-	if err != nil {
-		return nil, nil, nil, "", terrors.Wrap(err)
-	}
-	initialPasswordHashValue := t.PasswordHasher.Gen(salt, initialPassword)
+	initialPasswordHashValue := t.PasswordHasher.Gen([]byte(t.PasswordSalt), initialPassword)
 	created, roles, photoStudio, err := t.Repository.CreatePhotoStudioMember(
 		ctx,
 		photoStudioID,
@@ -76,11 +72,7 @@ func (t *Impl) VerifyPhotoStudioMemberPassword(
 	email string,
 	password string,
 ) (*entity.PhotoStudioMember, []*rbac.Role, *entity.PhotoStudio, error) {
-	salt, err := t.SaltRepository.Get(ctx)
-	if err != nil {
-		return nil, nil, nil, terrors.Wrap(err)
-	}
-	hashInput := t.PasswordHasher.Gen(salt, password)
+	hashInput := t.PasswordHasher.Gen([]byte(t.PasswordSalt), password)
 	hashInDB, member, roles, photoStudio, err := t.Repository.GetPhotoStudioMemberPasswordHashByEmail(ctx, photoStudioID, email)
 	if err != nil {
 		return nil, nil, nil, terrors.Wrap(err)

@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/businesslogic"
 	infra_repository "github.com/suzuito/sandbox2-go/photodx/service/auth/internal/infra/repository"
-	infra_saltrepository "github.com/suzuito/sandbox2-go/photodx/service/auth/internal/infra/saltrepository"
 	"github.com/suzuito/sandbox2-go/photodx/service/auth/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/auth/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
@@ -24,6 +23,7 @@ func Main(
 	e *gin.Engine,
 	l *slog.Logger,
 	gormDB *gorm.DB,
+	passwordSalt string,
 	adminRefreshTokenJWTCreator auth.JWTCreator,
 	adminRefreshTokenJWTVerifier auth.JWTVerifier,
 	adminAccessTokenJWTCreator auth.JWTCreator,
@@ -37,7 +37,7 @@ func Main(
 				GormDB:  gormDB,
 				NowFunc: time.Now,
 			},
-			SaltRepository:                            &infra_saltrepository.Impl{},
+			PasswordSalt:                              passwordSalt,
 			PasswordHasher:                            &proc.PasswordHasherMD5{},
 			PhotoStudioMemberIDGenerator:              &proc.IDGeneratorImpl{},
 			PhotoStudioMemberInitialPasswordGenerator: &proc.InitialPasswordGeneratorImpl{},

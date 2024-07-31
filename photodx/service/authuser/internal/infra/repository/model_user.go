@@ -7,16 +7,15 @@ import (
 )
 
 type modelUser struct {
-	ID                entity.UserID `gorm:"primaryKey;not null"`
-	Name              string
-	Email             string
-	EmailVerified     bool
-	ProfileImageURL   string
-	Active            bool      `gorm:"not null"`
-	Guest             bool      `gorm:"not null"`
-	InitializedByUser bool      `gorm:"not null"`
-	CreatedAt         time.Time `gorm:"not null"`
-	UpdatedAt         time.Time `gorm:"not null"`
+	ID              entity.UserID `gorm:"primaryKey;not null"`
+	Name            string
+	Email           string
+	EmailVerified   bool
+	ProfileImageURL string
+	Active          bool      `gorm:"not null"`
+	Guest           bool      `gorm:"not null"`
+	CreatedAt       time.Time `gorm:"not null"`
+	UpdatedAt       time.Time `gorm:"not null"`
 }
 
 func (t *modelUser) TableName() string {
