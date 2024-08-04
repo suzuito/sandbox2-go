@@ -10,18 +10,19 @@ import (
 )
 
 type Impl struct {
-	Repository                                repository.Repository
-	NowFunc                                   func() time.Time
-	UserRefreshTokenJWTCreator                auth.JWTCreator
-	UserRefreshTokenJWTVerifier               auth.JWTVerifier
-	UserAccessTokenJWTCreator                 auth.JWTCreator
-	UserAccessTokenJWTVerifier                auth.JWTVerifier
-	OAuth2LoginFlowStateGenerator             proc.RandomStringGenerator
-	PromoteGuestUserConfirmationCodeGenerator proc.RandomStringGenerator
-	UserIDGenerator                           proc.RandomStringGenerator
-	UserMailSender                            mail.UserMailSender
-	PasswordSalt                              string
-	PasswordHasher                            proc.PasswordHasher
-	WebPushVAPIDPublicKey                     string
-	WebPushVAPIDPrivateKey                    string
+	Repository                     repository.Repository
+	NowFunc                        func() time.Time
+	UserRefreshTokenJWTCreator     auth.JWTCreator
+	UserRefreshTokenJWTVerifier    auth.JWTVerifier
+	UserAccessTokenJWTCreator      auth.JWTCreator
+	UserAccessTokenJWTVerifier     auth.JWTVerifier
+	OAuth2LoginFlowStateGenerator  proc.RandomStringGenerator
+	UserCreationRequestIDGenerator proc.RandomStringGenerator
+	UserCreationCodeGenerator      proc.RandomStringGenerator
+	UserIDGenerator                proc.RandomStringGenerator
+	UserMailSender                 mail.UserMailSender
+	PasswordSalt                   string
+	PasswordHasher                 proc.PasswordHasher
+	WebPushVAPIDPublicKey          string
+	WebPushVAPIDPrivateKey         string
 }

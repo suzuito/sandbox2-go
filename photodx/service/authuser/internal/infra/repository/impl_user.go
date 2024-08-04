@@ -16,11 +16,27 @@ import (
 func (t *Impl) CreateUser(
 	ctx context.Context,
 	user *common_entity.User,
+	hashedPassword string,
 ) (*common_entity.User, error) {
+	now := t.NowFunc()
 	mUser := NewModelUser(user)
-	mUser.CreatedAt = t.NowFunc()
-	mUser.UpdatedAt = t.NowFunc()
-	if err := t.GormDB.Create(mUser).Error; err != nil {
+	mUser.CreatedAt = now
+	mUser.UpdatedAt = now
+	mUserPassword := modelUserPasswordHashValue{
+		UserID:    user.ID,
+		Value:     hashedPassword,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+	if err := t.GormDB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(mUser).Error; err != nil {
+			return terrors.Wrap(err)
+		}
+		if err := tx.Create(mUserPassword).Error; err != nil {
+			return terrors.Wrap(err)
+		}
+		return nil
+	}); err != nil {
 		return nil, terrors.Wrap(err)
 	}
 	return mUser.ToEntity(), nil
@@ -102,6 +118,23 @@ func (t *Impl) GetUser(
 	return mUser.ToEntity(), nil
 }
 
+func (t *Impl) GetUserByEmail(
+	ctx context.Context,
+	email string,
+) (*common_entity.User, error) {
+	mUser := modelUser{}
+	if err := t.GormDB.Where("email = ?", email).First(&mUser).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, terrors.Wrap(&repository.NoEntryError{
+				EntryType: repository.EntryTypeUser,
+				EntryID:   fmt.Sprintf("email:%s", email),
+			})
+		}
+		return nil, terrors.Wrap(err)
+	}
+	return mUser.ToEntity(), nil
+}
+
 func (t *Impl) GetUsers(
 	ctx context.Context,
 	userIDs []common_entity.UserID,
@@ -115,45 +148,4 @@ func (t *Impl) GetUsers(
 		ret = append(ret, u.ToEntity())
 	}
 	return ret, nil
-}
-
-func (t *Impl) PromoteUser(
-	ctx context.Context,
-	userID common_entity.UserID,
-	email string,
-	emailVerified bool,
-	passwordHashValue string,
-	active bool,
-) (*common_entity.User, error) {
-	now := t.NowFunc()
-	if err := t.GormDB.Transaction(func(tx *gorm.DB) error {
-		mUser := modelUser{}
-		if err := tx.
-			WithContext(ctx).
-			Where("id = ?", userID).
-			First(&mUser).
-			Error; err != nil {
-			return terrors.Wrap(err)
-		}
-		mUser.Active = active
-		mUser.Email = email
-		mUser.EmailVerified = emailVerified
-		mUser.UpdatedAt = t.NowFunc()
-		if err := tx.Save(&mUser).Error; err != nil {
-			return terrors.Wrap(err)
-		}
-		mUserPasswordHashValue := modelUserPasswordHashValue{
-			UserID:    userID,
-			Value:     passwordHashValue,
-			CreatedAt: now,
-			UpdatedAt: now,
-		}
-		if err := tx.Create(&mUserPasswordHashValue).Error; err != nil {
-			return terrors.Wrap(err)
-		}
-		return nil
-	}); err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	return t.GetUser(ctx, userID)
 }

@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 type UserID string
 type User struct {
 	ID              UserID `json:"id"`
@@ -11,8 +13,12 @@ type User struct {
 	Guest           bool   `json:"guest"`
 }
 
-type PromoteGuestUserConfirmationCode struct {
-	UserID UserID `json:"user_id"`
-	Email  string `json:"email"`
-	Code   string `json:"code"`
+type UserCreationRequestID string
+type UserCreationCode string
+
+type UserCreationRequest struct {
+	ID        UserCreationRequestID `json:"id"`
+	Email     string                `json:"email"`
+	Code      UserCreationCode      `json:"code"`
+	ExpiredAt time.Time             `json:"expiredAt"`
 }

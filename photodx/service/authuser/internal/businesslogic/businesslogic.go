@@ -9,6 +9,7 @@ import (
 	webpush "github.com/SherClockHolmes/webpush-go"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
+	pkg_entity "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/entity"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -53,27 +54,23 @@ type BusinessLogic interface {
 	) (*common_entity.User, error)
 
 	// impl_user.go
-	CreateGuestUser(
-		ctx context.Context,
-	) (*common_entity.User, error)
 	GetUser(
 		ctx context.Context,
 		userID common_entity.UserID,
 	) (*common_entity.User, error)
 
 	// impl_promote_guest_user.go
-	RequestPromoteGuestUser(
+	RequestRegisterUser(
 		ctx context.Context,
-		frontURLBase url.URL,
-		userID common_entity.UserID,
 		email string,
 		ttlSeconds int,
-	) error
-	PromoteGuestUser(
+		frontURL *url.URL,
+	) (pkg_entity.RequestRegisterUserResultCode, error)
+	RegisterUser(
 		ctx context.Context,
-		userID common_entity.UserID,
-		plainPassword string,
-		code string,
+		id common_entity.UserCreationRequestID,
+		code common_entity.UserCreationCode,
+		planinPassword string,
 	) (*common_entity.User, error)
 
 	// impl_web_push.go

@@ -27,14 +27,7 @@ type Repository interface {
 	CreateUser(
 		ctx context.Context,
 		user *common_entity.User,
-	) (*common_entity.User, error)
-	PromoteUser(
-		ctx context.Context,
-		userID common_entity.UserID,
-		email string,
-		emailVerified bool,
-		passwordHashValue string,
-		active bool,
+		hashedPassword string,
 	) (*common_entity.User, error)
 	GetUserByResourceOwnerID(
 		ctx context.Context,
@@ -49,6 +42,10 @@ type Repository interface {
 		ctx context.Context,
 		userID common_entity.UserID,
 	) (*common_entity.User, error)
+	GetUserByEmail(
+		ctx context.Context,
+		email string,
+	) (*common_entity.User, error)
 
 	UpdateOrCreateUserWebPushSubscription(
 		ctx context.Context,
@@ -59,15 +56,12 @@ type Repository interface {
 		userID common_entity.UserID,
 	) ([]*entity.UserWebPushSubscription, error)
 
-	CreatePromoteGuestUserConfirmationCode(
+	CreateUserCreationRequest(
 		ctx context.Context,
-		userID common_entity.UserID,
-		email string,
-		code string,
-		ttlSeconds int,
+		request *common_entity.UserCreationRequest,
 	) error
-	GetPromoteGuestUserConfirmationCodeNotExpired(
+	GetUserCreationRequest(
 		ctx context.Context,
-		userID common_entity.UserID,
-	) (*common_entity.PromoteGuestUserConfirmationCode, error)
+		id common_entity.UserCreationRequestID,
+	) (*common_entity.UserCreationRequest, error)
 }

@@ -17,6 +17,7 @@ import (
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
+	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
@@ -53,18 +54,19 @@ func Main(
 			FromName:  userMailSenderGmailSmtpFromName,
 			FromEmail: userMailSenderGmailSmtpFromEmail,
 		},
-		NowFunc:                                   time.Now,
-		PasswordSalt:                              passwordSalt,
-		PasswordHasher:                            &proc.PasswordHasherMD5{},
-		UserRefreshTokenJWTCreator:                userRefreshTokenJWTCreator,
-		UserRefreshTokenJWTVerifier:               userRefreshTokenJWTVerifier,
-		UserAccessTokenJWTCreator:                 userAccessTokenJWTCreator,
-		UserAccessTokenJWTVerifier:                userAccessTokenJWTVerifier,
-		OAuth2LoginFlowStateGenerator:             &proc.IDGeneratorImpl{},
-		UserIDGenerator:                           &proc.IDGeneratorImpl{},
-		PromoteGuestUserConfirmationCodeGenerator: &proc.IDGeneratorImpl{},
-		WebPushVAPIDPrivateKey:                    webPushVAPIDPrivateKey,
-		WebPushVAPIDPublicKey:                     webPushVAPIDPublicKey,
+		NowFunc:                        time.Now,
+		PasswordSalt:                   passwordSalt,
+		PasswordHasher:                 &proc.PasswordHasherMD5{},
+		UserRefreshTokenJWTCreator:     userRefreshTokenJWTCreator,
+		UserRefreshTokenJWTVerifier:    userRefreshTokenJWTVerifier,
+		UserAccessTokenJWTCreator:      userAccessTokenJWTCreator,
+		UserAccessTokenJWTVerifier:     userAccessTokenJWTVerifier,
+		OAuth2LoginFlowStateGenerator:  &proc.IDGeneratorImpl{},
+		UserIDGenerator:                &proc.IDGeneratorImpl{},
+		UserCreationRequestIDGenerator: &proc.IDGeneratorImpl{},
+		UserCreationCodeGenerator:      &proc.IDGeneratorImpl{},
+		WebPushVAPIDPrivateKey:         webPushVAPIDPrivateKey,
+		WebPushVAPIDPublicKey:          webPushVAPIDPublicKey,
 	}
 	u := usecase.Impl{
 		BusinessLogic: &b,
@@ -126,10 +128,6 @@ func Main(
 	// 	}
 	// })
 	// ==== Debug END ====
-	authuser.POST("guest", func(ctx *gin.Context) {
-		dto, err := u.APIPostGuest(ctx)
-		res(ctx, dto, err)
-	})
 	{
 		x := authuser.Group("x")
 		x.GET("callback", w.GetCallback)
@@ -235,8 +233,8 @@ func Main(
 			)
 		}
 		{
-			promote := z.Group("promote")
-			promote.POST("request", func(ctx *gin.Context) {
+			register := z.Group("register")
+			register.POST("request", func(ctx *gin.Context) {
 				body := struct {
 					Email string `json:"email"`
 				}{}
@@ -246,18 +244,18 @@ func Main(
 					})
 					return
 				}
-				dto, err := u.APIPostRequestPromoteGuestUser(
+				dto, err := u.APIPostRegisterRequest(
 					ctx,
-					*frontURL,
-					common_web.CtxGetUserPrincipalAccessToken(ctx).GetUserID(),
+					frontURL,
 					body.Email,
 				)
 				res(ctx, dto, err)
 			})
-			promote.POST("approve", func(ctx *gin.Context) {
+			register.POST("approve", func(ctx *gin.Context) {
 				body := struct {
-					Code     string `form:"code"`
-					Password string `form:"password"`
+					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
+					Code                  common_entity.UserCreationCode      `json:"code"`
+					Password              string                              `json:"password"`
 				}{}
 				if err := ctx.BindJSON(&body); err != nil {
 					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
@@ -265,11 +263,11 @@ func Main(
 					})
 					return
 				}
-				dto, err := u.APIPostApprovePromoteGuestUser(
+				dto, err := u.APIPostRegisterApprove(
 					ctx,
-					common_web.CtxGetUserPrincipalAccessToken(ctx),
-					body.Password,
+					body.UserCreationRequestID,
 					body.Code,
+					body.Password,
 				)
 				res(ctx, dto, err)
 			})

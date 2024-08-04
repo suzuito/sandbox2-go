@@ -7,10 +7,15 @@ import (
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
+type MailTo struct {
+	Email string
+	Name  string
+}
+
 type UserMailSender interface {
-	SendUserCreationMail(
+	SendUserCreationCode(
 		ctx context.Context,
-		user *common_entity.User,
-		verifierURL *url.URL,
+		req common_entity.UserCreationRequest,
+		userRegisterURL *url.URL,
 	) error
 }

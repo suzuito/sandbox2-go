@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"net/smtp"
 	"net/url"
+	"time"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
+	gateway_mail "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/gateway/mail"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -23,7 +25,7 @@ type UserMailSender struct {
 
 func (t *UserMailSender) sendUserMail(
 	ctx context.Context,
-	user *common_entity.User,
+	to *gateway_mail.MailTo,
 	subject string,
 	body string,
 ) error {
@@ -47,7 +49,7 @@ func (t *UserMailSender) sendUserMail(
 		return terrors.Wrap(err)
 	}
 	// 送信先
-	if err := c.Rcpt(user.Email); err != nil {
+	if err := c.Rcpt(to.Email); err != nil {
 		return terrors.Wrap(err)
 	}
 	// if err := c.Rcpt("hoge@example.com"); err != nil {
@@ -64,7 +66,7 @@ func (t *UserMailSender) sendUserMail(
 	}
 	defer wc.Close()
 	messageBody := ""
-	messageBody += fmt.Sprintf("To: %s<%s>\r\n", user.Name, user.Email)
+	messageBody += fmt.Sprintf("To: %s<%s>\r\n", to.Name, to.Email)
 	// messageBody += "Cc: ウルトラマン1000号<hoge@example.com>\r\n"
 	// messageBody += "Bcc: ウルトラマン2000号<fuga@example.com>\r\n"
 	messageBody += fmt.Sprintf("From: %s<replaced by google smtp server>\r\n", t.FromName)
@@ -78,19 +80,23 @@ func (t *UserMailSender) sendUserMail(
 	return nil
 }
 
-func (t *UserMailSender) SendUserCreationMail(
+func (t *UserMailSender) SendUserCreationCode(
 	ctx context.Context,
-	user *common_entity.User,
-	verifierURL *url.URL,
+	req common_entity.UserCreationRequest,
+	userRegisterURL *url.URL,
 ) error {
 	return t.sendUserMail(
 		ctx,
-		user,
-		"ユーザー登録確認メール",
+		&gateway_mail.MailTo{
+			Name:  "お客様",
+			Email: req.Email,
+		},
+		"ユーザー登録コード",
 		fmt.Sprintf(
-			"メールアドレス %s を持つユーザーが仮登録されました。本登録する場合は下記リンクへアクセスしてください。\r\n%s\r\n本メールが身に覚えのないものである場合は無視してください。\r\n",
-			user.Email,
-			verifierURL.String(),
+			"ユーザー登録コードです。\r\n\r\n%s\r\n\r\n%sへアクセスし、本登録コードを入力してください。ユーザー登録処理を開始できます。\r\n本メールが身に覚えのないものである場合は無視してください。\r\nなお、本コードの有効期限は%sです。",
+			req.Code,
+			userRegisterURL.String(),
+			req.ExpiredAt.Format(time.RFC3339),
 		),
 	)
 }
