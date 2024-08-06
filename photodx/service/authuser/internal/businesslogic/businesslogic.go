@@ -9,7 +9,6 @@ import (
 	webpush "github.com/SherClockHolmes/webpush-go"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
-	pkg_entity "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/entity"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
@@ -59,17 +58,21 @@ type BusinessLogic interface {
 		userID common_entity.UserID,
 	) (*common_entity.User, error)
 
-	// impl_promote_guest_user.go
-	RequestRegisterUser(
+	// impl_user_creation.go
+	CreateUserCreationRequest(
 		ctx context.Context,
 		email string,
 		ttlSeconds int,
 		frontURL *url.URL,
-	) (pkg_entity.RequestRegisterUserResultCode, error)
-	RegisterUser(
+	) (*common_entity.UserCreationRequest, error)
+	GetValidUserCreationRequestNotExpired(
 		ctx context.Context,
 		id common_entity.UserCreationRequestID,
 		code common_entity.UserCreationCode,
+	) (*common_entity.UserCreationRequest, error)
+	CreateUser(
+		ctx context.Context,
+		email string,
 		planinPassword string,
 	) (*common_entity.User, error)
 

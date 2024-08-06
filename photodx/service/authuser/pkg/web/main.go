@@ -233,7 +233,23 @@ func Main(
 			)
 		}
 		{
-			register := z.Group("register")
+			register := z.Group("user_creation")
+			// register.POST("", func(ctx *gin.Context) {
+			// 	body := struct {
+			// 		UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
+			// 	}{}
+			// 	if err := ctx.BindJSON(&body); err != nil {
+			// 		p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+			// 			Message: err.Error(),
+			// 		})
+			// 		return
+			// 	}
+			// 	dto, err := u.APIPostUserCreation(
+			// 		ctx,
+			// 		body.UserCreationRequestID,
+			// 	)
+			// 	res(ctx, dto, err)
+			// })
 			register.POST("request", func(ctx *gin.Context) {
 				body := struct {
 					Email string `json:"email"`
@@ -244,14 +260,32 @@ func Main(
 					})
 					return
 				}
-				dto, err := u.APIPostRegisterRequest(
+				dto, err := u.APIPostUserCreationRequest(
 					ctx,
 					frontURL,
 					body.Email,
 				)
 				res(ctx, dto, err)
 			})
-			register.POST("approve", func(ctx *gin.Context) {
+			register.POST("verify", func(ctx *gin.Context) {
+				body := struct {
+					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
+					Code                  common_entity.UserCreationCode      `json:"code"`
+				}{}
+				if err := ctx.BindJSON(&body); err != nil {
+					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+						Message: err.Error(),
+					})
+					return
+				}
+				dto, err := u.APIPostUserCreationVerify(
+					ctx,
+					body.UserCreationRequestID,
+					body.Code,
+				)
+				res(ctx, dto, err)
+			})
+			register.POST("create", func(ctx *gin.Context) {
 				body := struct {
 					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
 					Code                  common_entity.UserCreationCode      `json:"code"`
@@ -263,7 +297,7 @@ func Main(
 					})
 					return
 				}
-				dto, err := u.APIPostRegisterApprove(
+				dto, err := u.APIPostUserCreationCreate(
 					ctx,
 					body.UserCreationRequestID,
 					body.Code,

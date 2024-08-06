@@ -5,20 +5,19 @@ import (
 	"net/url"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
-	pkg_entity "github.com/suzuito/sandbox2-go/photodx/service/authuser/pkg/entity"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
 )
 
-type DTOAPIPostRegisterRequest struct {
-	Code pkg_entity.RequestRegisterUserResultCode `json:"code"`
+type DTOAPIPostUserCreationRequest struct {
+	UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestId"`
 }
 
-func (t *Impl) APIPostRegisterRequest(
+func (t *Impl) APIPostUserCreationRequest(
 	ctx context.Context,
 	frontBaseURL *url.URL,
 	email string,
-) (*DTOAPIPostRegisterRequest, error) {
-	result, err := t.BusinessLogic.RequestRegisterUser(
+) (*DTOAPIPostUserCreationRequest, error) {
+	req, err := t.BusinessLogic.CreateUserCreationRequest(
 		ctx,
 		email,
 		600,
@@ -27,26 +26,69 @@ func (t *Impl) APIPostRegisterRequest(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return &DTOAPIPostRegisterRequest{
-		Code: result,
+	return &DTOAPIPostUserCreationRequest{
+		UserCreationRequestID: req.ID,
 	}, nil
 }
 
-type DTOAPIPostRegisterApprove struct {
+// type DTOAPIPostUserCreation struct {
+// }
+//
+// func (t *Impl) APIPostUserCreation(
+// 	ctx context.Context,
+// 	userCreationRequestID common_entity.UserCreationRequestID,
+// ) (*DTOAPIPostUserCreation, error) {
+// 	_, err := t.BusinessLogic.GetValidUserCreationRequestNotExpired(ctx, userCreationRequestID)
+// 	if err != nil {
+// 		return nil, terrors.Wrap(err)
+// 	}
+// 	return &DTOAPIPostUserCreation{}, nil
+// }
+
+type DTOAPIPostUserCreationVerifyResult string
+
+const (
+	DTOAPIPostUserCreationVerifyResultOK DTOAPIPostUserCreationVerifyResult = "ok"
+	DTOAPIPostUserCreationVerifyResultNG DTOAPIPostUserCreationVerifyResult = "ng"
+)
+
+type DTOAPIPostUserCreationVerify struct {
+}
+
+func (t *Impl) APIPostUserCreationVerify(
+	ctx context.Context,
+	userCreationRequestID common_entity.UserCreationRequestID,
+	code common_entity.UserCreationCode,
+) (*DTOAPIPostUserCreationVerify, error) {
+	if _, err := t.BusinessLogic.GetValidUserCreationRequestNotExpired(
+		ctx,
+		userCreationRequestID,
+		code,
+	); err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return &DTOAPIPostUserCreationVerify{}, nil
+}
+
+type DTOAPIPostUserCreationCreate struct {
 	User         *common_entity.User `json:"user"`
 	RefreshToken string              `json:"refreshToken"`
 }
 
-func (t *Impl) APIPostRegisterApprove(
+func (t *Impl) APIPostUserCreationCreate(
 	ctx context.Context,
 	userCreationRequestID common_entity.UserCreationRequestID,
 	code common_entity.UserCreationCode,
 	plainPassword string,
-) (*DTOAPIPostRegisterApprove, error) {
-	user, err := t.BusinessLogic.RegisterUser(
+) (*DTOAPIPostUserCreationCreate, error) {
+	req, err := t.BusinessLogic.GetValidUserCreationRequestNotExpired(
 		ctx,
 		userCreationRequestID,
 		code,
+	)
+	user, err := t.BusinessLogic.CreateUser(
+		ctx,
+		req.Email,
 		plainPassword,
 	)
 	if err != nil {
@@ -56,7 +98,7 @@ func (t *Impl) APIPostRegisterApprove(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	return &DTOAPIPostRegisterApprove{
+	return &DTOAPIPostUserCreationCreate{
 		User:         user,
 		RefreshToken: refreshToken,
 	}, nil
