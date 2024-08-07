@@ -15,7 +15,7 @@ func (t *Impl) PostRefreshAccessToken(
 	ctx context.Context,
 	principal entity.UserPrincipalRefreshToken,
 ) (*DTOPostRefreshAccessToken, error) {
-	accessToken, err := t.BusinessLogic.CreateUserAccessToken(ctx, principal.GetUserID(), principal.IsGuestUser())
+	accessToken, err := t.BusinessLogic.CreateUserAccessToken(ctx, principal.GetUserID())
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

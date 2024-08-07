@@ -14,7 +14,6 @@ type User struct {
 	EmailVerified   bool   `json:"email_verified"`
 	ProfileImageURL string `json:"profileImageUrl" validate:"required"`
 	Active          bool   `json:"active"`
-	Guest           bool   `json:"guest"`
 }
 
 func (t *User) Validate() error {

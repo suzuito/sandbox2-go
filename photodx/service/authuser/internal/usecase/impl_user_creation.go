@@ -97,7 +97,7 @@ func (t *Impl) APIPostUserCreationCreate(
 	if err := t.BusinessLogic.DeleteUserCreationRequest(ctx, userCreationRequestID); err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	refreshToken, err := t.BusinessLogic.CreateUserRefreshToken(ctx, user.ID, user.Guest)
+	refreshToken, err := t.BusinessLogic.CreateUserRefreshToken(ctx, user.ID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

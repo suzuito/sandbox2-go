@@ -113,7 +113,6 @@ func (t *Impl) CreateUser(
 		EmailVerified:   true,
 		ProfileImageURL: "https://vos.line-scdn.net/chdev-console-static/default-profile.png",
 		Active:          true,
-		Guest:           false,
 	}
 	if err := user.Validate(); err != nil {
 		return nil, terrors.Wrap(err)

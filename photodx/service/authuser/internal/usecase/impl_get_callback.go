@@ -53,11 +53,11 @@ func (t *Impl) GetCallback(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	refreshToken, err := t.BusinessLogic.CreateUserRefreshToken(ctx, user.ID, false)
+	refreshToken, err := t.BusinessLogic.CreateUserRefreshToken(ctx, user.ID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
-	accessToken, err := t.BusinessLogic.CreateUserAccessToken(ctx, user.ID, false)
+	accessToken, err := t.BusinessLogic.CreateUserAccessToken(ctx, user.ID)
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}

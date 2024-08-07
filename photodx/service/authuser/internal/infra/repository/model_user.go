@@ -13,7 +13,6 @@ type modelUser struct {
 	EmailVerified   bool
 	ProfileImageURL string
 	Active          bool      `gorm:"not null"`
-	Guest           bool      `gorm:"not null"`
 	CreatedAt       time.Time `gorm:"not null"`
 	UpdatedAt       time.Time `gorm:"not null"`
 }
@@ -30,7 +29,6 @@ func (t *modelUser) ToEntity() *entity.User {
 		EmailVerified:   t.EmailVerified,
 		ProfileImageURL: t.ProfileImageURL,
 		Active:          t.Active,
-		Guest:           t.Guest,
 	}
 }
 
@@ -42,6 +40,5 @@ func NewModelUser(s *entity.User) *modelUser {
 		EmailVerified:   s.EmailVerified,
 		ProfileImageURL: s.ProfileImageURL,
 		Active:          s.Active,
-		Guest:           s.Guest,
 	}
 }

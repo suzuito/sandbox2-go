@@ -34,7 +34,6 @@ func (t *Impl) CreateUserIfNotExistsFromResourceOwnerID(
 		return nil, terrors.Wrap(err)
 	}
 	user.ID = entity.UserID(userID)
-	user.Guest = false
 	createdUser, err := t.Repository.CreateUserByResourceOwnerID(
 		ctx,
 		user,

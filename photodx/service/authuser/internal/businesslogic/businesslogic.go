@@ -17,14 +17,12 @@ type BusinessLogic interface {
 	CreateUserAccessToken(
 		ctx context.Context,
 		userID common_entity.UserID,
-		isGuest bool,
 	) (string, error)
 
 	// impl_user_refresh_token.go
 	CreateUserRefreshToken(
 		ctx context.Context,
 		userID common_entity.UserID,
-		isGuest bool,
 	) (string, error)
 	VerifyUserRefreshToken(
 		ctx context.Context,

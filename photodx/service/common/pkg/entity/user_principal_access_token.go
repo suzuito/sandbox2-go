@@ -9,7 +9,6 @@ import (
 
 type UserPrincipalAccessToken interface {
 	GetUserID() UserID
-	IsGuest() bool
 	GetPermissions() []*pbrbac.Permission
 }
 

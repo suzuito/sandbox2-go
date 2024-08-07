@@ -14,17 +14,12 @@ import (
 func (t *Impl) CreateUserAccessToken(
 	ctx context.Context,
 	userID entity.UserID,
-	isGuest bool,
 ) (string, error) {
 	now := t.NowFunc()
 	ttlMinutes := 5
 	expiresAt := now.Add(time.Second * time.Duration(ttlMinutes) * 60)
 	roles := []rbac.RoleID{}
-	if isGuest {
-		roles = append(roles, rbac.RoleGuest.ID)
-	} else {
-		roles = append(roles, rbac.RoleUser.ID)
-	}
+	roles = append(roles, rbac.RoleUser.ID)
 	claims := auth.JWTClaimsUserAccessToken{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   string(userID),
@@ -32,8 +27,7 @@ func (t *Impl) CreateUserAccessToken(
 			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
-		Roles:       roles,
-		IsGuestUser: isGuest,
+		Roles: roles,
 	}
 	tokenString, err := t.UserAccessTokenJWTCreator.CreateJWTToken(
 		ctx,
