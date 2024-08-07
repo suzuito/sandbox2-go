@@ -31,19 +31,19 @@ func (t *Impl) APIPostUserCreationRequest(
 	}, nil
 }
 
-// type DTOAPIPostUserCreation struct {
-// }
-//
-// func (t *Impl) APIPostUserCreation(
-// 	ctx context.Context,
-// 	userCreationRequestID common_entity.UserCreationRequestID,
-// ) (*DTOAPIPostUserCreation, error) {
-// 	_, err := t.BusinessLogic.GetValidUserCreationRequestNotExpired(ctx, userCreationRequestID)
-// 	if err != nil {
-// 		return nil, terrors.Wrap(err)
-// 	}
-// 	return &DTOAPIPostUserCreation{}, nil
-// }
+type DTOAPIPostUserCreation struct {
+}
+
+func (t *Impl) APIPostUserCreation(
+	ctx context.Context,
+	userCreationRequestID common_entity.UserCreationRequestID,
+) (*DTOAPIPostUserCreation, error) {
+	_, err := t.BusinessLogic.GetUserCreationRequestNotExpired(ctx, userCreationRequestID)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	return &DTOAPIPostUserCreation{}, nil
+}
 
 type DTOAPIPostUserCreationVerifyResult string
 

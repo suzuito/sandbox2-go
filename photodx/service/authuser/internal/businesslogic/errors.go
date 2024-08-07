@@ -2,4 +2,4 @@ package businesslogic
 
 import "fmt"
 
-var ErrMismtachUserCreationRequestCode = fmt.Errorf("missmatch code")
+var ErrMismatchUserCreationCode = fmt.Errorf("missmatch code")

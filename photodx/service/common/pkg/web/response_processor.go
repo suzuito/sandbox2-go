@@ -57,7 +57,7 @@ var (
 		FailStatusCode: http.StatusInternalServerError,
 		LogError:       true,
 		Response: &ResponseError{
-			Message: "bad request",
+			Message: "internal server error",
 		},
 	}
 )

@@ -61,7 +61,20 @@ func (t *Impl) GetValidUserCreationRequestNotExpired(
 	id common_entity.UserCreationRequestID,
 	code common_entity.UserCreationCode,
 ) (*common_entity.UserCreationRequest, error) {
-	now := t.NowFunc()
+	r, err := t.GetUserCreationRequestNotExpired(ctx, id)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	if r.Code != code {
+		return nil, terrors.Wrap(ErrMismatchUserCreationCode)
+	}
+	return r, nil
+}
+
+func (t *Impl) GetUserCreationRequestNotExpired(
+	ctx context.Context,
+	id common_entity.UserCreationRequestID,
+) (*common_entity.UserCreationRequest, error) {
 	r, err := t.Repository.GetUserCreationRequest(
 		ctx,
 		id,
@@ -69,14 +82,12 @@ func (t *Impl) GetValidUserCreationRequestNotExpired(
 	if err != nil {
 		return nil, terrors.Wrap(err)
 	}
+	now := t.NowFunc()
 	if now.After(r.ExpiredAt) {
 		return nil, &common_repository.NoEntryError{
 			EntryType: "User",
 			EntryID:   string(id),
 		}
-	}
-	if r.Code != code {
-		return nil, terrors.Wrap(ErrMismtachUserCreationRequestCode)
 	}
 	return r, nil
 }

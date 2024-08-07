@@ -69,7 +69,7 @@ func (t *UserMailSender) sendUserMail(
 	messageBody += fmt.Sprintf("To: %s<%s>\r\n", to.Name, to.Email)
 	// messageBody += "Cc: ウルトラマン1000号<hoge@example.com>\r\n"
 	// messageBody += "Bcc: ウルトラマン2000号<fuga@example.com>\r\n"
-	messageBody += fmt.Sprintf("From: %s<replaced by google smtp server>\r\n", t.FromName)
+	messageBody += fmt.Sprintf("From: %s\r\n", t.FromName)
 	messageBody += fmt.Sprintf("Subject: %s\r\n", subject)
 	messageBody += body
 	// messageBody += "こんにちは\r\n私はウルトラマンである\r\nhttps://www.example.com\r\n"
@@ -93,7 +93,7 @@ func (t *UserMailSender) SendUserCreationCode(
 		},
 		"ユーザー登録コード",
 		fmt.Sprintf(
-			"ユーザー登録コードです。\r\n\r\n%s\r\n\r\n%sへアクセスし、本登録コードを入力してください。ユーザー登録処理を開始できます。\r\n本メールが身に覚えのないものである場合は無視してください。\r\nなお、本コードの有効期限は%sです。",
+			"ユーザー登録コードです。\r\n\r\n%s\r\n\r\n%sへアクセスし、登録コードを入力してください。ユーザー登録処理を開始できます。\r\n本メールが身に覚えのないものである場合は無視してください。\r\nなお、本コードの有効期限は%sです。",
 			req.Code,
 			userRegisterURL.String(),
 			req.ExpiredAt.Format(time.RFC3339),

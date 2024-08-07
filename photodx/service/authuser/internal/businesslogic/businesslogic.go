@@ -70,6 +70,10 @@ type BusinessLogic interface {
 		id common_entity.UserCreationRequestID,
 		code common_entity.UserCreationCode,
 	) (*common_entity.UserCreationRequest, error)
+	GetUserCreationRequestNotExpired(
+		ctx context.Context,
+		id common_entity.UserCreationRequestID,
+	) (*common_entity.UserCreationRequest, error)
 	CreateUser(
 		ctx context.Context,
 		email string,

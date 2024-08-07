@@ -13,12 +13,13 @@ import (
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
 	infra_gmailsmtp "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/infra/gateway/mail/gmailsmtp"
 	infra_repository "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/infra/repository"
+	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/proc"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/usecase"
 	internal_web "github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/auth"
 	common_businesslogic "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/businesslogic"
 	common_entity "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/entity"
-	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
+	common_proc "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/proc"
 	common_web "github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web"
 	"github.com/suzuito/sandbox2-go/photodx/service/common/pkg/web/presenter"
 	"gorm.io/gorm"
@@ -56,15 +57,15 @@ func Main(
 		},
 		NowFunc:                        time.Now,
 		PasswordSalt:                   passwordSalt,
-		PasswordHasher:                 &proc.PasswordHasherMD5{},
+		PasswordHasher:                 &common_proc.PasswordHasherMD5{},
 		UserRefreshTokenJWTCreator:     userRefreshTokenJWTCreator,
 		UserRefreshTokenJWTVerifier:    userRefreshTokenJWTVerifier,
 		UserAccessTokenJWTCreator:      userAccessTokenJWTCreator,
 		UserAccessTokenJWTVerifier:     userAccessTokenJWTVerifier,
-		OAuth2LoginFlowStateGenerator:  &proc.IDGeneratorImpl{},
-		UserIDGenerator:                &proc.IDGeneratorImpl{},
-		UserCreationRequestIDGenerator: &proc.IDGeneratorImpl{},
-		UserCreationCodeGenerator:      &proc.IDGeneratorImpl{},
+		OAuth2LoginFlowStateGenerator:  &common_proc.IDGeneratorImpl{},
+		UserIDGenerator:                &common_proc.IDGeneratorImpl{},
+		UserCreationRequestIDGenerator: &common_proc.IDGeneratorImpl{},
+		UserCreationCodeGenerator:      &proc.UserCreationCodeGeneratorImpl{},
 		WebPushVAPIDPrivateKey:         webPushVAPIDPrivateKey,
 		WebPushVAPIDPublicKey:          webPushVAPIDPublicKey,
 	}
@@ -89,6 +90,17 @@ func Main(
 		return terrors.Wrap(err)
 	}
 	p := presenter.Impl{}
+	webResponseOption := common_web.DefaultWebResponseOption
+	webResponseOption.ErrorHandlers = append(
+		webResponseOption.ErrorHandlers,
+		&common_web.WebResponseOptionErrorHandler{
+			IsErrorTarget:  businesslogic.ErrMismatchUserCreationCode,
+			FailStatusCode: http.StatusBadRequest,
+			Response: &common_web.ResponseError{
+				Message: "mismatch code",
+			},
+		},
+	)
 	res := func(ctx *gin.Context, r any, err error) {
 		common_web.Response(
 			ctx,
@@ -96,7 +108,7 @@ func Main(
 			&p,
 			r,
 			err,
-			&common_web.DefaultWebResponseOption,
+			&webResponseOption,
 		)
 	}
 	w := internal_web.Impl{
@@ -131,6 +143,80 @@ func Main(
 	{
 		x := authuser.Group("x")
 		x.GET("callback", w.GetCallback)
+		{
+			userCreation := x.Group("user_creation")
+			userCreation.POST("", func(ctx *gin.Context) {
+				body := struct {
+					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
+				}{}
+				if err := ctx.BindJSON(&body); err != nil {
+					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+						Message: err.Error(),
+					})
+					return
+				}
+				dto, err := u.APIPostUserCreation(
+					ctx,
+					body.UserCreationRequestID,
+				)
+				res(ctx, dto, err)
+			})
+			userCreation.POST("request", func(ctx *gin.Context) {
+				body := struct {
+					Email string `json:"email"`
+				}{}
+				if err := ctx.BindJSON(&body); err != nil {
+					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+						Message: err.Error(),
+					})
+					return
+				}
+				dto, err := u.APIPostUserCreationRequest(
+					ctx,
+					frontURL,
+					body.Email,
+				)
+				res(ctx, dto, err)
+			})
+			userCreation.POST("verify", func(ctx *gin.Context) {
+				body := struct {
+					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
+					Code                  common_entity.UserCreationCode      `json:"code"`
+				}{}
+				if err := ctx.BindJSON(&body); err != nil {
+					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+						Message: err.Error(),
+					})
+					return
+				}
+				dto, err := u.APIPostUserCreationVerify(
+					ctx,
+					body.UserCreationRequestID,
+					body.Code,
+				)
+				res(ctx, dto, err)
+			})
+			userCreation.POST("create", func(ctx *gin.Context) {
+				body := struct {
+					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
+					Code                  common_entity.UserCreationCode      `json:"code"`
+					Password              string                              `json:"password"`
+				}{}
+				if err := ctx.BindJSON(&body); err != nil {
+					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+						Message: err.Error(),
+					})
+					return
+				}
+				dto, err := u.APIPostUserCreationCreate(
+					ctx,
+					body.UserCreationRequestID,
+					body.Code,
+					body.Password,
+				)
+				res(ctx, dto, err)
+			})
+		}
 	}
 	{
 		authorize := authuser.Group("authorize")
@@ -231,80 +317,6 @@ func Main(
 					res(ctx, dto, err)
 				},
 			)
-		}
-		{
-			register := z.Group("user_creation")
-			// register.POST("", func(ctx *gin.Context) {
-			// 	body := struct {
-			// 		UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
-			// 	}{}
-			// 	if err := ctx.BindJSON(&body); err != nil {
-			// 		p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-			// 			Message: err.Error(),
-			// 		})
-			// 		return
-			// 	}
-			// 	dto, err := u.APIPostUserCreation(
-			// 		ctx,
-			// 		body.UserCreationRequestID,
-			// 	)
-			// 	res(ctx, dto, err)
-			// })
-			register.POST("request", func(ctx *gin.Context) {
-				body := struct {
-					Email string `json:"email"`
-				}{}
-				if err := ctx.BindJSON(&body); err != nil {
-					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-						Message: err.Error(),
-					})
-					return
-				}
-				dto, err := u.APIPostUserCreationRequest(
-					ctx,
-					frontURL,
-					body.Email,
-				)
-				res(ctx, dto, err)
-			})
-			register.POST("verify", func(ctx *gin.Context) {
-				body := struct {
-					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
-					Code                  common_entity.UserCreationCode      `json:"code"`
-				}{}
-				if err := ctx.BindJSON(&body); err != nil {
-					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-						Message: err.Error(),
-					})
-					return
-				}
-				dto, err := u.APIPostUserCreationVerify(
-					ctx,
-					body.UserCreationRequestID,
-					body.Code,
-				)
-				res(ctx, dto, err)
-			})
-			register.POST("create", func(ctx *gin.Context) {
-				body := struct {
-					UserCreationRequestID common_entity.UserCreationRequestID `json:"userCreationRequestID"`
-					Code                  common_entity.UserCreationCode      `json:"code"`
-					Password              string                              `json:"password"`
-				}{}
-				if err := ctx.BindJSON(&body); err != nil {
-					p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
-						Message: err.Error(),
-					})
-					return
-				}
-				dto, err := u.APIPostUserCreationCreate(
-					ctx,
-					body.UserCreationRequestID,
-					body.Code,
-					body.Password,
-				)
-				res(ctx, dto, err)
-			})
 		}
 	}
 	return nil

@@ -110,15 +110,13 @@ CREATE TABLE `users_web_push_subscriptions` (
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
-CREATE TABLE `promote_guest_user_confirmation_codes` (
+CREATE TABLE `user_creation_requests` (
     -- Not master data table
-    `user_id` VARCHAR(128) NOT NULL,
+    `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `email` VARCHAR(128) NOT NULL,
     `code` VARCHAR(256) NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `expired_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`user_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+    `expired_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 --
