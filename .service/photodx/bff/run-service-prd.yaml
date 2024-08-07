@@ -102,3 +102,24 @@ spec:
                 secretKeyRef:
                   key: "1"
                   name: web_push_api_admin_vapid_public_key
+            - name: USER_PASSWORD_SALT
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: user_password_salt
+            - name: ADMIN_PASSWORD_SALT
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: admin_password_salt
+            - name: USER_MAIL_SENDER_GMAIL_SMTP_ACCOUNT
+              value: suzuito3@gmail.com
+            - name: USER_MAIL_SENDER_GMAIL_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: "1"
+                  name: user_mail_sender_gmail_smtp_password
+            - name: USER_MAIL_SENDER_GMAIL_SMTP_FROM_EMAIL
+              value: suzuito3@gmail.com
+            - name: USER_MAIL_SENDER_GMAIL_SMTP_FROM_NAME
+              value: PhotoDX運用
