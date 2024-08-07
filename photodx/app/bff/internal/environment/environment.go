@@ -33,4 +33,12 @@ type Environment struct {
 	WebPushAPIUserVAPIDPublicKey   string `envconfig:"WEB_PUSH_API_USER_VAPID_PUBLIC_KEY" required:"true"`
 	WebPushAPIAdminVAPIDPrivateKey string `envconfig:"WEB_PUSH_API_ADMIN_VAPID_PRIVATE_KEY" required:"true"`
 	WebPushAPIAdminVAPIDPublicKey  string `envconfig:"WEB_PUSH_API_ADMIN_VAPID_PUBLIC_KEY" required:"true"`
+
+	UserPasswordSalt  string `required:"true" split_words:"true"`
+	AdminPasswordSalt string `required:"true" split_words:"true"`
+
+	UserMailSenderGmailSmtpAccount   string `required:"true" split_words:"true"`
+	UserMailSenderGmailSmtpPassword  string `required:"true" split_words:"true"`
+	UserMailSenderGmailSmtpFromEmail string `required:"true" split_words:"true"`
+	UserMailSenderGmailSmtpFromName  string `required:"true" split_words:"true"`
 }

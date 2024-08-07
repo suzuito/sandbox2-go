@@ -7,14 +7,14 @@ import (
 )
 
 type modelUser struct {
-	ID                entity.UserID `gorm:"primaryKey;not null"`
-	Name              string
-	ProfileImageURL   string
-	Active            bool      `gorm:"not null"`
-	Guest             bool      `gorm:"not null"`
-	InitializedByUser bool      `gorm:"not null"`
-	CreatedAt         time.Time `gorm:"not null"`
-	UpdatedAt         time.Time `gorm:"not null"`
+	ID              entity.UserID `gorm:"primaryKey;not null"`
+	Name            string
+	Email           string
+	EmailVerified   bool
+	ProfileImageURL string
+	Active          bool      `gorm:"not null"`
+	CreatedAt       time.Time `gorm:"not null"`
+	UpdatedAt       time.Time `gorm:"not null"`
 }
 
 func (t *modelUser) TableName() string {
@@ -23,22 +23,22 @@ func (t *modelUser) TableName() string {
 
 func (t *modelUser) ToEntity() *entity.User {
 	return &entity.User{
-		ID:                t.ID,
-		Name:              t.Name,
-		ProfileImageURL:   t.ProfileImageURL,
-		Active:            t.Active,
-		Guest:             t.Guest,
-		InitializedByUser: t.InitializedByUser,
+		ID:              t.ID,
+		Name:            t.Name,
+		Email:           t.Email,
+		EmailVerified:   t.EmailVerified,
+		ProfileImageURL: t.ProfileImageURL,
+		Active:          t.Active,
 	}
 }
 
 func NewModelUser(s *entity.User) *modelUser {
 	return &modelUser{
-		ID:                s.ID,
-		Name:              s.Name,
-		ProfileImageURL:   s.ProfileImageURL,
-		Active:            s.Active,
-		Guest:             s.Guest,
-		InitializedByUser: s.InitializedByUser,
+		ID:              s.ID,
+		Name:            s.Name,
+		Email:           s.Email,
+		EmailVerified:   s.EmailVerified,
+		ProfileImageURL: s.ProfileImageURL,
+		Active:          s.Active,
 	}
 }

@@ -3,7 +3,6 @@ package businesslogic
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/suzuito/sandbox2-go/common/terrors"
 	"github.com/suzuito/sandbox2-go/photodx/service/authuser/internal/entity/oauth2loginflow"
@@ -35,7 +34,6 @@ func (t *Impl) CreateUserIfNotExistsFromResourceOwnerID(
 		return nil, terrors.Wrap(err)
 	}
 	user.ID = entity.UserID(userID)
-	user.Guest = false
 	createdUser, err := t.Repository.CreateUserByResourceOwnerID(
 		ctx,
 		user,
@@ -46,23 +44,6 @@ func (t *Impl) CreateUserIfNotExistsFromResourceOwnerID(
 		return nil, terrors.Wrap(err)
 	}
 	return createdUser, nil
-}
-
-func (t *Impl) CreateGuestUser(
-	ctx context.Context,
-) (*common_entity.User, error) {
-	userID, err := t.UserIDGenerator.Gen()
-	if err != nil {
-		return nil, terrors.Wrap(err)
-	}
-	user := common_entity.User{
-		ID:              common_entity.UserID(userID),
-		Name:            fmt.Sprintf("ゲストユーザー%d", t.NowFunc().Unix()),
-		ProfileImageURL: "https://vos.line-scdn.net/chdev-console-static/default-profile.png",
-		Guest:           true,
-		Active:          true,
-	}
-	return t.Repository.CreateUser(ctx, &user)
 }
 
 func (t *Impl) GetUsers(

@@ -17,14 +17,12 @@ type BusinessLogic interface {
 	CreateUserAccessToken(
 		ctx context.Context,
 		userID common_entity.UserID,
-		isGuest bool,
 	) (string, error)
 
 	// impl_user_refresh_token.go
 	CreateUserRefreshToken(
 		ctx context.Context,
 		userID common_entity.UserID,
-		isGuest bool,
 	) (string, error)
 	VerifyUserRefreshToken(
 		ctx context.Context,
@@ -53,12 +51,35 @@ type BusinessLogic interface {
 	) (*common_entity.User, error)
 
 	// impl_user.go
-	CreateGuestUser(
-		ctx context.Context,
-	) (*common_entity.User, error)
 	GetUser(
 		ctx context.Context,
 		userID common_entity.UserID,
+	) (*common_entity.User, error)
+
+	// impl_user_creation.go
+	CreateUserCreationRequest(
+		ctx context.Context,
+		email string,
+		ttlSeconds int,
+		frontURL *url.URL,
+	) (*common_entity.UserCreationRequest, error)
+	DeleteUserCreationRequest(
+		ctx context.Context,
+		userCreationRequestID common_entity.UserCreationRequestID,
+	) error
+	GetValidUserCreationRequestNotExpired(
+		ctx context.Context,
+		id common_entity.UserCreationRequestID,
+		code common_entity.UserCreationCode,
+	) (*common_entity.UserCreationRequest, error)
+	GetUserCreationRequestNotExpired(
+		ctx context.Context,
+		id common_entity.UserCreationRequestID,
+	) (*common_entity.UserCreationRequest, error)
+	CreateUser(
+		ctx context.Context,
+		email string,
+		planinPassword string,
 	) (*common_entity.User, error)
 
 	// impl_web_push.go

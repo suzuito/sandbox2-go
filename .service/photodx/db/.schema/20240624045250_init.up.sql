@@ -1,4 +1,6 @@
+--
 -- Admin auth
+--
 CREATE TABLE `photo_studios` (
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
     `name` VARCHAR(128) NOT NULL, -- TODO: Rethink MAX length
@@ -52,7 +54,9 @@ CREATE TABLE `photo_studio_members_web_push_subscriptions` (
     FOREIGN KEY (`photo_studio_member_id`) REFERENCES `photo_studio_members` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
+--
 -- User auth
+--
 CREATE TABLE `oauth2_loginflow_states` (
     -- Not master data table
     `code` VARCHAR(128) PRIMARY KEY NOT NULL,
@@ -65,13 +69,22 @@ CREATE TABLE `users` (
     -- TODO By allowing guest user, the number of rows of this table will be big size.
     --      Must use nosql like firestore
     `id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `email` VARCHAR(128),
+    `email_verified` BOOLEAN NOT NULL,
     `name` VARCHAR(128),
     `profile_image_url` VARCHAR(512) NOT NULL,
-    `initialized_by_user` BOOLEAN NOT NULL,
     `active` BOOLEAN NOT NULL,
-    `guest` BOOLEAN NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY (`email`)
+);
+
+CREATE TABLE `user_password_hash_values` (
+    `user_id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `value` VARCHAR(512) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 CREATE TABLE `provider_resource_owners_users_mappings` (
@@ -86,8 +99,6 @@ CREATE TABLE `provider_resource_owners_users_mappings` (
 
 CREATE TABLE `users_web_push_subscriptions` (
     -- Not master data table
-    -- TODO By allowing guest user, the number of rows of this table will be big size.
-    --      Must use nosql like firestore
     `endpoint` VARCHAR(512) PRIMARY KEY NOT NULL,
     `user_id` VARCHAR(128) NOT NULL,
     `expiration_time` TIMESTAMP,
@@ -96,7 +107,18 @@ CREATE TABLE `users_web_push_subscriptions` (
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
+CREATE TABLE `user_creation_requests` (
+    -- Not master data table
+    `id` VARCHAR(128) PRIMARY KEY NOT NULL,
+    `email` VARCHAR(128) NOT NULL,
+    `code` VARCHAR(256) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `expired_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+--
 -- Admin
+--
 CREATE TABLE `photo_studio_users` (
     `photo_studio_id` VARCHAR(128) NOT NULL,
     `user_id` VARCHAR(128) NOT NULL,

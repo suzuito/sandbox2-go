@@ -26,6 +26,5 @@ func (t *Impl) GenerateUserFromLINEProfile(
 		}
 	}
 	user.Active = true
-	user.InitializedByUser = false
 	return user, nil
 }

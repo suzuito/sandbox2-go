@@ -10,7 +10,7 @@ import (
 
 type Impl struct {
 	Repository                                repository.Repository
-	SaltRepository                            repository.SaltRepository
+	PasswordSalt                              string
 	PasswordHasher                            proc.PasswordHasher
 	PhotoStudioMemberIDGenerator              proc.RandomStringGenerator
 	PhotoStudioMemberInitialPasswordGenerator proc.RandomStringGenerator

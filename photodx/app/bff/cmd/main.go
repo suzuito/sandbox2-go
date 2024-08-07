@@ -43,6 +43,7 @@ func setUp(
 	engine := gin.Default()
 	authBusinessLogic := auth_businesslogic.Main(
 		resource.GormDB,
+		env.AdminPasswordSalt,
 		env.WebPushAPIAdminVAPIDPrivateKey,
 		env.WebPushAPIAdminVAPIDPublicKey,
 	)
@@ -74,6 +75,7 @@ func setUp(
 		engine,
 		resource.Logger,
 		resource.GormDB,
+		env.AdminPasswordSalt,
 		resource.AdminRefreshTokenJWTCreator,
 		resource.AdminRefreshTokenJWTVerifier,
 		resource.AdminAccessTokenJWTCreator,
@@ -97,6 +99,7 @@ func setUp(
 		engine,
 		resource.Logger,
 		resource.GormDB,
+		env.UserPasswordSalt,
 		resource.UserRefreshTokenJWTCreator,
 		resource.UserRefreshTokenJWTVerifier,
 		resource.UserAccessTokenJWTCreator,
@@ -107,6 +110,10 @@ func setUp(
 		env.FrontBaseURL,
 		env.WebPushAPIUserVAPIDPrivateKey,
 		env.WebPushAPIUserVAPIDPublicKey,
+		env.UserMailSenderGmailSmtpAccount,
+		env.UserMailSenderGmailSmtpPassword,
+		env.UserMailSenderGmailSmtpFromEmail,
+		env.UserMailSenderGmailSmtpFromName,
 	); err != nil {
 		return terrors.Wrapf("Main is failed : %w", err)
 	}

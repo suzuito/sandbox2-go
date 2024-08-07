@@ -27,6 +27,7 @@ type Repository interface {
 	CreateUser(
 		ctx context.Context,
 		user *common_entity.User,
+		hashedPassword string,
 	) (*common_entity.User, error)
 	GetUserByResourceOwnerID(
 		ctx context.Context,
@@ -41,6 +42,10 @@ type Repository interface {
 		ctx context.Context,
 		userID common_entity.UserID,
 	) (*common_entity.User, error)
+	GetUserByEmail(
+		ctx context.Context,
+		email string,
+	) (*common_entity.User, error)
 
 	UpdateOrCreateUserWebPushSubscription(
 		ctx context.Context,
@@ -50,4 +55,17 @@ type Repository interface {
 		ctx context.Context,
 		userID common_entity.UserID,
 	) ([]*entity.UserWebPushSubscription, error)
+
+	CreateUserCreationRequest(
+		ctx context.Context,
+		request *common_entity.UserCreationRequest,
+	) error
+	DeleteUserCreationRequest(
+		ctx context.Context,
+		userCreationRequestID common_entity.UserCreationRequestID,
+	) error
+	GetUserCreationRequest(
+		ctx context.Context,
+		id common_entity.UserCreationRequestID,
+	) (*common_entity.UserCreationRequest, error)
 }
