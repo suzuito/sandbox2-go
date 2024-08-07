@@ -65,6 +65,10 @@ type BusinessLogic interface {
 		ttlSeconds int,
 		frontURL *url.URL,
 	) (*common_entity.UserCreationRequest, error)
+	DeleteUserCreationRequest(
+		ctx context.Context,
+		userCreationRequestID common_entity.UserCreationRequestID,
+	) error
 	GetValidUserCreationRequestNotExpired(
 		ctx context.Context,
 		id common_entity.UserCreationRequestID,

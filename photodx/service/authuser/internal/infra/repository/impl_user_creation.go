@@ -41,3 +41,13 @@ func (t *Impl) GetUserCreationRequest(
 	}
 	return m.ToEntity(), nil
 }
+
+func (t *Impl) DeleteUserCreationRequest(
+	ctx context.Context,
+	userCreationRequestID common_entity.UserCreationRequestID,
+) error {
+	if err := t.GormDB.Where("id = ?", userCreationRequestID).Delete(&modelUserCreationRequest{}).Error; err != nil {
+		return terrors.Wrap(err)
+	}
+	return nil
+}

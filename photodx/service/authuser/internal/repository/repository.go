@@ -60,6 +60,10 @@ type Repository interface {
 		ctx context.Context,
 		request *common_entity.UserCreationRequest,
 	) error
+	DeleteUserCreationRequest(
+		ctx context.Context,
+		userCreationRequestID common_entity.UserCreationRequestID,
+	) error
 	GetUserCreationRequest(
 		ctx context.Context,
 		id common_entity.UserCreationRequestID,

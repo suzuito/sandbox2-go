@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand"
 	"net/url"
 	"time"
 
@@ -107,12 +108,15 @@ func (t *Impl) CreateUser(
 	}
 	user := common_entity.User{
 		ID:              common_entity.UserID(userID),
-		Name:            "",
+		Name:            fmt.Sprintf("ユーザー%d%d", time.Now().Unix(), rand.Intn(1000)),
 		Email:           email,
 		EmailVerified:   true,
-		ProfileImageURL: "",
+		ProfileImageURL: "https://vos.line-scdn.net/chdev-console-static/default-profile.png",
 		Active:          true,
 		Guest:           false,
+	}
+	if err := user.Validate(); err != nil {
+		return nil, terrors.Wrap(err)
 	}
 	created, err := t.Repository.CreateUser(
 		ctx,
@@ -123,4 +127,11 @@ func (t *Impl) CreateUser(
 		return nil, terrors.Wrap(err)
 	}
 	return created, nil
+}
+
+func (t *Impl) DeleteUserCreationRequest(
+	ctx context.Context,
+	userCreationRequestID common_entity.UserCreationRequestID,
+) error {
+	return terrors.Wrap(t.Repository.DeleteUserCreationRequest(ctx, userCreationRequestID))
 }

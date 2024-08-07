@@ -1,16 +1,24 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/suzuito/sandbox2-go/common/terrors"
+)
 
 type UserID string
 type User struct {
-	ID              UserID `json:"id"`
-	Name            string `json:"name"`
-	Email           string `json:"email"`
+	ID              UserID `json:"id" validate:"required"`
+	Name            string `json:"name" validate:"required"`
+	Email           string `json:"email" validate:"required"`
 	EmailVerified   bool   `json:"email_verified"`
-	ProfileImageURL string `json:"profileImageUrl"`
+	ProfileImageURL string `json:"profileImageUrl" validate:"required"`
 	Active          bool   `json:"active"`
 	Guest           bool   `json:"guest"`
+}
+
+func (t *User) Validate() error {
+	return terrors.Wrap(validate.Struct(t))
 }
 
 type UserCreationRequestID string
