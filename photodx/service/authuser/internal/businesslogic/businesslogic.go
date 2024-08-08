@@ -55,6 +55,11 @@ type BusinessLogic interface {
 		ctx context.Context,
 		userID common_entity.UserID,
 	) (*common_entity.User, error)
+	VerifyUserPassword(
+		ctx context.Context,
+		email string,
+		password string,
+	) (*common_entity.User, error)
 
 	// impl_user_creation.go
 	CreateUserCreationRequest(

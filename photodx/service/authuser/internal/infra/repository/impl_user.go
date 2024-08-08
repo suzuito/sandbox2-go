@@ -149,3 +149,18 @@ func (t *Impl) GetUsers(
 	}
 	return ret, nil
 }
+
+func (t *Impl) GetUserPasswordHashByEmail(
+	ctx context.Context,
+	email string,
+) (string, *common_entity.User, error) {
+	mUser := modelUser{}
+	if err := t.GormDB.WithContext(ctx).Where("email = ?", email).First(&mUser).Error; err != nil {
+		return "", nil, terrors.Wrap(err)
+	}
+	mUserPassword := modelUserPasswordHashValue{}
+	if err := t.GormDB.WithContext(ctx).Where("user_id = ?", mUser.ID).First(&mUserPassword).Error; err != nil {
+		return "", nil, terrors.Wrap(err)
+	}
+	return mUserPassword.Value, mUser.ToEntity(), nil
+}

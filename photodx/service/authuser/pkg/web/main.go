@@ -143,6 +143,20 @@ func Main(
 	{
 		x := authuser.Group("x")
 		x.GET("callback", w.GetCallback)
+		x.POST("login", func(ctx *gin.Context) {
+			body := struct {
+				Email    string `json:"email"`
+				Password string `json:"password"`
+			}{}
+			if err := ctx.BindJSON(&body); err != nil {
+				p.JSON(ctx, http.StatusBadRequest, common_web.ResponseError{
+					Message: err.Error(),
+				})
+				return
+			}
+			dto, err := u.APIPostLogin(ctx, body.Email, body.Password)
+			res(ctx, dto, err)
+		})
 		{
 			userCreation := x.Group("user_creation")
 			userCreation.POST("", func(ctx *gin.Context) {

@@ -46,6 +46,10 @@ type Repository interface {
 		ctx context.Context,
 		email string,
 	) (*common_entity.User, error)
+	GetUserPasswordHashByEmail(
+		ctx context.Context,
+		email string,
+	) (string, *common_entity.User, error)
 
 	UpdateOrCreateUserWebPushSubscription(
 		ctx context.Context,

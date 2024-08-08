@@ -59,3 +59,19 @@ func (t *Impl) GetUser(
 ) (*common_entity.User, error) {
 	return t.Repository.GetUser(ctx, userID)
 }
+
+func (t *Impl) VerifyUserPassword(
+	ctx context.Context,
+	email string,
+	password string,
+) (*common_entity.User, error) {
+	passwordHashInput := t.PasswordHasher.Gen([]byte(t.PasswordSalt), password)
+	passwordHash, user, err := t.Repository.GetUserPasswordHashByEmail(ctx, email)
+	if err != nil {
+		return nil, terrors.Wrap(err)
+	}
+	if passwordHashInput != passwordHash {
+		return nil, terrors.Wrapf("mismatch password")
+	}
+	return user, nil
+}
