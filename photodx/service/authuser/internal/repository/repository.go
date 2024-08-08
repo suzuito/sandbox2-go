@@ -72,4 +72,8 @@ type Repository interface {
 		ctx context.Context,
 		id common_entity.UserCreationRequestID,
 	) (*common_entity.UserCreationRequest, error)
+	GetUserCreationRequestByEmail(
+		ctx context.Context,
+		email string,
+	) (*common_entity.UserCreationRequest, error)
 }

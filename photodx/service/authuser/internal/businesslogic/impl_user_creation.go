@@ -31,6 +31,16 @@ func (t *Impl) CreateUserCreationRequest(
 	} else if !errors.As(err, &noEntryError) {
 		return nil, terrors.Wrap(err)
 	}
+	if _, err := t.Repository.GetUserCreationRequestByEmail(ctx, email); err == nil {
+		return nil, terrors.Wrap(
+			&common_repository.DuplicateEntryError{
+				EntryType: "UserCreationRequest",
+				EntryID:   fmt.Sprintf("email:%s", email),
+			},
+		)
+	} else if !errors.As(err, &noEntryError) {
+		return nil, terrors.Wrap(err)
+	}
 	id, err := t.UserCreationRequestIDGenerator.Gen()
 	if err != nil {
 		return nil, terrors.Wrap(err)

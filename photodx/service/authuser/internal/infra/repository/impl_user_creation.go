@@ -42,6 +42,23 @@ func (t *Impl) GetUserCreationRequest(
 	return m.ToEntity(), nil
 }
 
+func (t *Impl) GetUserCreationRequestByEmail(
+	ctx context.Context,
+	email string,
+) (*common_entity.UserCreationRequest, error) {
+	m := modelUserCreationRequest{}
+	if err := t.GormDB.Where("email = ?", email).First(&m).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &common_repository.NoEntryError{
+				EntryType: "UserCreationRequest",
+				EntryID:   string(email),
+			}
+		}
+		return nil, terrors.Wrap(err)
+	}
+	return m.ToEntity(), nil
+}
+
 func (t *Impl) DeleteUserCreationRequest(
 	ctx context.Context,
 	userCreationRequestID common_entity.UserCreationRequestID,
